@@ -26,11 +26,11 @@ export const securityHeaders = {
   // Content Security Policy - prevents XSS and other injection attacks
   'Content-Security-Policy': [
     "default-src 'self'",
-    "script-src 'self' 'unsafe-eval' 'unsafe-inline'", // Next.js requires unsafe-inline for dev
-    "style-src 'self' 'unsafe-inline'", // Tailwind requires unsafe-inline
-    "img-src 'self' data: https:",
-    "font-src 'self' data:",
-    "connect-src 'self' https:",
+    "script-src 'self' 'unsafe-eval' 'unsafe-inline' https://va.vercel-scripts.com https://vercel.live", // Vercel Analytics + Next.js dev
+    "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com", // Tailwind + Google Fonts
+    "img-src 'self' data: https: blob:",
+    "font-src 'self' data: https://fonts.gstatic.com",
+    "connect-src 'self' https: https://vitals.vercel-insights.com https://vercel.live", // Vercel Analytics
     "frame-ancestors 'none'",
     "base-uri 'self'",
     "form-action 'self'",
