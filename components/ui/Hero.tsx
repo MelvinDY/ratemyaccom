@@ -1,46 +1,198 @@
-export default function Hero() {
-  return (
-    <section className="bg-gradient-to-br from-primary-600 via-primary-700 to-primary-900 text-white">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-28">
-        <div className="text-center">
-          <h1 className="text-4xl md:text-6xl font-bold mb-6 text-balance">
-            Find Your Perfect Student Accommodation in NSW
-          </h1>
-          <p className="text-xl md:text-2xl mb-8 text-primary-100 max-w-3xl mx-auto text-balance">
-            Real reviews from real students. Make informed decisions about where you&apos;ll call
-            home during your university years.
-          </p>
+'use client';
 
-          <div className="flex flex-wrap justify-center gap-4 text-sm md:text-base">
-            <div className="flex items-center space-x-2 bg-white/10 backdrop-blur-sm px-4 py-2 rounded-full">
-              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                <path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z" />
-              </svg>
-              <span>5,000+ Reviews</span>
-            </div>
-            <div className="flex items-center space-x-2 bg-white/10 backdrop-blur-sm px-4 py-2 rounded-full">
-              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                <path
-                  fillRule="evenodd"
-                  d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z"
-                  clipRule="evenodd"
-                />
-              </svg>
-              <span>200+ Locations</span>
-            </div>
-            <div className="flex items-center space-x-2 bg-white/10 backdrop-blur-sm px-4 py-2 rounded-full">
-              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                <path
-                  fillRule="evenodd"
-                  d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                  clipRule="evenodd"
-                />
-              </svg>
-              <span>Verified Students</span>
-            </div>
-          </div>
+import { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
+import { MessageSquare, MapPin, ShieldCheck } from 'lucide-react';
+
+export default function Hero() {
+  const [currentText, setCurrentText] = useState('');
+  const fullText = 'Find Your Perfect Student Accommodation in NSW';
+
+  // Typewriter effect
+  useEffect(() => {
+    let index = 0;
+    const timer = setInterval(() => {
+      if (index < fullText.length) {
+        setCurrentText(fullText.slice(0, index + 1));
+        index++;
+      } else {
+        clearInterval(timer);
+      }
+    }, 50);
+
+    return () => clearInterval(timer);
+  }, []);
+
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.3,
+        delayChildren: 0.2,
+      },
+    },
+  };
+
+  const itemVariants = {
+    hidden: { y: 20, opacity: 0 },
+    visible: {
+      y: 0,
+      opacity: 1,
+      transition: {
+        duration: 0.6,
+        ease: 'easeOut',
+      },
+    },
+  };
+
+  const badgeVariants = {
+    hidden: { scale: 0, opacity: 0 },
+    visible: {
+      scale: 1,
+      opacity: 1,
+      transition: {
+        duration: 0.5,
+        ease: 'easeOut',
+      },
+    },
+  };
+
+  const stats = [
+    {
+      icon: MessageSquare,
+      title: '5,000+ Reviews',
+      description: 'Honest feedback from students',
+      color: 'bg-purple-500/20 text-purple-300',
+    },
+    {
+      icon: MapPin,
+      title: '200+ Locations',
+      description: 'Across NSW universities',
+      color: 'bg-blue-500/20 text-blue-300',
+    },
+    {
+      icon: ShieldCheck,
+      title: 'Verified Students',
+      description: 'University email verified',
+      color: 'bg-indigo-500/20 text-indigo-300',
+    },
+  ];
+
+  return (
+    <div className="h-[calc(100vh-4rem)] bg-gradient-to-br from-gray-900 via-blue-900 to-purple-900 flex items-center justify-center relative overflow-hidden">
+      {/* Animated Background Elements */}
+      <div className="absolute inset-0 overflow-hidden">
+        {/* Stars */}
+        <div className="absolute inset-0">
+          {[...Array(150)].map((_, i) => {
+            const randomOpacity = Math.random() * 0.4 + 0.4; // Random between 0.4 and 0.8
+            return (
+              <motion.div
+                key={i}
+                className="absolute w-0.5 h-0.5 bg-white rounded-full"
+                style={{
+                  left: `${Math.random() * 100}%`,
+                  top: `${Math.random() * 100}%`,
+                }}
+                initial={{ opacity: randomOpacity, scale: Math.random() * 0.5 + 0.5 }}
+                animate={{
+                  opacity: [0.4, 0.8, 0.4],
+                  scale: [0.5, 1, 0.5],
+                }}
+                transition={{
+                  duration: Math.random() * 4 + 3,
+                  repeat: Infinity,
+                  ease: 'easeInOut',
+                }}
+              />
+            );
+          })}
         </div>
+
+        {/* Glowing orbs */}
+        <motion.div
+          animate={{
+            backgroundPosition: ['0% 0%', '100% 100%'],
+          }}
+          transition={{
+            duration: 20,
+            repeat: Infinity,
+            repeatType: 'reverse',
+          }}
+          className="absolute inset-0 opacity-40"
+          style={{
+            backgroundImage:
+              'radial-gradient(circle at 20% 50%, rgba(147, 51, 234, 0.3) 0%, transparent 50%), radial-gradient(circle at 80% 20%, rgba(59, 130, 246, 0.3) 0%, transparent 50%)',
+            backgroundSize: '200% 200%',
+          }}
+        />
+
+        {/* Purple glow effect */}
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-purple-500 rounded-full opacity-20 blur-3xl"></div>
+        <div className="absolute top-1/3 left-1/3 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-blue-500 rounded-full opacity-15 blur-2xl"></div>
       </div>
-    </section>
+
+      {/* Hero Section */}
+      <motion.section
+        variants={containerVariants}
+        initial="hidden"
+        animate="visible"
+        className="relative z-10 text-center px-6 py-12 max-w-6xl mx-auto"
+      >
+        {/* Main Headline with Typewriter Effect */}
+        <motion.h1
+          variants={itemVariants}
+          className="text-5xl md:text-7xl font-bold text-white mb-6 leading-tight"
+          style={{
+            textShadow: '0 0 30px rgba(147, 51, 234, 0.5)',
+          }}
+        >
+          {currentText}
+          <motion.span
+            animate={{ opacity: [0, 1, 0] }}
+            transition={{ duration: 1, repeat: Infinity }}
+            className="text-purple-300"
+          >
+            |
+          </motion.span>
+        </motion.h1>
+
+        {/* Subtitle */}
+        <motion.p
+          variants={itemVariants}
+          className="text-xl md:text-2xl text-purple-100 mb-12 max-w-4xl mx-auto leading-relaxed"
+          style={{
+            textShadow: '0 0 20px rgba(147, 51, 234, 0.3)',
+          }}
+        >
+          Real reviews from real students. Make informed decisions about where you&apos;ll call home
+          during your university years.
+        </motion.p>
+
+        {/* Stats Badges */}
+        <motion.div variants={containerVariants} className="flex flex-wrap justify-center gap-6">
+          {stats.map((stat, index) => (
+            <motion.div
+              key={index}
+              variants={badgeVariants}
+              whileHover={{ scale: 1.05, y: -5 }}
+              className="flex items-center gap-3 bg-white/10 backdrop-blur-md px-6 py-4 rounded-2xl border border-white/20 hover:bg-white/20 transition-all duration-300"
+              style={{
+                boxShadow: 'inset 0 0 0 0px rgba(147, 51, 234, 0.3), 0 4px 32px rgba(0, 0, 0, 0.3)',
+              }}
+            >
+              <div className={`p-2 rounded-full ${stat.color}`}>
+                <stat.icon size={24} />
+              </div>
+              <div className="text-left">
+                <div className="font-semibold text-white">{stat.title}</div>
+                <div className="text-sm text-gray-300">{stat.description}</div>
+              </div>
+            </motion.div>
+          ))}
+        </motion.div>
+      </motion.section>
+    </div>
   );
 }
