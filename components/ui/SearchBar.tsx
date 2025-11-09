@@ -24,7 +24,7 @@ export default function SearchBar() {
   };
 
   return (
-    <div className="bg-white rounded-xl shadow-lg p-6 -mt-10 relative z-10 max-w-4xl mx-4 lg:mx-auto">
+    <div className="bg-white rounded-xl shadow-lg p-6 -mt-10 relative z-10 max-w-4xl mx-4 lg:mx-auto border-2 border-purple-900">
       <form onSubmit={handleSearch} className="space-y-4">
         <div className="grid md:grid-cols-2 gap-4">
           <div>
@@ -35,7 +35,7 @@ export default function SearchBar() {
               id="university"
               value={university}
               onChange={(e) => setUniversity(e.target.value)}
-              className="input"
+              className="w-full px-4 py-2 bg-white border-2 border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent text-gray-900"
             >
               {universities.map((uni) => (
                 <option key={uni} value={uni}>
@@ -55,12 +55,12 @@ export default function SearchBar() {
               placeholder="e.g., Kensington, UNSW Village..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="input"
+              className="w-full px-4 py-2 bg-white border-2 border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent text-gray-900 placeholder-gray-500"
             />
           </div>
         </div>
 
-        <button type="submit" className="btn btn-primary w-full md:w-auto px-8">
+        <button type="submit" className="bg-gradient-to-r from-purple-600 to-pink-600 text-white px-8 py-2 rounded-lg font-medium hover:from-purple-700 hover:to-pink-700 transition-all duration-200 w-full md:w-auto">
           <svg
             className="w-5 h-5 inline-block mr-2"
             fill="none"
