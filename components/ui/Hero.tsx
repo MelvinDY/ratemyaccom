@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { MessageSquare, MapPin, ShieldCheck } from 'lucide-react';
+import LiquidBackground from './LiquidBackground';
 
 export default function Hero() {
   const [currentText, setCurrentText] = useState('');
@@ -81,57 +82,8 @@ export default function Hero() {
 
   return (
     <div className="h-[calc(100vh-4rem)] bg-gradient-to-br from-gray-900 via-blue-900 to-purple-900 flex items-center justify-center relative overflow-hidden">
-      {/* Animated Background Elements */}
-      <div className="absolute inset-0 overflow-hidden">
-        {/* Stars */}
-        <div className="absolute inset-0">
-          {[...Array(150)].map((_, i) => {
-            const randomOpacity = Math.random() * 0.4 + 0.4; // Random between 0.4 and 0.8
-            return (
-              <motion.div
-                key={i}
-                className="absolute w-0.5 h-0.5 bg-white rounded-full"
-                style={{
-                  left: `${Math.random() * 100}%`,
-                  top: `${Math.random() * 100}%`,
-                }}
-                initial={{ opacity: randomOpacity, scale: Math.random() * 0.5 + 0.5 }}
-                animate={{
-                  opacity: [0.4, 0.8, 0.4],
-                  scale: [0.5, 1, 0.5],
-                }}
-                transition={{
-                  duration: Math.random() * 4 + 3,
-                  repeat: Infinity,
-                  ease: 'easeInOut',
-                }}
-              />
-            );
-          })}
-        </div>
-
-        {/* Glowing orbs */}
-        <motion.div
-          animate={{
-            backgroundPosition: ['0% 0%', '100% 100%'],
-          }}
-          transition={{
-            duration: 20,
-            repeat: Infinity,
-            repeatType: 'reverse',
-          }}
-          className="absolute inset-0 opacity-40"
-          style={{
-            backgroundImage:
-              'radial-gradient(circle at 20% 50%, rgba(147, 51, 234, 0.3) 0%, transparent 50%), radial-gradient(circle at 80% 20%, rgba(59, 130, 246, 0.3) 0%, transparent 50%)',
-            backgroundSize: '200% 200%',
-          }}
-        />
-
-        {/* Purple glow effect */}
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-purple-500 rounded-full opacity-20 blur-3xl"></div>
-        <div className="absolute top-1/3 left-1/3 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-blue-500 rounded-full opacity-15 blur-2xl"></div>
-      </div>
+      {/* Liquid Background */}
+      <LiquidBackground className="absolute inset-0" />
 
       {/* Hero Section */}
       <motion.section
