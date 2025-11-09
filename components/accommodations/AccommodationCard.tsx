@@ -9,7 +9,7 @@ export default function AccommodationCard({ accommodation }: AccommodationCardPr
   return (
     <Link href={`/accommodation/${accommodation.slug}`}>
       <div className="card overflow-hidden h-full flex flex-col hover:scale-[1.02] transition-transform duration-300">
-        <div className="relative h-48 bg-gradient-to-br from-primary-400 to-primary-600">
+        <div className="relative h-48 bg-gradient-to-br from-purple-400 via-pink-400 to-purple-600">
           {accommodation.verified && (
             <span className="absolute top-3 right-3 badge badge-success">Verified</span>
           )}
