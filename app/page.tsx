@@ -9,10 +9,12 @@ export default function Home() {
   return (
     <div className="bg-gray-900">
       <Hero />
-      <div className="max-w-7xl mx-auto">
-        <SearchBar />
+      <div className="bg-gradient-to-br from-purple-900/80 via-purple-800/60 to-purple-900/80 pb-[3912px]">
+        <div className="max-w-7xl mx-auto">
+          <SearchBar />
+        </div>
+        <FeaturedGrid accommodations={featuredAccommodations} />
       </div>
-      <FeaturedGrid accommodations={featuredAccommodations} />
 
       <section className="bg-gradient-to-br from-purple-900/20 via-pink-900/10 to-purple-900/20 py-16 border-y border-purple-500/20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
