@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef, useEffect, useState } from 'react';
+import { useRef, useEffect } from 'react';
 
 type Circle = {
   x: number;
@@ -102,6 +102,7 @@ export default function ParticlesBg({
         cancelAnimationFrame(animationFrameRef.current);
       }
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [color, quantity, staticity, ease, refresh]);
 
   const resizeCanvas = () => {
@@ -211,7 +212,9 @@ export default function ParticlesBg({
 
       if (remapClosestEdge > 1) {
         circle.alpha += 0.02;
-        if (circle.alpha > circle.targetAlpha) circle.alpha = circle.targetAlpha;
+        if (circle.alpha > circle.targetAlpha) {
+          circle.alpha = circle.targetAlpha;
+        }
       } else {
         circle.alpha = circle.targetAlpha * remapClosestEdge;
       }

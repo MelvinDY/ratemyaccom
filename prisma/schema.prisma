@@ -1,0 +1,308 @@
+// Prisma Schema for RateMyAccom
+// PostgreSQL database with optimized indexing and relationships
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ============================================
+// CORE MODELS
+// ============================================
+
+model User {
+  id         String   @id @default(cuid())
+  email      String   @unique
+  name       String
+  password   String?  // Nullable for OAuth users
+  university String?
+  studentId  String?
+  verified   Boolean  @default(false)
+  role       Role     @default(USER)
+
+  // OAuth fields
+  provider   String?  // 'google', 'facebook', etc.
+  providerId String?  // ID from OAuth provider
+
+  // Relationships
+  reviews    Review[]
+  savedAccommodations SavedAccommodation[]
+
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([email])
+  @@index([university])
+  @@map("users")
+}
+
+enum Role {
+  USER
+  ADMIN
+  MODERATOR
+}
+
+model Accommodation {
+  id          String   @id @default(cuid())
+  name        String
+  slug        String   @unique
+  university  String
+
+  // Location - using separate fields for efficient querying
+  address     String
+  suburb      String
+  state       String
+  postcode    String
+  latitude    Float?
+  longitude   Float?
+
+  description String   @db.Text
+  type        AccommodationType
+
+  // Images stored as JSON array of URLs
+  images      String[] @default([])
+
+  // Pricing
+  priceMin    Int
+  priceMax    Int
+  currency    String   @default("AUD")
+  pricePeriod PricePeriod @default(WEEK)
+
+  capacity    Int
+  roomTypes   String[] @default([])
+
+  // Contact Info - JSON for flexibility
+  contactInfo Json     // { phone?, email?, website? }
+
+  // Calculated ratings (updated via triggers or cron)
+  ratingOverall     Float   @default(0)
+  ratingCleanliness Float   @default(0)
+  ratingLocation    Float   @default(0)
+  ratingValue       Float   @default(0)
+  ratingAmenities   Float   @default(0)
+  ratingManagement  Float   @default(0)
+  ratingSafety      Float   @default(0)
+  totalReviews      Int     @default(0)
+
+  // Distance in kilometers
+  distanceToCampus    Float?
+  distanceToTransport Float?
+
+  verified    Boolean  @default(false)
+  featured    Boolean  @default(false)
+  active      Boolean  @default(true)
+
+  // Metadata for scraping
+  sourceUrl   String?  // Original source URL
+  scrapedAt   DateTime?
+  lastVerified DateTime?
+
+  // Relationships
+  amenities   AccommodationAmenity[]
+  reviews     Review[]
+  savedBy     SavedAccommodation[]
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Indexes for common queries
+  @@index([university])
+  @@index([suburb])
+  @@index([state])
+  @@index([type])
+  @@index([slug])
+  @@index([verified])
+  @@index([featured])
+  @@index([ratingOverall])
+  @@index([priceMin])
+  @@index([priceMax])
+  @@index([createdAt])
+  @@map("accommodations")
+}
+
+enum AccommodationType {
+  ON_CAMPUS
+  OFF_CAMPUS
+  PRIVATE
+  COLLEGE
+}
+
+enum PricePeriod {
+  WEEK
+  MONTH
+  SEMESTER
+  YEAR
+}
+
+model Amenity {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  icon        String?
+  category    String?  // 'facilities', 'services', 'security', etc.
+  description String?
+
+  // Relationships
+  accommodations AccommodationAmenity[]
+
+  createdAt   DateTime @default(now())
+
+  @@index([category])
+  @@map("amenities")
+}
+
+// Junction table for many-to-many relationship
+model AccommodationAmenity {
+  accommodation   Accommodation @relation(fields: [accommodationId], references: [id], onDelete: Cascade)
+  accommodationId String
+  amenity         Amenity @relation(fields: [amenityId], references: [id], onDelete: Cascade)
+  amenityId       String
+  available       Boolean @default(true)
+
+  @@id([accommodationId, amenityId])
+  @@map("accommodation_amenities")
+}
+
+model Review {
+  id              String   @id @default(cuid())
+
+  // Relationships
+  accommodation   Accommodation @relation(fields: [accommodationId], references: [id], onDelete: Cascade)
+  accommodationId String
+  user            User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId          String
+
+  // Ratings
+  rating          Float
+  ratingCleanliness Float
+  ratingLocation    Float
+  ratingValue       Float
+  ratingAmenities   Float
+  ratingManagement  Float
+  ratingSafety      Float
+
+  // Content
+  title           String
+  text            String   @db.Text
+  pros            String[] @default([])
+  cons            String[] @default([])
+
+  // Metadata
+  verified        Boolean  @default(false)
+  roomType        String?
+  stayDuration    String?
+
+  // Moderation
+  helpful         Int      @default(0)
+  reported        Int      @default(0)
+  status          ReviewStatus @default(PUBLISHED)
+  moderatedBy     String?
+  moderatedAt     DateTime?
+
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([accommodationId])
+  @@index([userId])
+  @@index([status])
+  @@index([createdAt])
+  @@index([rating])
+  @@map("reviews")
+}
+
+enum ReviewStatus {
+  PENDING
+  PUBLISHED
+  REJECTED
+  FLAGGED
+}
+
+model SavedAccommodation {
+  user            User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId          String
+  accommodation   Accommodation @relation(fields: [accommodationId], references: [id], onDelete: Cascade)
+  accommodationId String
+
+  createdAt       DateTime @default(now())
+
+  @@id([userId, accommodationId])
+  @@map("saved_accommodations")
+}
+
+// ============================================
+// SCRAPING & DATA IMPORT MODELS
+// ============================================
+
+model ScrapingJob {
+  id          String   @id @default(cuid())
+  source      String   // 'studentvip', 'accommodation.com.au', etc.
+  status      JobStatus @default(PENDING)
+
+  // Job configuration
+  config      Json     // { url, filters, etc. }
+
+  // Results
+  itemsFound    Int      @default(0)
+  itemsImported Int      @default(0)
+  itemsFailed   Int      @default(0)
+
+  // Error tracking
+  errors      Json?    // Array of error messages
+
+  startedAt   DateTime?
+  completedAt DateTime?
+  createdAt   DateTime @default(now())
+
+  @@index([status])
+  @@index([source])
+  @@index([createdAt])
+  @@map("scraping_jobs")
+}
+
+enum JobStatus {
+  PENDING
+  RUNNING
+  COMPLETED
+  FAILED
+  CANCELLED
+}
+
+model DataImportLog {
+  id              String   @id @default(cuid())
+  source          String
+  action          ImportAction
+  entityType      String   // 'accommodation', 'review', etc.
+  entityId        String?
+
+  // Data
+  rawData         Json?
+  processedData   Json?
+
+  status          ImportStatus
+  errorMessage    String?  @db.Text
+
+  createdAt       DateTime @default(now())
+
+  @@index([source])
+  @@index([status])
+  @@index([createdAt])
+  @@index([entityType])
+  @@map("data_import_logs")
+}
+
+enum ImportAction {
+  CREATE
+  UPDATE
+  SKIP
+  ERROR
+}
+
+enum ImportStatus {
+  SUCCESS
+  FAILED
+  DUPLICATE
+  VALIDATION_ERROR
+}

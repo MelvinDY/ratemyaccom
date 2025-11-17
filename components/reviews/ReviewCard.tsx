@@ -6,20 +6,20 @@ interface ReviewCardProps {
 
 export default function ReviewCard({ review }: ReviewCardProps) {
   return (
-    <div className="card p-6">
+    <div className="bg-gray-800/50 backdrop-blur-sm border border-purple-500/20 rounded-lg p-6">
       <div className="flex items-start justify-between mb-4">
         <div className="flex-1">
           <div className="flex items-center space-x-2 mb-2">
-            <div className="bg-primary-600 text-white w-10 h-10 rounded-full flex items-center justify-center font-bold">
+            <div className="bg-gradient-to-br from-purple-600 to-pink-600 text-white w-10 h-10 rounded-full flex items-center justify-center font-bold">
               {review.userName.charAt(0)}
             </div>
             <div>
               <div className="flex items-center space-x-2">
-                <h4 className="font-semibold text-gray-900">{review.userName}</h4>
-                {review.verified && <span className="badge badge-success text-xs">Verified</span>}
+                <h4 className="font-semibold text-white">{review.userName}</h4>
+                {review.verified && <span className="bg-green-600/30 text-green-300 border border-green-500/50 px-2 py-0.5 rounded-full text-xs">Verified</span>}
               </div>
               {review.userUniversity && (
-                <p className="text-sm text-gray-500">{review.userUniversity}</p>
+                <p className="text-sm text-purple-200">{review.userUniversity}</p>
               )}
             </div>
           </div>
@@ -31,7 +31,7 @@ export default function ReviewCard({ review }: ReviewCardProps) {
               <svg
                 key={i}
                 className={`w-4 h-4 ${
-                  i < Math.floor(review.rating) ? 'text-yellow-400' : 'text-gray-300'
+                  i < Math.floor(review.rating) ? 'text-yellow-400' : 'text-gray-600'
                 }`}
                 fill="currentColor"
                 viewBox="0 0 20 20"
@@ -40,18 +40,18 @@ export default function ReviewCard({ review }: ReviewCardProps) {
               </svg>
             ))}
           </div>
-          <p className="text-sm text-gray-500">{new Date(review.createdAt).toLocaleDateString()}</p>
+          <p className="text-sm text-purple-200">{new Date(review.createdAt).toLocaleDateString()}</p>
         </div>
       </div>
 
-      <h3 className="text-lg font-semibold mb-2">{review.title}</h3>
+      <h3 className="text-lg font-semibold text-white mb-2">{review.title}</h3>
 
-      <p className="text-gray-700 mb-4 leading-relaxed">{review.text}</p>
+      <p className="text-gray-300 mb-4 leading-relaxed">{review.text}</p>
 
       {review.roomType && review.stayDuration && (
-        <div className="flex flex-wrap gap-2 mb-4 text-sm text-gray-600">
-          <span className="bg-gray-100 px-3 py-1 rounded-full">Room: {review.roomType}</span>
-          <span className="bg-gray-100 px-3 py-1 rounded-full">Stayed: {review.stayDuration}</span>
+        <div className="flex flex-wrap gap-2 mb-4 text-sm">
+          <span className="bg-purple-600/30 text-purple-200 border border-purple-500/50 px-3 py-1 rounded-full">Room: {review.roomType}</span>
+          <span className="bg-purple-600/30 text-purple-200 border border-purple-500/50 px-3 py-1 rounded-full">Stayed: {review.stayDuration}</span>
         </div>
       )}
 
@@ -59,12 +59,12 @@ export default function ReviewCard({ review }: ReviewCardProps) {
         <div className="grid md:grid-cols-2 gap-4 mb-4">
           {review.pros && review.pros.length > 0 && (
             <div>
-              <h5 className="font-semibold text-accent-700 mb-2 text-sm">Pros</h5>
+              <h5 className="font-semibold text-green-400 mb-2 text-sm">Pros</h5>
               <ul className="space-y-1">
                 {review.pros.map((pro, index) => (
-                  <li key={index} className="text-sm text-gray-700 flex items-start">
+                  <li key={index} className="text-sm text-gray-300 flex items-start">
                     <svg
-                      className="w-4 h-4 text-accent-600 mr-2 mt-0.5 flex-shrink-0"
+                      className="w-4 h-4 text-green-400 mr-2 mt-0.5 flex-shrink-0"
                       fill="currentColor"
                       viewBox="0 0 20 20"
                     >
@@ -83,12 +83,12 @@ export default function ReviewCard({ review }: ReviewCardProps) {
 
           {review.cons && review.cons.length > 0 && (
             <div>
-              <h5 className="font-semibold text-red-700 mb-2 text-sm">Cons</h5>
+              <h5 className="font-semibold text-red-400 mb-2 text-sm">Cons</h5>
               <ul className="space-y-1">
                 {review.cons.map((con, index) => (
-                  <li key={index} className="text-sm text-gray-700 flex items-start">
+                  <li key={index} className="text-sm text-gray-300 flex items-start">
                     <svg
-                      className="w-4 h-4 text-red-600 mr-2 mt-0.5 flex-shrink-0"
+                      className="w-4 h-4 text-red-400 mr-2 mt-0.5 flex-shrink-0"
                       fill="currentColor"
                       viewBox="0 0 20 20"
                     >
@@ -107,8 +107,8 @@ export default function ReviewCard({ review }: ReviewCardProps) {
         </div>
       )}
 
-      <div className="flex items-center justify-between pt-4 border-t border-gray-100">
-        <button className="text-sm text-gray-600 hover:text-primary-600 transition-colors flex items-center">
+      <div className="flex items-center justify-between pt-4 border-t border-purple-500/20">
+        <button className="text-sm text-purple-200 hover:text-purple-400 transition-colors flex items-center">
           <svg className="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path
               strokeLinecap="round"
@@ -120,7 +120,7 @@ export default function ReviewCard({ review }: ReviewCardProps) {
           Helpful ({review.helpful})
         </button>
 
-        <button className="text-sm text-gray-500 hover:text-gray-700 transition-colors">
+        <button className="text-sm text-gray-400 hover:text-gray-300 transition-colors">
           Report
         </button>
       </div>

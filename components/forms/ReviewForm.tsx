@@ -7,12 +7,12 @@ export default function ReviewForm() {
   const [hoverRating, setHoverRating] = useState(0);
 
   return (
-    <div className="card p-6">
-      <h3 className="text-xl font-bold mb-6">Write a Review</h3>
+    <div className="bg-gray-800/50 backdrop-blur-sm border border-purple-500/20 rounded-lg p-6">
+      <h3 className="text-xl font-bold text-white mb-6">Write a Review</h3>
 
       <form className="space-y-6">
         <div>
-          <span className="block text-sm font-medium text-gray-700 mb-2">Overall Rating *</span>
+          <span className="block text-sm font-medium text-purple-200 mb-2">Overall Rating *</span>
           <div className="flex items-center space-x-2">
             {[1, 2, 3, 4, 5].map((star) => (
               <button
@@ -25,7 +25,7 @@ export default function ReviewForm() {
               >
                 <svg
                   className={`w-8 h-8 transition-colors ${
-                    star <= (hoverRating || rating) ? 'text-yellow-400' : 'text-gray-300'
+                    star <= (hoverRating || rating) ? 'text-yellow-400' : 'text-gray-600'
                   }`}
                   fill="currentColor"
                   viewBox="0 0 20 20"
@@ -34,33 +34,33 @@ export default function ReviewForm() {
                 </svg>
               </button>
             ))}
-            <span className="ml-2 text-sm text-gray-600">
+            <span className="ml-2 text-sm text-purple-200">
               {rating > 0 ? `${rating} star${rating > 1 ? 's' : ''}` : 'Select rating'}
             </span>
           </div>
         </div>
 
         <div>
-          <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-2">
+          <label htmlFor="title" className="block text-sm font-medium text-purple-200 mb-2">
             Review Title *
           </label>
           <input
             type="text"
             id="title"
-            className="input"
+            className="w-full px-4 py-2 bg-gray-700 border border-purple-500/30 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
             placeholder="Summarize your experience"
             required
           />
         </div>
 
         <div>
-          <label htmlFor="review-text" className="block text-sm font-medium text-gray-700 mb-2">
+          <label htmlFor="review-text" className="block text-sm font-medium text-purple-200 mb-2">
             Your Review *
           </label>
           <textarea
             id="review-text"
             rows={6}
-            className="input resize-none"
+            className="w-full px-4 py-2 bg-gray-700 border border-purple-500/30 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent resize-none"
             placeholder="Share your experience living here. What did you like? What could be improved?"
             required
           />
@@ -68,10 +68,10 @@ export default function ReviewForm() {
 
         <div className="grid md:grid-cols-2 gap-4">
           <div>
-            <label htmlFor="room-type" className="block text-sm font-medium text-gray-700 mb-2">
+            <label htmlFor="room-type" className="block text-sm font-medium text-purple-200 mb-2">
               Room Type
             </label>
-            <select id="room-type" className="input">
+            <select id="room-type" className="w-full px-4 py-2 bg-gray-700 border border-purple-500/30 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent">
               <option value="">Select room type</option>
               <option value="single">Single</option>
               <option value="twin">Twin Share</option>
@@ -81,10 +81,10 @@ export default function ReviewForm() {
           </div>
 
           <div>
-            <label htmlFor="duration" className="block text-sm font-medium text-gray-700 mb-2">
+            <label htmlFor="duration" className="block text-sm font-medium text-purple-200 mb-2">
               Stay Duration
             </label>
-            <select id="duration" className="input">
+            <select id="duration" className="w-full px-4 py-2 bg-gray-700 border border-purple-500/30 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent">
               <option value="">Select duration</option>
               <option value="1-semester">1 Semester</option>
               <option value="2-semesters">2 Semesters</option>
@@ -98,19 +98,19 @@ export default function ReviewForm() {
           <input
             type="checkbox"
             id="verified"
-            className="mt-1 rounded border-gray-300 text-primary-600 focus:ring-primary-500"
+            className="mt-1 rounded border-purple-500/30 bg-gray-700 text-purple-600 focus:ring-purple-500"
           />
-          <label htmlFor="verified" className="ml-2 text-sm text-gray-700">
+          <label htmlFor="verified" className="ml-2 text-sm text-gray-300">
             I verify that I have lived at this accommodation and this review is based on my personal
             experience.
           </label>
         </div>
 
         <div className="flex space-x-4">
-          <button type="submit" className="btn btn-primary">
+          <button type="submit" className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-semibold py-2 px-6 rounded-lg transition-all duration-200">
             Submit Review
           </button>
-          <button type="button" className="btn btn-secondary">
+          <button type="button" className="bg-gray-700 hover:bg-gray-600 text-white font-semibold py-2 px-6 rounded-lg transition-all duration-200">
             Cancel
           </button>
         </div>

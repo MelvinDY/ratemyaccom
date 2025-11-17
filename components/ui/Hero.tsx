@@ -1,150 +1,157 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
-import { MessageSquare, MapPin, ShieldCheck } from 'lucide-react';
-import LiquidBackground from './LiquidBackground';
+import { motion, useScroll, useTransform } from 'framer-motion';
+import { ArrowRight, Sparkles } from 'lucide-react';
+import Link from 'next/link';
 
 export default function Hero() {
-  const [currentText, setCurrentText] = useState('');
-  const fullText = 'Find Your Perfect Student Accommodation in NSW';
-
-  // Typewriter effect
-  useEffect(() => {
-    let index = 0;
-    const timer = setInterval(() => {
-      if (index < fullText.length) {
-        setCurrentText(fullText.slice(0, index + 1));
-        index++;
-      } else {
-        clearInterval(timer);
-      }
-    }, 50);
-
-    return () => clearInterval(timer);
-  }, []);
+  const { scrollY } = useScroll();
+  const y = useTransform(scrollY, [0, 500], [0, 150]);
+  const opacity = useTransform(scrollY, [400, 700], [1, 0]);
 
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
       transition: {
-        staggerChildren: 0.3,
+        staggerChildren: 0.15,
         delayChildren: 0.2,
       },
     },
   };
 
   const itemVariants = {
-    hidden: { y: 20, opacity: 0 },
+    hidden: { y: 30, opacity: 0 },
     visible: {
       y: 0,
       opacity: 1,
       transition: {
-        duration: 0.6,
-        ease: 'easeOut',
+        duration: 0.8,
+        ease: [0.25, 0.46, 0.45, 0.94] as const,
       },
     },
   };
 
-  const badgeVariants = {
-    hidden: { scale: 0, opacity: 0 },
-    visible: {
-      scale: 1,
-      opacity: 1,
-      transition: {
-        duration: 0.5,
-        ease: 'easeOut',
-      },
-    },
-  };
-
-  const stats = [
-    {
-      icon: MessageSquare,
-      title: '5,000+ Reviews',
-      description: 'Honest feedback from students',
-      color: 'bg-purple-500/20 text-purple-300',
-    },
-    {
-      icon: MapPin,
-      title: '200+ Locations',
-      description: 'Across NSW universities',
-      color: 'bg-blue-500/20 text-blue-300',
-    },
-    {
-      icon: ShieldCheck,
-      title: 'Verified Students',
-      description: 'University email verified',
-      color: 'bg-indigo-500/20 text-indigo-300',
-    },
-  ];
 
   return (
-    <div className="h-[calc(100vh-4rem)] bg-gradient-to-br from-gray-900 via-blue-900 to-purple-900 flex items-center justify-center relative overflow-hidden">
-      {/* Liquid Background */}
-      <LiquidBackground className="absolute inset-0" />
+    <div className="relative min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900 overflow-hidden">
+      {/* Animated Background Gradients */}
+      <div className="absolute inset-0">
+        <motion.div
+          className="absolute top-1/4 -left-1/4 w-1/2 h-1/2 bg-purple-500/30 rounded-full blur-3xl"
+          animate={{
+            scale: [1, 1.2, 1],
+            opacity: [0.3, 0.5, 0.3],
+          }}
+          transition={{
+            duration: 8,
+            repeat: Infinity,
+            ease: 'easeInOut',
+          }}
+        />
+        <motion.div
+          className="absolute bottom-1/4 -right-1/4 w-1/2 h-1/2 bg-pink-500/30 rounded-full blur-3xl"
+          animate={{
+            scale: [1.2, 1, 1.2],
+            opacity: [0.3, 0.5, 0.3],
+          }}
+          transition={{
+            duration: 8,
+            repeat: Infinity,
+            ease: 'easeInOut',
+            delay: 1,
+          }}
+        />
+        <motion.div
+          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-1/3 h-1/3 bg-indigo-500/20 rounded-full blur-3xl"
+          animate={{
+            scale: [1, 1.3, 1],
+            opacity: [0.2, 0.4, 0.2],
+          }}
+          transition={{
+            duration: 10,
+            repeat: Infinity,
+            ease: 'easeInOut',
+            delay: 2,
+          }}
+        />
+      </div>
 
-      {/* Hero Section */}
-      <motion.section
-        variants={containerVariants}
-        initial="hidden"
-        animate="visible"
-        className="relative z-10 text-center px-6 py-12 max-w-6xl mx-auto"
+      {/* Grid Pattern Overlay */}
+      <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.05)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.05)_1px,transparent_1px)] bg-[size:64px_64px] [mask-image:radial-gradient(ellipse_80%_50%_at_50%_50%,black,transparent)]" />
+
+      {/* Hero Content */}
+      <motion.div
+        style={{ y, opacity }}
+        className="relative z-10 flex flex-col items-center justify-center min-h-screen px-4 sm:px-6 lg:px-8 py-20"
       >
-        {/* Main Headline with Typewriter Effect */}
-        <motion.h1
-          variants={itemVariants}
-          className="text-5xl md:text-7xl font-bold text-white mb-6 leading-tight"
-          style={{
-            textShadow: '0 0 30px rgba(147, 51, 234, 0.5)',
-          }}
+        <motion.div
+          variants={containerVariants}
+          initial="hidden"
+          animate="visible"
+          className="max-w-6xl mx-auto text-center"
         >
-          {currentText}
-          <motion.span
-            animate={{ opacity: [0, 1, 0] }}
-            transition={{ duration: 1, repeat: Infinity }}
-            className="text-purple-300"
+          {/* Badge */}
+          <motion.div variants={itemVariants} className="inline-flex items-center mb-8">
+            <div className="flex items-center gap-2 px-4 py-2 bg-white/10 backdrop-blur-md rounded-full border border-purple-300/30">
+              <Sparkles className="w-4 h-4 text-purple-300" />
+              <span className="text-sm font-medium text-purple-100">
+                Trusted by 5,000+ Students
+              </span>
+            </div>
+          </motion.div>
+
+          {/* Main Headline */}
+          <motion.h1
+            variants={itemVariants}
+            className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-extrabold text-white mb-8 leading-[1.1] tracking-tight"
           >
-            |
-          </motion.span>
-        </motion.h1>
+            <span className="block">Find Your Perfect</span>
+            <span className="block bg-gradient-to-r from-purple-400 via-pink-400 to-purple-400 bg-clip-text text-transparent">
+              Student Accommodation
+            </span>
+            <span className="block text-4xl sm:text-5xl md:text-6xl mt-2">in NSW</span>
+          </motion.h1>
 
-        {/* Subtitle */}
-        <motion.p
-          variants={itemVariants}
-          className="text-xl md:text-2xl text-purple-100 mb-12 max-w-4xl mx-auto leading-relaxed"
-          style={{
-            textShadow: '0 0 20px rgba(147, 51, 234, 0.3)',
-          }}
-        >
-          Real reviews from real students. Make informed decisions about where you&apos;ll call home
-          during your university years.
-        </motion.p>
+          {/* Subtitle */}
+          <motion.p
+            variants={itemVariants}
+            className="text-lg sm:text-xl md:text-2xl text-purple-100/90 mb-12 max-w-3xl mx-auto leading-relaxed font-light"
+          >
+            Real reviews from real students. Make informed decisions about where you&apos;ll call
+            home during your university years.
+          </motion.p>
 
-        {/* Stats Badges */}
-        <motion.div variants={containerVariants} className="flex flex-wrap justify-center gap-6">
-          {stats.map((stat, index) => (
-            <motion.div
-              key={index}
-              variants={badgeVariants}
-              whileHover={{ scale: 1.05, y: -5 }}
-              className="flex items-center gap-3 bg-white/10 backdrop-blur-md px-6 py-4 rounded-2xl border border-white/20 hover:bg-white/20 transition-all duration-300"
-              style={{
-                boxShadow: 'inset 0 0 0 0px rgba(147, 51, 234, 0.3), 0 4px 32px rgba(0, 0, 0, 0.3)',
-              }}
-            >
-              <div className={`p-2 rounded-full ${stat.color}`}>
-                <stat.icon size={24} />
-              </div>
-              <div className="text-left">
-                <div className="font-semibold text-white">{stat.title}</div>
-                <div className="text-sm text-gray-300">{stat.description}</div>
-              </div>
-            </motion.div>
-          ))}
+          {/* CTA Buttons */}
+          <motion.div
+            variants={itemVariants}
+            className="flex flex-col sm:flex-row gap-4 justify-center items-center"
+          >
+            <Link href="/browse">
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className="group px-8 py-4 bg-gradient-to-r from-purple-500 to-pink-500 text-white font-semibold rounded-full shadow-lg shadow-purple-500/50 hover:shadow-xl hover:shadow-purple-500/60 transition-all duration-300 flex items-center gap-2"
+              >
+                <span>Explore Accommodations</span>
+                <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+              </motion.button>
+            </Link>
+            <Link href="/about">
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className="px-8 py-4 bg-white/10 backdrop-blur-md text-white font-semibold rounded-full border-2 border-white/20 hover:bg-white/20 hover:border-white/30 transition-all duration-300"
+              >
+                Learn More
+              </motion.button>
+            </Link>
+          </motion.div>
         </motion.div>
-      </motion.section>
+      </motion.div>
+
+      {/* Bottom gradient fade */}
+      <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-gray-900 to-transparent" />
     </div>
   );
 }

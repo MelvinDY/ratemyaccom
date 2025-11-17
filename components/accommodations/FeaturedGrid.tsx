@@ -20,7 +20,9 @@ export default function FeaturedGrid({ accommodations }: FeaturedGridProps) {
   const displayedAccommodations = accommodations.slice(0, 3);
 
   useEffect(() => {
-    if (!sectionRef.current || !scrollContainerRef.current) return;
+    if (!sectionRef.current || !scrollContainerRef.current) {
+      return;
+    }
 
     const section = sectionRef.current;
     const scrollContainer = scrollContainerRef.current;

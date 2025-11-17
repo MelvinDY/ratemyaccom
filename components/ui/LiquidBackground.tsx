@@ -59,7 +59,9 @@ export default function LiquidBackground({ className = '' }: Props) {
   `;
 
   useEffect(() => {
-    if (!containerRef.current) return;
+    if (!containerRef.current) {
+      return;
+    }
 
     // Initialize renderer
     const renderer = new Renderer();
@@ -70,7 +72,9 @@ export default function LiquidBackground({ className = '' }: Props) {
 
     // Resize function
     const resize = () => {
-      if (!containerRef.current) return;
+      if (!containerRef.current) {
+        return;
+      }
       const scale = 1;
       renderer.setSize(
         containerRef.current.offsetWidth * scale,
@@ -129,12 +133,13 @@ export default function LiquidBackground({ className = '' }: Props) {
       if (containerRef.current && gl?.canvas) {
         try {
           containerRef.current.removeChild(gl.canvas);
-        } catch (e) {
+        } catch {
           // Canvas may already be removed
         }
       }
       gl?.getExtension('WEBGL_lose_context')?.loseContext();
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return <div ref={containerRef} className={className} />;

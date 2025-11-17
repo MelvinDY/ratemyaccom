@@ -16,8 +16,8 @@ export default function RatingBreakdown({ breakdown, totalReviews }: RatingBreak
   ];
 
   return (
-    <div className="card p-6">
-      <h3 className="text-xl font-bold mb-6">Rating Breakdown</h3>
+    <div className="bg-gray-800/50 backdrop-blur-sm border border-purple-500/20 rounded-lg p-6">
+      <h3 className="text-xl font-bold text-white mb-6">Rating Breakdown</h3>
 
       <div className="space-y-4">
         {categories.map((category) => {
@@ -29,14 +29,14 @@ export default function RatingBreakdown({ breakdown, totalReviews }: RatingBreak
               <div className="flex items-center justify-between mb-2">
                 <div className="flex items-center space-x-2">
                   <span className="text-lg">{category.icon}</span>
-                  <span className="text-sm font-medium text-gray-700">{category.label}</span>
+                  <span className="text-sm font-medium text-purple-200">{category.label}</span>
                 </div>
-                <span className="text-sm font-semibold text-gray-900">{rating.toFixed(1)}</span>
+                <span className="text-sm font-semibold text-white">{rating.toFixed(1)}</span>
               </div>
 
-              <div className="relative h-2 bg-gray-200 rounded-full overflow-hidden">
+              <div className="relative h-2 bg-gray-700 rounded-full overflow-hidden">
                 <div
-                  className="absolute top-0 left-0 h-full bg-gradient-to-r from-primary-500 to-primary-600 rounded-full transition-all duration-500"
+                  className="absolute top-0 left-0 h-full bg-gradient-to-r from-purple-500 to-pink-500 rounded-full transition-all duration-500"
                   style={{ width: `${percentage}%` }}
                 />
               </div>
@@ -45,9 +45,9 @@ export default function RatingBreakdown({ breakdown, totalReviews }: RatingBreak
         })}
       </div>
 
-      <div className="mt-6 pt-6 border-t border-gray-200 text-center">
-        <p className="text-sm text-gray-600">
-          Based on <span className="font-semibold">{totalReviews}</span> verified reviews
+      <div className="mt-6 pt-6 border-t border-purple-500/20 text-center">
+        <p className="text-sm text-purple-200">
+          Based on <span className="font-semibold text-white">{totalReviews}</span> verified reviews
         </p>
       </div>
     </div>
