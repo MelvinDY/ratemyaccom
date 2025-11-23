@@ -110,3 +110,39 @@ export function verifyVerificationToken(token: string): string | null {
     return null;
   }
 }
+
+/**
+ * Generate password reset token
+ * Valid for 1 hour
+ */
+export function generatePasswordResetToken(email: string): string {
+  return jwt.sign({ email, type: 'password-reset' }, JWT_SECRET, {
+    expiresIn: '1h',
+    issuer: 'ratemyaccom',
+  });
+}
+
+/**
+ * Verify password reset token
+ */
+export function verifyPasswordResetToken(token: string): string | null {
+  try {
+    const decoded = jwt.verify(token, JWT_SECRET, {
+      issuer: 'ratemyaccom',
+    });
+
+    if (
+      typeof decoded === 'object' &&
+      decoded !== null &&
+      'email' in decoded &&
+      'type' in decoded &&
+      decoded.type === 'password-reset'
+    ) {
+      return decoded.email as string;
+    }
+
+    return null;
+  } catch (error) {
+    return null;
+  }
+}
