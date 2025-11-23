@@ -138,10 +138,6 @@ export async function POST(request: NextRequest) {
         message: 'Registration successful. Please check your email to verify your account.',
         data: {
           user,
-          // In development, include the verification link
-          ...(process.env.NODE_ENV === 'development' && {
-            verificationUrl,
-          }),
         },
       },
       { status: 201 }
