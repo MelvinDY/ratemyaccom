@@ -15,18 +15,13 @@ const apiClient = axios.create({
 });
 
 /**
- * Request interceptor - add auth token and CSRF token
+ * Request interceptor - add CSRF token
+ * Note: Auth token is sent automatically via httpOnly cookies
  */
 apiClient.interceptors.request.use(
   async (config) => {
-    // Add auth token if available
+    // Add CSRF token for state-changing requests
     if (typeof window !== 'undefined') {
-      const token = localStorage.getItem('auth_token');
-      if (token) {
-        config.headers.Authorization = `Bearer ${token}`;
-      }
-
-      // Add CSRF token for state-changing requests
       if (['post', 'put', 'patch', 'delete'].includes(config.method || '')) {
         const csrfToken = document.cookie
           .split('; ')
@@ -46,20 +41,75 @@ apiClient.interceptors.request.use(
   }
 );
 
+// Flag to prevent infinite refresh loops
+let isRefreshing = false;
+let failedQueue: Array<{
+  resolve: (value?: unknown) => void;
+  reject: (reason?: unknown) => void;
+}> = [];
+
+const processQueue = (error: Error | null) => {
+  failedQueue.forEach((prom) => {
+    if (error) {
+      prom.reject(error);
+    } else {
+      prom.resolve();
+    }
+  });
+  failedQueue = [];
+};
+
 /**
- * Response interceptor - handle errors globally
+ * Response interceptor - handle errors globally with automatic token refresh
  */
 apiClient.interceptors.response.use(
   (response) => response,
-  (error: AxiosError) => {
+  async (error: AxiosError) => {
+    const originalRequest = error.config as AxiosRequestConfig & { _retry?: boolean };
+
     // Handle specific error codes
     if (error.response) {
       const { status, data } = error.response;
 
-      // Unauthorized - redirect to login
-      if (status === 401) {
-        if (typeof window !== 'undefined') {
-          window.location.href = '/login';
+      // Unauthorized - try to refresh token
+      if (status === 401 && !originalRequest._retry) {
+        // Don't retry auth endpoints to prevent loops
+        if (originalRequest.url?.includes('/auth/')) {
+          if (typeof window !== 'undefined') {
+            window.location.href = '/login';
+          }
+          return Promise.reject(error);
+        }
+
+        if (isRefreshing) {
+          // Queue this request to retry after refresh completes
+          return new Promise((resolve, reject) => {
+            failedQueue.push({ resolve, reject });
+          })
+            .then(() => {
+              return apiClient(originalRequest);
+            })
+            .catch((err) => {
+              return Promise.reject(err);
+            });
+        }
+
+        originalRequest._retry = true;
+        isRefreshing = true;
+
+        try {
+          // Try to refresh the token
+          await apiClient.post('/auth/refresh');
+          isRefreshing = false;
+          processQueue(null);
+          return apiClient(originalRequest);
+        } catch (refreshError) {
+          isRefreshing = false;
+          processQueue(refreshError as Error);
+          if (typeof window !== 'undefined') {
+            window.location.href = '/login';
+          }
+          return Promise.reject(refreshError);
         }
       }
 

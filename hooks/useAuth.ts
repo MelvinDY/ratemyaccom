@@ -32,16 +32,16 @@ export const useAuth = create<AuthState>()(
       login: async (credentials: UserLogin) => {
         set({ isLoading: true, error: null });
         try {
-          const response = await api.post<{ user: User; token: string }>(
-            '/auth/login',
-            credentials
-          );
+          const response = await api.post<{
+            success: boolean;
+            data: { user: User; accessToken: string };
+          }>('/auth/login', credentials);
 
-          // Store token
-          localStorage.setItem('auth_token', response.token);
+          // Token is already stored in httpOnly cookie by the server
+          // No need to store in localStorage (security risk)
 
           set({
-            user: response.user,
+            user: response.data.user,
             isAuthenticated: true,
             isLoading: false,
           });
@@ -57,17 +57,17 @@ export const useAuth = create<AuthState>()(
       register: async (userData: UserRegistration) => {
         set({ isLoading: true, error: null });
         try {
-          const response = await api.post<{ user: User; token: string }>(
-            '/auth/register',
-            userData
-          );
+          const response = await api.post<{
+            success: boolean;
+            data: { user: User; verificationUrl?: string };
+          }>('/auth/register', userData);
 
-          // Store token
-          localStorage.setItem('auth_token', response.token);
+          // Note: User is NOT authenticated yet - needs email verification
+          // No token is returned from registration
 
           set({
-            user: response.user,
-            isAuthenticated: true,
+            user: response.data.user,
+            isAuthenticated: false, // Not authenticated until email verified
             isLoading: false,
           });
         } catch (error) {
@@ -86,8 +86,8 @@ export const useAuth = create<AuthState>()(
         } catch (error) {
           console.error('Logout error:', error);
         } finally {
-          // Clear token and state
-          localStorage.removeItem('auth_token');
+          // Server clears httpOnly cookies
+          // Just clear local state
           set({
             user: null,
             isAuthenticated: false,
