@@ -34,13 +34,18 @@ async function sendEmail({ to, subject, html, text }: SendEmailOptions): Promise
   }
 
   try {
-    await resend.emails.send({
+    const emailData: { from: string; to: string; subject: string; html: string; text?: string } = {
       from: FROM_EMAIL,
       to,
       subject,
       html,
-      text,
-    });
+    };
+
+    if (text) {
+      emailData.text = text;
+    }
+
+    await resend.emails.send(emailData);
   } catch (error) {
     console.error('Failed to send email:', error);
     throw new Error('Failed to send email');
