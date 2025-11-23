@@ -32,19 +32,19 @@
 - **Summary**: Implement Google OAuth Authentication
 - **Status**: To Do
 - **Jira**: [KAN-20](https://ratemyaccom.atlassian.net/browse/KAN-20)
-- **Pull Request**: _To be created_
+- **Pull Request**: [#16](https://github.com/MelvinDY/ratemyaccom/pull/16)
 
 #### KAN-21: Password Reset Request
 - **Summary**: API: POST /api/auth/forgot-password - Password Reset Request
 - **Status**: To Do
 - **Jira**: [KAN-21](https://ratemyaccom.atlassian.net/browse/KAN-21)
-- **Pull Request**: _To be created_
+- **Pull Request**: [#17](https://github.com/MelvinDY/ratemyaccom/pull/17)
 
 #### KAN-22: Password Reset Confirmation
 - **Summary**: API: POST /api/auth/reset-password - Password Reset Confirmation
 - **Status**: To Do
 - **Jira**: [KAN-22](https://ratemyaccom.atlassian.net/browse/KAN-22)
-- **Pull Request**: _To be created_
+- **Pull Request**: [#18](https://github.com/MelvinDY/ratemyaccom/pull/18)
 
 ### User Profile Endpoints
 
@@ -124,7 +124,7 @@
 - **Summary**: Implement Email Service Integration
 - **Status**: To Do
 - **Jira**: [KAN-23](https://ratemyaccom.atlassian.net/browse/KAN-23)
-- **Pull Request**: _To be created_
+- **Pull Request**: [#19](https://github.com/MelvinDY/ratemyaccom/pull/19)
 
 ### Security Features
 
@@ -132,31 +132,31 @@
 - **Summary**: Implement Account Lockout (Brute Force Protection)
 - **Status**: To Do
 - **Jira**: [KAN-24](https://ratemyaccom.atlassian.net/browse/KAN-24)
-- **Pull Request**: _To be created_
+- **Pull Request**: [#20](https://github.com/MelvinDY/ratemyaccom/pull/20)
 
 #### KAN-25: Session Revocation
 - **Summary**: Implement Session Revocation
 - **Status**: To Do
 - **Jira**: [KAN-25](https://ratemyaccom.atlassian.net/browse/KAN-25)
-- **Pull Request**: _To be created_
+- **Pull Request**: [#21](https://github.com/MelvinDY/ratemyaccom/pull/21)
 
 #### KAN-26: Enhanced Rate Limiting
 - **Summary**: Add Enhanced Rate Limiting to Auth Routes
 - **Status**: To Do
 - **Jira**: [KAN-26](https://ratemyaccom.atlassian.net/browse/KAN-26)
-- **Pull Request**: _To be created_
+- **Pull Request**: [#22](https://github.com/MelvinDY/ratemyaccom/pull/22)
 
 #### KAN-27: CSRF Protection
 - **Summary**: Implement CSRF Protection for Auth Routes
 - **Status**: To Do
 - **Jira**: [KAN-27](https://ratemyaccom.atlassian.net/browse/KAN-27)
-- **Pull Request**: _To be created_
+- **Pull Request**: [#23](https://github.com/MelvinDY/ratemyaccom/pull/23)
 
 #### KAN-28: Audit Logging
 - **Summary**: Implement Audit Logging for Auth Events
 - **Status**: To Do
 - **Jira**: [KAN-28](https://ratemyaccom.atlassian.net/browse/KAN-28)
-- **Pull Request**: _To be created_
+- **Pull Request**: [#24](https://github.com/MelvinDY/ratemyaccom/pull/24)
 
 ---
 
