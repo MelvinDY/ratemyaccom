@@ -15,26 +15,53 @@ const apiClient = axios.create({
 });
 
 /**
- * Request interceptor - add auth token and CSRF token
+ * Get CSRF token from cookies
+ */
+function getCsrfToken(): string | null {
+  if (typeof window === 'undefined') return null;
+
+  const csrfToken = document.cookie
+    .split('; ')
+    .find((row) => row.startsWith('csrf_token='))
+    ?.split('=')[1];
+
+  return csrfToken || null;
+}
+
+/**
+ * Fetch a new CSRF token from the server
+ */
+async function fetchCsrfToken(): Promise<string | null> {
+  try {
+    const response = await axios.get('/api/auth/csrf', {
+      baseURL: process.env.NEXT_PUBLIC_API_URL || '/api',
+      withCredentials: true,
+    });
+    return response.data.data.csrfToken;
+  } catch (error) {
+    console.error('Failed to fetch CSRF token:', error);
+    return null;
+  }
+}
+
+/**
+ * Request interceptor - add CSRF token
+ * Note: Auth token is sent automatically via httpOnly cookies
  */
 apiClient.interceptors.request.use(
   async (config) => {
-    // Add auth token if available
+    // Add CSRF token for state-changing requests
     if (typeof window !== 'undefined') {
-      const token = localStorage.getItem('auth_token');
-      if (token) {
-        config.headers.Authorization = `Bearer ${token}`;
-      }
-
-      // Add CSRF token for state-changing requests
       if (['post', 'put', 'patch', 'delete'].includes(config.method || '')) {
-        const csrfToken = document.cookie
-          .split('; ')
-          .find((row) => row.startsWith('csrf_token='))
-          ?.split('=')[1];
+        let csrfToken = getCsrfToken();
+
+        // If no CSRF token exists, fetch one
+        if (!csrfToken) {
+          csrfToken = await fetchCsrfToken();
+        }
 
         if (csrfToken) {
-          config.headers['X-CSRF-Token'] = csrfToken;
+          config.headers['x-csrf-token'] = csrfToken;
         }
       }
     }
@@ -46,20 +73,99 @@ apiClient.interceptors.request.use(
   }
 );
 
+// Flag to prevent infinite refresh loops
+let isRefreshing = false;
+let failedQueue: Array<{
+  resolve: (value?: unknown) => void;
+  reject: (reason?: unknown) => void;
+}> = [];
+
+const processQueue = (error: Error | null) => {
+  failedQueue.forEach((prom) => {
+    if (error) {
+      prom.reject(error);
+    } else {
+      prom.resolve();
+    }
+  });
+  failedQueue = [];
+};
+
 /**
- * Response interceptor - handle errors globally
+ * Response interceptor - handle errors globally with automatic token refresh
  */
 apiClient.interceptors.response.use(
   (response) => response,
-  (error: AxiosError) => {
+  async (error: AxiosError) => {
+    const originalRequest = error.config as AxiosRequestConfig & { _retry?: boolean };
+
     // Handle specific error codes
     if (error.response) {
       const { status, data } = error.response;
 
-      // Unauthorized - redirect to login
-      if (status === 401) {
-        if (typeof window !== 'undefined') {
-          window.location.href = '/login';
+      // Unauthorized - try to refresh token
+      if (status === 401 && !originalRequest._retry) {
+        // Don't retry auth endpoints to prevent loops
+        if (originalRequest.url?.includes('/auth/')) {
+          if (typeof window !== 'undefined') {
+            window.location.href = '/login';
+          }
+          return Promise.reject(error);
+        }
+
+        if (isRefreshing) {
+          // Queue this request to retry after refresh completes
+          return new Promise((resolve, reject) => {
+            failedQueue.push({ resolve, reject });
+          })
+            .then(() => {
+              return apiClient(originalRequest);
+            })
+            .catch((err) => {
+              return Promise.reject(err);
+            });
+        }
+
+        originalRequest._retry = true;
+        isRefreshing = true;
+
+        try {
+          // Try to refresh the token
+          await apiClient.post('/auth/refresh');
+          isRefreshing = false;
+          processQueue(null);
+          return apiClient(originalRequest);
+        } catch (refreshError) {
+          isRefreshing = false;
+          processQueue(refreshError as Error);
+          if (typeof window !== 'undefined') {
+            window.location.href = '/login';
+          }
+          return Promise.reject(refreshError);
+        }
+      }
+
+      // CSRF validation failed - fetch new token and retry once
+      if (status === 403 && !originalRequest._retry) {
+        const errorMessage =
+          (data as { error?: string; message?: string })?.error ||
+          (data as { error?: string; message?: string })?.message;
+
+        if (errorMessage?.toLowerCase().includes('csrf')) {
+          originalRequest._retry = true;
+
+          try {
+            // Fetch a new CSRF token
+            const newCsrfToken = await fetchCsrfToken();
+            if (newCsrfToken && originalRequest.headers) {
+              originalRequest.headers['x-csrf-token'] = newCsrfToken;
+              // Retry the original request with new CSRF token
+              return apiClient(originalRequest);
+            }
+          } catch (csrfError) {
+            console.error('Failed to refresh CSRF token:', csrfError);
+            return Promise.reject(csrfError);
+          }
         }
       }
 
