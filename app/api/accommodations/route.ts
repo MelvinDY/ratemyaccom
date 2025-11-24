@@ -129,12 +129,12 @@ export async function GET(request: NextRequest) {
         suburb: accom.suburb,
         state: accom.state,
         postcode: accom.postcode,
-        coordinates: accom.latitude && accom.longitude
-          ? {
-              lat: accom.latitude,
-              lng: accom.longitude,
-            }
-          : undefined,
+        ...(accom.latitude && accom.longitude && {
+          coordinates: {
+            lat: accom.latitude,
+            lng: accom.longitude,
+          },
+        }),
       },
       description: accom.description,
       type: convertAccommodationType(accom.type),
@@ -142,7 +142,7 @@ export async function GET(request: NextRequest) {
       amenities: accom.amenities.map((aa) => ({
         id: aa.amenity.id,
         name: aa.amenity.name,
-        icon: aa.amenity.icon || undefined,
+        ...(aa.amenity.icon && { icon: aa.amenity.icon }),
         available: aa.available,
       })),
       pricing: {
@@ -199,4 +199,223 @@ export async function GET(request: NextRequest) {
       { status: 500 }
     );
   }
+}
+
+/**
+ * POST /api/accommodations
+ * Create a new accommodation listing
+ * KAN-5
+ */
+export async function POST(request: NextRequest) {
+  try {
+    // Import auth middleware
+    const { requireAuth } = await import('@/lib/auth/middleware');
+
+    // Authenticate user (admin only)
+    let user;
+    try {
+      user = await requireAuth(request);
+
+      // Check if user is admin or moderator
+      if (user.role !== 'ADMIN' && user.role !== 'MODERATOR') {
+        return NextResponse.json(
+          {
+            success: false,
+            error: 'Permission denied',
+            message: 'Only administrators can create accommodation listings',
+          },
+          { status: 403 }
+        );
+      }
+    } catch (error) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: 'Authentication required',
+          message: 'You must be logged in as an administrator',
+        },
+        { status: 401 }
+      );
+    }
+
+    const body = await request.json();
+    const {
+      name,
+      university,
+      address,
+      suburb,
+      state,
+      postcode,
+      latitude,
+      longitude,
+      description,
+      type,
+      images,
+      priceMin,
+      priceMax,
+      pricePeriod,
+      capacity,
+      roomTypes,
+      contactInfo,
+      distanceToCampus,
+      distanceToTransport,
+    } = body;
+
+    // Validate required fields
+    if (!name || !university || !address || !suburb || !state || !postcode || !description || !type) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: 'Missing required fields',
+          message: 'Name, university, address, suburb, state, postcode, description, and type are required',
+        },
+        { status: 400 }
+      );
+    }
+
+    if (!priceMin || !priceMax) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: 'Missing pricing information',
+          message: 'Price min and max are required',
+        },
+        { status: 400 }
+      );
+    }
+
+    // Generate slug from name
+    const slug = name
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/(^-|-$)/g, '');
+
+    // Check if slug already exists
+    const existingAccommodation = await prisma.accommodation.findUnique({
+      where: { slug },
+    });
+
+    if (existingAccommodation) {
+      // Add random suffix to make it unique
+      const uniqueSlug = `${slug}-${Math.random().toString(36).substring(7)}`;
+
+      const accommodation = await createAccommodationRecord({
+        name,
+        slug: uniqueSlug,
+        university,
+        address,
+        suburb,
+        state,
+        postcode,
+        latitude,
+        longitude,
+        description,
+        type: parseAccommodationType(type),
+        images: images || [],
+        priceMin,
+        priceMax,
+        pricePeriod: pricePeriod || 'WEEK',
+        capacity: capacity || 1,
+        roomTypes: roomTypes || [],
+        contactInfo: contactInfo || {},
+        distanceToCampus,
+        distanceToTransport,
+      });
+
+      return NextResponse.json(
+        {
+          success: true,
+          message: 'Accommodation created successfully',
+          data: accommodation,
+        },
+        { status: 201 }
+      );
+    }
+
+    const accommodation = await createAccommodationRecord({
+      name,
+      slug,
+      university,
+      address,
+      suburb,
+      state,
+      postcode,
+      latitude,
+      longitude,
+      description,
+      type: parseAccommodationType(type),
+      images: images || [],
+      priceMin,
+      priceMax,
+      pricePeriod: pricePeriod || 'WEEK',
+      capacity: capacity || 1,
+      roomTypes: roomTypes || [],
+      contactInfo: contactInfo || {},
+      distanceToCampus,
+      distanceToTransport,
+    });
+
+    return NextResponse.json(
+      {
+        success: true,
+        message: 'Accommodation created successfully',
+        data: accommodation,
+      },
+      { status: 201 }
+    );
+  } catch (error) {
+    console.error('Error creating accommodation:', error);
+    return NextResponse.json(
+      {
+        success: false,
+        error: 'Failed to create accommodation',
+        message: error instanceof Error ? error.message : 'Unknown error',
+      },
+      { status: 500 }
+    );
+  }
+}
+
+// Helper function to create accommodation
+async function createAccommodationRecord(data: any) {
+  return await prisma.accommodation.create({
+    data: {
+      name: data.name,
+      slug: data.slug,
+      university: data.university,
+      address: data.address,
+      suburb: data.suburb,
+      state: data.state,
+      postcode: data.postcode,
+      latitude: data.latitude,
+      longitude: data.longitude,
+      description: data.description,
+      type: data.type,
+      images: data.images,
+      priceMin: data.priceMin,
+      priceMax: data.priceMax,
+      pricePeriod: data.pricePeriod,
+      capacity: data.capacity,
+      roomTypes: data.roomTypes,
+      contactInfo: data.contactInfo,
+      distanceToCampus: data.distanceToCampus,
+      distanceToTransport: data.distanceToTransport,
+    },
+    select: {
+      id: true,
+      name: true,
+      slug: true,
+      university: true,
+      address: true,
+      suburb: true,
+      state: true,
+      postcode: true,
+      description: true,
+      type: true,
+      priceMin: true,
+      priceMax: true,
+      createdAt: true,
+      updatedAt: true,
+    },
+  });
 }

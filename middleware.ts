@@ -1,35 +1,57 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { applySecurityHeaders } from '@/lib/security/headers';
-import { rateLimit, rateLimitHeaders } from '@/lib/security/rate-limiter';
+import {
+  applyRateLimit,
+  getRateLimitHeaders,
+} from '@/lib/security/enhanced-rate-limiter';
+import {
+  createCsrfToken,
+  setCsrfCookie,
+  validateCsrfMiddleware,
+  getCsrfTokenFromCookies,
+} from '@/lib/auth/csrf';
 
 /**
  * Middleware to apply security measures globally
  */
 export async function middleware(request: NextRequest) {
+  // Validate CSRF for API routes (state-changing methods only)
+  if (request.nextUrl.pathname.startsWith('/api')) {
+    const csrfError = validateCsrfMiddleware(request);
+    if (csrfError) {
+      return csrfError;
+    }
+  }
+
   // Create response
   let response = NextResponse.next();
 
   // Apply security headers
   response = applySecurityHeaders(response);
 
-  // Determine rate limit type based on path
-  let rateLimitType: 'auth' | 'review' | 'search' | 'api' = 'api';
-
-  if (request.nextUrl.pathname.startsWith('/api/auth')) {
-    rateLimitType = 'auth';
-  } else if (request.nextUrl.pathname.startsWith('/api/reviews')) {
-    rateLimitType = 'review';
-  } else if (request.nextUrl.pathname.startsWith('/api/search')) {
-    rateLimitType = 'search';
+  // Set CSRF token cookie if not present or for all page requests
+  // This ensures the client always has a valid CSRF token
+  if (!request.nextUrl.pathname.startsWith('/api')) {
+    const existingToken = getCsrfTokenFromCookies(request);
+    if (!existingToken) {
+      const newToken = createCsrfToken();
+      setCsrfCookie(response, newToken);
+    }
   }
 
-  // Apply rate limiting for API routes
+  // Apply enhanced rate limiting for API routes
   if (request.nextUrl.pathname.startsWith('/api')) {
-    const rateLimitResult = await rateLimit(request, rateLimitType);
+    // Skip rate limiting for health check
+    if (request.nextUrl.pathname === '/api/health') {
+      return response;
+    }
 
-    // Add rate limit headers
-    const headers = rateLimitHeaders(rateLimitResult);
+    // Apply rate limit (with automatic route detection and admin bypass)
+    const rateLimitResult = await applyRateLimit(request);
+
+    // Add rate limit headers to response
+    const headers = getRateLimitHeaders(rateLimitResult);
     Object.entries(headers).forEach(([key, value]) => {
       response.headers.set(key, value);
     });
@@ -38,8 +60,11 @@ export async function middleware(request: NextRequest) {
     if (!rateLimitResult.success) {
       return new NextResponse(
         JSON.stringify({
-          error: rateLimitResult.error,
-          retryAfter: rateLimitResult.resetTime,
+          success: false,
+          error: 'Too many requests',
+          message: rateLimitResult.error || 'Rate limit exceeded',
+          retryAfter: rateLimitResult.retryAfter,
+          resetTime: rateLimitResult.resetTime,
         }),
         {
           status: 429,
