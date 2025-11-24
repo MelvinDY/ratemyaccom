@@ -3,6 +3,9 @@
 @tailwind utilities;
 
 @layer base {
+  html {
+    scroll-behavior: smooth;
+  }
   body {
     @apply bg-gradient-to-b from-purple-900 via-gray-900 to-gray-900 text-gray-900;
   }
@@ -108,8 +111,6 @@
     text-wrap: balance;
   }
 }
-
-
 
 @layer base {
   * {

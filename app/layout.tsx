@@ -4,6 +4,7 @@ import { Analytics } from '@vercel/analytics/react';
 import { SpeedInsights } from '@vercel/speed-insights/next';
 import './globals.css';
 import Header from '@/components/ui/Header';
+import Footer from '@/components/ui/Footer';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -41,94 +42,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className={inter.className}>
         <Header />
         <main>{children}</main>
+        <Footer />
         <Analytics />
         <SpeedInsights />
-        <footer className="bg-charcoal/95 backdrop-blur-xl border-t border-white/10 text-white mt-20">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-            <div className="grid md:grid-cols-4 gap-8">
-              <div>
-                <h3 className="font-bold text-lg mb-4 bg-gradient-to-b from-white to-white/70 bg-clip-text text-transparent">
-                  Rate My Accom NSW
-                </h3>
-                <p className="text-white/60 text-sm">
-                  Helping NSW students find their perfect accommodation through honest reviews.
-                </p>
-              </div>
-              <div>
-                <h4 className="font-semibold mb-4 text-white/90">Quick Links</h4>
-                <ul className="space-y-2 text-sm text-white/60">
-                  <li>
-                    <a href="/" className="hover:text-lyra-purple-start transition-colors">
-                      Home
-                    </a>
-                  </li>
-                  <li>
-                    <a href="/browse" className="hover:text-lyra-purple-start transition-colors">
-                      Browse
-                    </a>
-                  </li>
-                  <li>
-                    <a href="/about" className="hover:text-lyra-purple-start transition-colors">
-                      About
-                    </a>
-                  </li>
-                </ul>
-              </div>
-              <div>
-                <h4 className="font-semibold mb-4 text-white/90">Universities</h4>
-                <ul className="space-y-2 text-sm text-white/60">
-                  <li>
-                    <a
-                      href="/browse?university=unsw"
-                      className="hover:text-lyra-purple-start transition-colors"
-                    >
-                      UNSW
-                    </a>
-                  </li>
-                  <li>
-                    <a
-                      href="/browse?university=sydney"
-                      className="hover:text-lyra-purple-start transition-colors"
-                    >
-                      University of Sydney
-                    </a>
-                  </li>
-                  <li>
-                    <a
-                      href="/browse?university=macquarie"
-                      className="hover:text-lyra-purple-start transition-colors"
-                    >
-                      Macquarie University
-                    </a>
-                  </li>
-                </ul>
-              </div>
-              <div>
-                <h4 className="font-semibold mb-4 text-white/90">Contact</h4>
-                <ul className="space-y-2 text-sm text-white/60">
-                  <li>
-                    <a href="/help" className="hover:text-lyra-purple-start transition-colors">
-                      Help Center
-                    </a>
-                  </li>
-                  <li>
-                    <a href="/contact" className="hover:text-lyra-purple-start transition-colors">
-                      Contact Us
-                    </a>
-                  </li>
-                  <li>
-                    <a href="/privacy" className="hover:text-lyra-purple-start transition-colors">
-                      Privacy Policy
-                    </a>
-                  </li>
-                </ul>
-              </div>
-            </div>
-            <div className="border-t border-white/10 mt-8 pt-8 text-center text-sm text-white/50">
-              <p>&copy; 2024 Rate My Accom NSW. All rights reserved.</p>
-            </div>
-          </div>
-        </footer>
       </body>
     </html>
   );
