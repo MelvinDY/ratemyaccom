@@ -5,11 +5,32 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
+import { verifyAccessToken } from '@/lib/auth/jwt';
+import { logLogout } from '@/lib/security/audit-logger';
 
 export const dynamic = 'force-dynamic';
 
-export async function POST(_request: NextRequest) {
+export async function POST(request: NextRequest) {
   try {
+    // Extract user info from token before clearing cookies
+    const token = request.cookies.get('auth-token')?.value;
+    let userInfo = null;
+
+    if (token) {
+      try {
+        const payload = verifyAccessToken(token);
+        if (payload) {
+          userInfo = {
+            id: payload.userId,
+            email: payload.email,
+            name: payload.email.split('@')[0], // Fallback name from email
+          };
+        }
+      } catch {
+        // Token invalid or expired, proceed with logout anyway
+      }
+    }
+
     // Create response
     const response = NextResponse.json(
       {
@@ -35,6 +56,11 @@ export async function POST(_request: NextRequest) {
       maxAge: 0, // Expire immediately
       path: '/',
     });
+
+    // Log logout event if user was authenticated
+    if (userInfo) {
+      await logLogout(request, userInfo);
+    }
 
     // TODO: Add token to blacklist in production
     // For now, we're just clearing cookies which is sufficient for basic security

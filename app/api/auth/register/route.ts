@@ -10,6 +10,7 @@ import { hashPassword, validatePassword } from '@/lib/auth/password';
 import { validateEmail, getUniversityFromEmail } from '@/lib/auth/email';
 import { generateVerificationToken } from '@/lib/auth/jwt';
 import { sendVerificationEmail } from '@/lib/email/service';
+import { logRegistration } from '@/lib/security/audit-logger';
 
 export const dynamic = 'force-dynamic';
 
@@ -131,6 +132,14 @@ export async function POST(request: NextRequest) {
       // Don't fail registration if email sending fails
       // User can request a new verification email later
     }
+
+    // Log successful registration
+    await logRegistration(request, {
+      id: user.id,
+      email: user.email,
+      name: user.name,
+      university: user.university,
+    });
 
     return NextResponse.json(
       {

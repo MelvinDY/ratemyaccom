@@ -23,6 +23,14 @@ interface PasswordChangedEmailProps {
   supportUrl: string;
 }
 
+interface AccountLockedEmailProps {
+  name: string;
+  appName: string;
+  unlockTime: string;
+  remainingMinutes: number;
+  supportUrl: string;
+}
+
 const baseStyles = `
   body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
@@ -254,9 +262,75 @@ function passwordChanged({ appName, supportUrl }: PasswordChangedEmailProps): st
   `;
 }
 
+function accountLocked({
+  name,
+  appName,
+  unlockTime,
+  remainingMinutes,
+  supportUrl,
+}: AccountLockedEmailProps): string {
+  return `
+    <!DOCTYPE html>
+    <html>
+      <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Account Locked</title>
+        <style>${baseStyles}</style>
+      </head>
+      <body>
+        <div class="container">
+          <div class="header">
+            <div class="logo">${appName}</div>
+            <h1>🔒 Account Temporarily Locked</h1>
+          </div>
+
+          <p>Hi ${name},</p>
+
+          <p>Your ${appName} account has been temporarily locked due to multiple failed login attempts.</p>
+
+          <div class="warning">
+            <strong>⏰ Locked Until:</strong><br>
+            ${unlockTime} (approximately ${remainingMinutes} minutes from now)
+          </div>
+
+          <h3>Why was my account locked?</h3>
+          <p>As a security measure, we temporarily lock accounts after several unsuccessful login attempts. This helps protect your account from unauthorized access.</p>
+
+          <h3>What should I do?</h3>
+          <ul>
+            <li>Wait until ${unlockTime} before attempting to log in again</li>
+            <li>Make sure you're using the correct password</li>
+            <li>Check that Caps Lock is not enabled when typing your password</li>
+            <li>If you've forgotten your password, use the "Forgot Password" link</li>
+          </ul>
+
+          <div class="warning">
+            <strong>⚠️ Didn't attempt to log in?</strong><br>
+            If you didn't try to access your account, someone may have attempted to gain unauthorized access. We recommend changing your password immediately after your account is unlocked.
+          </div>
+
+          <div style="text-align: center;">
+            <a href="${supportUrl}" class="button">Contact Support</a>
+          </div>
+
+          <h3>Need Help?</h3>
+          <p>If you're having trouble accessing your account, our support team is here to help. Contact us anytime!</p>
+
+          <div class="footer">
+            <p>This email was sent by ${appName}</p>
+            <p>Your security is our priority.</p>
+          </div>
+        </div>
+      </body>
+    </html>
+  `;
+}
+
 export const emailTemplates = {
   verification,
   passwordReset,
   welcome,
   passwordChanged,
+  accountLocked,
 };

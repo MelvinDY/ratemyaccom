@@ -14,7 +14,7 @@ export const dynamic = 'force-dynamic';
  * Returns a CSRF token and sets it as a cookie
  * This endpoint should be called before making any state-changing requests
  */
-export async function GET(request: NextRequest) {
+export async function GET(_request: NextRequest) {
   try {
     // Generate new CSRF token
     const csrfToken = createCsrfToken();

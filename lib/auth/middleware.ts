@@ -3,9 +3,14 @@
  * Provides authentication and authorization utilities for API routes
  */
 
-import { NextRequest } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { verifyToken, JWTPayload } from './jwt';
 import { prisma } from '@/lib/database/prisma';
+import {
+  validateCsrfFromRequest,
+  requiresCsrfProtection,
+  createCsrfErrorResponse,
+} from './csrf';
 
 export interface AuthenticatedRequest extends NextRequest {
   user?: JWTPayload;
@@ -116,4 +121,59 @@ export async function requireOwnership(
   }
 
   return user;
+}
+
+/**
+ * Require CSRF token validation
+ * Returns error response if CSRF validation fails
+ */
+export function requireCsrf(request: NextRequest): NextResponse | null {
+  // Only validate for state-changing methods
+  if (!requiresCsrfProtection(request.method)) {
+    return null;
+  }
+
+  // Validate CSRF token
+  if (!validateCsrfFromRequest(request)) {
+    return createCsrfErrorResponse();
+  }
+
+  return null;
+}
+
+/**
+ * Combined middleware: Require both authentication and CSRF validation
+ * Use this for protected routes that modify data
+ */
+export async function requireAuthAndCsrf(
+  request: NextRequest
+): Promise<{ user: JWTPayload; error: NextResponse | null }> {
+  // Check CSRF first
+  const csrfError = requireCsrf(request);
+  if (csrfError) {
+    throw new Error('CSRF validation failed');
+  }
+
+  // Then check authentication
+  const user = await requireAuth(request);
+
+  return { user, error: null };
+}
+
+/**
+ * Combined middleware: Require authentication, verification, and CSRF
+ */
+export async function requireVerifiedAndCsrf(
+  request: NextRequest
+): Promise<{ user: JWTPayload; error: NextResponse | null }> {
+  // Check CSRF first
+  const csrfError = requireCsrf(request);
+  if (csrfError) {
+    throw new Error('CSRF validation failed');
+  }
+
+  // Then check authentication and verification
+  const user = await requireVerified(request);
+
+  return { user, error: null };
 }

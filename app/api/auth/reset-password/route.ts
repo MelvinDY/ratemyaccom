@@ -9,6 +9,7 @@ import { prisma } from '@/lib/database/prisma';
 import { validatePassword, hashPassword } from '@/lib/auth/password';
 import { verifyPasswordResetToken } from '@/lib/auth/jwt';
 import { sendPasswordChangedEmail } from '@/lib/email/service';
+import { logPasswordChange } from '@/lib/security/audit-logger';
 
 export const dynamic = 'force-dynamic';
 
@@ -85,6 +86,13 @@ export async function POST(request: NextRequest) {
     await prisma.user.update({
       where: { id: user.id },
       data: { password: hashedPassword },
+    });
+
+    // Log password change
+    await logPasswordChange(request, {
+      id: user.id,
+      email: user.email,
+      name: user.name,
     });
 
     // Send password changed notification email

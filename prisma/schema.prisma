@@ -28,9 +28,16 @@ model User {
   provider   String?  // 'google', 'facebook', etc.
   providerId String?  // ID from OAuth provider
 
+  // Account lockout fields
+  failedLoginAttempts Int      @default(0)
+  lastFailedLogin     DateTime?
+  lockedUntil         DateTime?
+  lockoutCount        Int      @default(0) // Total number of times account has been locked
+
   // Relationships
   reviews    Review[]
   savedAccommodations SavedAccommodation[]
+  auditLogs  AuditLog[]
 
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
@@ -230,6 +237,100 @@ model SavedAccommodation {
 
   @@id([userId, accommodationId])
   @@map("saved_accommodations")
+}
+
+// ============================================
+// SECURITY & AUDIT MODELS
+// ============================================
+
+model AuditLog {
+  id          String   @id @default(cuid())
+
+  // Event information
+  eventType   AuditEventType
+  eventAction String   // 'attempt', 'success', 'failure', 'update', 'delete', etc.
+  eventStatus AuditEventStatus
+
+  // User information (may be null for anonymous actions)
+  userId      String?
+  userEmail   String?
+  userName    String?
+  userRole    String?
+
+  // Request information
+  ipAddress   String
+  userAgent   String?
+  requestPath String?
+  requestMethod String?
+
+  // Additional context (flexible JSON for event-specific data)
+  metadata    Json?    // { reason, oldValue, newValue, attemptNumber, etc. }
+
+  // Result
+  message     String?  @db.Text
+  errorMessage String? @db.Text
+
+  // Relationships
+  relatedUser User? @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  createdAt   DateTime @default(now())
+
+  // Indexes for common queries
+  @@index([userId])
+  @@index([eventType])
+  @@index([eventStatus])
+  @@index([ipAddress])
+  @@index([createdAt])
+  @@index([userEmail])
+  @@map("audit_logs")
+}
+
+enum AuditEventType {
+  // Authentication events
+  AUTH_LOGIN
+  AUTH_LOGOUT
+  AUTH_REGISTER
+  AUTH_VERIFY_EMAIL
+  AUTH_FORGOT_PASSWORD
+  AUTH_RESET_PASSWORD
+  AUTH_REFRESH_TOKEN
+  AUTH_TOKEN_EXPIRED
+
+  // Account security events
+  ACCOUNT_LOCKED
+  ACCOUNT_UNLOCKED
+  ACCOUNT_DELETED
+  ACCOUNT_UPDATED
+  PASSWORD_CHANGED
+  EMAIL_CHANGED
+
+  // Authorization events
+  PERMISSION_DENIED
+  ROLE_CHANGED
+
+  // Data operations
+  REVIEW_CREATED
+  REVIEW_UPDATED
+  REVIEW_DELETED
+  REVIEW_FLAGGED
+
+  // Admin actions
+  ADMIN_ACTION
+  ADMIN_UNLOCK_ACCOUNT
+  ADMIN_DELETE_REVIEW
+  ADMIN_BAN_USER
+
+  // Security events
+  RATE_LIMIT_EXCEEDED
+  CSRF_VALIDATION_FAILED
+  SUSPICIOUS_ACTIVITY
+}
+
+enum AuditEventStatus {
+  SUCCESS
+  FAILURE
+  WARNING
+  INFO
 }
 
 // ============================================

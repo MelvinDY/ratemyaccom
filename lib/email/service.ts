@@ -130,3 +130,38 @@ export async function sendPasswordChangedEmail(email: string): Promise<void> {
     text: `Your password was successfully changed. If you didn't make this change, please contact support immediately.`,
   });
 }
+
+/**
+ * Send email when account is locked due to failed login attempts
+ * KAN-24: Account Lockout
+ */
+export async function sendAccountLockedEmail(
+  email: string,
+  name: string,
+  lockedUntil: Date
+): Promise<void> {
+  const unlockTime = lockedUntil.toLocaleString('en-AU', {
+    timeZone: 'Australia/Sydney',
+    dateStyle: 'medium',
+    timeStyle: 'short',
+  });
+
+  const remainingMinutes = Math.ceil(
+    (lockedUntil.getTime() - Date.now()) / (1000 * 60)
+  );
+
+  const html = emailTemplates.accountLocked({
+    name,
+    appName: APP_NAME,
+    unlockTime,
+    remainingMinutes,
+    supportUrl: `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/support`,
+  });
+
+  await sendEmail({
+    to: email,
+    subject: `${APP_NAME} account locked due to failed login attempts`,
+    html,
+    text: `Hi ${name}, your ${APP_NAME} account has been temporarily locked due to multiple failed login attempts. You can try logging in again at ${unlockTime}. If you didn't attempt to log in, please contact our support team immediately.`,
+  });
+}

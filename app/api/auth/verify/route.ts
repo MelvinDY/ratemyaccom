@@ -8,6 +8,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/database/prisma';
 import { verifyVerificationToken } from '@/lib/auth/jwt';
 import { sendWelcomeEmail } from '@/lib/email/service';
+import { logEmailVerification } from '@/lib/security/audit-logger';
 
 export const dynamic = 'force-dynamic';
 
@@ -92,6 +93,13 @@ export async function POST(request: NextRequest) {
         university: true,
         verified: true,
       },
+    });
+
+    // Log email verification
+    await logEmailVerification(request, {
+      id: updatedUser.id,
+      email: updatedUser.email,
+      name: updatedUser.name,
     });
 
     // Send welcome email
