@@ -1,10 +1,7 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { applySecurityHeaders } from '@/lib/security/headers';
-import {
-  applyRateLimit,
-  getRateLimitHeaders,
-} from '@/lib/security/enhanced-rate-limiter';
+import { applyRateLimit, getRateLimitHeaders } from '@/lib/security/enhanced-rate-limiter';
 import {
   createCsrfToken,
   setCsrfCookie,
@@ -13,12 +10,18 @@ import {
 } from '@/lib/auth/csrf';
 
 /**
+ * Middleware runtime configuration
+ * Using Node.js runtime for better compatibility with crypto operations
+ */
+export const runtime = 'nodejs';
+
+/**
  * Middleware to apply security measures globally
  */
 export async function middleware(request: NextRequest) {
   // Validate CSRF for API routes (state-changing methods only)
   if (request.nextUrl.pathname.startsWith('/api')) {
-    const csrfError = validateCsrfMiddleware(request);
+    const csrfError = await validateCsrfMiddleware(request);
     if (csrfError) {
       return csrfError;
     }
@@ -35,7 +38,7 @@ export async function middleware(request: NextRequest) {
   if (!request.nextUrl.pathname.startsWith('/api')) {
     const existingToken = getCsrfTokenFromCookies(request);
     if (!existingToken) {
-      const newToken = createCsrfToken();
+      const newToken = await createCsrfToken();
       setCsrfCookie(response, newToken);
     }
   }

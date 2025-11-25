@@ -240,6 +240,31 @@ model SavedAccommodation {
 }
 
 // ============================================
+// OTP (One-Time Password) MODEL
+// ============================================
+
+model Otp {
+  id          String   @id @default(cuid())
+  email       String
+  code        String   // 6-digit OTP code (hashed)
+  type        OtpType  @default(LOGIN)
+  attempts    Int      @default(0) // Track failed verification attempts
+  verified    Boolean  @default(false)
+  expiresAt   DateTime
+  createdAt   DateTime @default(now())
+
+  @@index([email])
+  @@index([expiresAt])
+  @@map("otps")
+}
+
+enum OtpType {
+  LOGIN
+  EMAIL_VERIFICATION
+  PASSWORD_RESET
+}
+
+// ============================================
 // SECURITY & AUDIT MODELS
 // ============================================
 

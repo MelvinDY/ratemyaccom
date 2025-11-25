@@ -1,7 +1,10 @@
 import { notFound } from 'next/navigation';
+import { prisma } from '@/lib/database/prisma';
 import RatingBreakdown from '@/components/reviews/RatingBreakdown';
 import ReviewCard from '@/components/reviews/ReviewCard';
 import ReviewForm from '@/components/forms/ReviewForm';
+import ImageGallery from '@/components/accommodations/ImageGallery';
+import LocationMap from '@/components/accommodations/LocationMap';
 import { Accommodation, Review } from '@/types';
 
 interface AccommodationPageProps {
@@ -10,26 +13,137 @@ interface AccommodationPageProps {
   };
 }
 
-async function getAccommodation(slug: string): Promise<{ accommodation: Accommodation; reviews: Review[] } | null> {
+async function getAccommodation(
+  slug: string
+): Promise<{ accommodation: Accommodation; reviews: Review[] } | null> {
   try {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'}/api/accommodations/${slug}`, {
-      cache: 'no-store',
+    // Fetch directly from database using Prisma (server-side)
+    const dbAccommodation = await prisma.accommodation.findFirst({
+      where: {
+        OR: [{ id: slug }, { slug: slug }],
+      },
+      include: {
+        amenities: {
+          include: {
+            amenity: true,
+          },
+        },
+        reviews: {
+          where: {
+            status: 'PUBLISHED',
+          },
+          orderBy: {
+            createdAt: 'desc',
+          },
+          take: 10,
+          include: {
+            user: {
+              select: {
+                id: true,
+                name: true,
+                university: true,
+                verified: true,
+              },
+            },
+          },
+        },
+      },
     });
 
-    if (!response.ok) {
+    if (!dbAccommodation) {
       return null;
     }
 
-    const data = await response.json();
-
-    if (!data.success) {
-      return null;
-    }
-
-    return {
-      accommodation: data.data,
-      reviews: data.reviews || [],
+    // Transform to frontend format
+    const accommodation: Accommodation = {
+      id: dbAccommodation.id,
+      name: dbAccommodation.name,
+      slug: dbAccommodation.slug,
+      university: dbAccommodation.university,
+      location: {
+        address: dbAccommodation.address,
+        suburb: dbAccommodation.suburb,
+        state: dbAccommodation.state,
+        postcode: dbAccommodation.postcode,
+        coordinates:
+          dbAccommodation.latitude && dbAccommodation.longitude
+            ? { lat: dbAccommodation.latitude, lng: dbAccommodation.longitude }
+            : undefined,
+      },
+      description: dbAccommodation.description,
+      type: dbAccommodation.type.toLowerCase().replace('_', '-') as Accommodation['type'],
+      images: dbAccommodation.images,
+      amenities: dbAccommodation.amenities.map((aa) => ({
+        id: aa.amenity.id,
+        name: aa.amenity.name,
+        icon: aa.amenity.icon || undefined,
+        available: aa.available,
+      })),
+      pricing: {
+        min: dbAccommodation.priceMin,
+        max: dbAccommodation.priceMax,
+        currency: dbAccommodation.currency,
+        period: dbAccommodation.pricePeriod.toLowerCase() as 'week' | 'month' | 'semester' | 'year',
+      },
+      capacity: dbAccommodation.capacity,
+      roomTypes: dbAccommodation.roomTypes,
+      contactInfo: dbAccommodation.contactInfo as {
+        phone?: string;
+        email?: string;
+        website?: string;
+      },
+      ratings: {
+        overall: dbAccommodation.ratingOverall,
+        breakdown: {
+          cleanliness: dbAccommodation.ratingCleanliness,
+          location: dbAccommodation.ratingLocation,
+          value: dbAccommodation.ratingValue,
+          amenities: dbAccommodation.ratingAmenities,
+          management: dbAccommodation.ratingManagement,
+          safety: dbAccommodation.ratingSafety,
+        },
+        totalReviews: dbAccommodation.totalReviews,
+      },
+      distance: {
+        toCampus: dbAccommodation.distanceToCampus || 0,
+        toTransport: dbAccommodation.distanceToTransport || 0,
+      },
+      verified: dbAccommodation.verified,
+      featured: dbAccommodation.featured,
+      createdAt: dbAccommodation.createdAt,
+      updatedAt: dbAccommodation.updatedAt,
     };
+
+    // Transform reviews
+    const reviews: Review[] = dbAccommodation.reviews.map((r) => ({
+      id: r.id,
+      accommodationId: r.accommodationId,
+      userId: r.userId,
+      userName: r.user.name,
+      userUniversity: r.user.university || undefined,
+      rating: r.rating,
+      ratingBreakdown: {
+        cleanliness: r.ratingCleanliness,
+        location: r.ratingLocation,
+        value: r.ratingValue,
+        amenities: r.ratingAmenities,
+        management: r.ratingManagement,
+        safety: r.ratingSafety,
+      },
+      title: r.title,
+      text: r.text,
+      pros: r.pros,
+      cons: r.cons,
+      verified: r.verified,
+      roomType: r.roomType || undefined,
+      stayDuration: r.stayDuration || undefined,
+      createdAt: r.createdAt,
+      updatedAt: r.updatedAt,
+      helpful: r.helpful,
+      reported: r.reported,
+    }));
+
+    return { accommodation, reviews };
   } catch (error) {
     console.error('Error fetching accommodation:', error);
     return null;
@@ -57,7 +171,9 @@ export default async function AccommodationPage({ params }: AccommodationPagePro
           <div className="flex items-start justify-between">
             <div className="flex-1">
               <div className="flex items-center space-x-3 mb-4">
-                <h1 className="text-4xl font-bold bg-gradient-to-b from-white to-white/70 bg-clip-text text-transparent">{accommodation.name}</h1>
+                <h1 className="text-4xl font-bold bg-gradient-to-b from-white to-white/70 bg-clip-text text-transparent">
+                  {accommodation.name}
+                </h1>
                 {accommodation.verified && (
                   <span className="bg-gradient-to-r from-lyra-purple-start to-lyra-purple-end text-white px-3 py-1 rounded-full text-sm font-semibold">
                     Verified
@@ -103,7 +219,7 @@ export default async function AccommodationPage({ params }: AccommodationPagePro
                     </svg>
                   ))}
                 </div>
-                <span className="text-3xl font-bold">
+                <span className="text-3xl font-bold text-white">
                   {accommodation.ratings.overall.toFixed(1)}
                 </span>
               </div>
@@ -118,15 +234,32 @@ export default async function AccommodationPage({ params }: AccommodationPagePro
         <div className="grid lg:grid-cols-3 gap-8">
           {/* Left Column - Main Content */}
           <div className="lg:col-span-2 space-y-8">
+            {/* Photo Gallery */}
+            <ImageGallery images={accommodation.images} name={accommodation.name} />
+
+            {/* Location Map */}
+            <LocationMap
+              accommodationName={accommodation.name}
+              university={accommodation.university}
+              address={accommodation.location.address}
+              suburb={accommodation.location.suburb}
+              state={accommodation.location.state}
+              postcode={accommodation.location.postcode}
+              coordinates={accommodation.location.coordinates}
+              distanceToCampus={accommodation.distance.toCampus}
+            />
+
             {/* About Section */}
             <section className="bg-white/5 backdrop-blur-md border border-white/10 rounded-xl p-6">
-              <h2 className="text-2xl font-bold bg-gradient-to-b from-white to-white/70 bg-clip-text text-transparent mb-4">About</h2>
+              <h2 className="text-2xl font-bold bg-gradient-to-b from-white to-white/70 bg-clip-text text-transparent mb-4">
+                About
+              </h2>
               <p className="text-white/70 leading-relaxed mb-6">{accommodation.description}</p>
 
               <div className="grid md:grid-cols-2 gap-4 mb-6">
                 <div>
                   <h3 className="font-semibold text-white mb-2">Type</h3>
-                  <p className="text-white/60 capitalize">{accommodation.type}</p>
+                  <p className="text-white/60 capitalize">{accommodation.type.replace('-', ' ')}</p>
                 </div>
                 <div>
                   <h3 className="font-semibold text-white mb-2">Capacity</h3>
@@ -146,7 +279,10 @@ export default async function AccommodationPage({ params }: AccommodationPagePro
                 <h3 className="font-semibold text-white mb-3">Room Types Available</h3>
                 <div className="flex flex-wrap gap-2">
                   {accommodation.roomTypes.map((type) => (
-                    <span key={type} className="bg-gradient-to-r from-lyra-purple-start/20 to-lyra-purple-end/20 text-white border border-white/20 px-3 py-1 rounded-full text-sm">
+                    <span
+                      key={type}
+                      className="bg-gradient-to-r from-lyra-purple-start/20 to-lyra-purple-end/20 text-white border border-white/20 px-3 py-1 rounded-full text-sm"
+                    >
                       {type}
                     </span>
                   ))}
@@ -156,7 +292,9 @@ export default async function AccommodationPage({ params }: AccommodationPagePro
 
             {/* Amenities */}
             <section className="bg-white/5 backdrop-blur-md border border-white/10 rounded-xl p-6">
-              <h2 className="text-2xl font-bold bg-gradient-to-b from-white to-white/70 bg-clip-text text-transparent mb-4">Amenities</h2>
+              <h2 className="text-2xl font-bold bg-gradient-to-b from-white to-white/70 bg-clip-text text-transparent mb-4">
+                Amenities
+              </h2>
               <div className="grid md:grid-cols-2 gap-3">
                 {accommodation.amenities.map((amenity) => (
                   <div
@@ -186,17 +324,30 @@ export default async function AccommodationPage({ params }: AccommodationPagePro
 
             {/* Reviews */}
             <section>
-              <h2 className="text-2xl font-bold bg-gradient-to-b from-white to-white/70 bg-clip-text text-transparent mb-6">Student Reviews</h2>
-              <div className="space-y-6">
-                {reviews.map((review) => (
-                  <ReviewCard key={review.id} review={review} />
-                ))}
-              </div>
+              <h2 className="text-2xl font-bold bg-gradient-to-b from-white to-white/70 bg-clip-text text-transparent mb-6">
+                Student Reviews
+              </h2>
+              {reviews.length > 0 ? (
+                <div className="space-y-6">
+                  {reviews.map((review) => (
+                    <ReviewCard key={review.id} review={review} />
+                  ))}
+                </div>
+              ) : (
+                <div className="bg-white/5 backdrop-blur-md border border-white/10 rounded-xl p-8 text-center">
+                  <p className="text-white/60">
+                    No reviews yet. Be the first to share your experience!
+                  </p>
+                </div>
+              )}
             </section>
 
             {/* Review Form */}
             <section>
-              <ReviewForm />
+              <ReviewForm
+                accommodationId={accommodation.id}
+                accommodationSlug={accommodation.slug}
+              />
             </section>
           </div>
 
@@ -204,7 +355,9 @@ export default async function AccommodationPage({ params }: AccommodationPagePro
           <div className="space-y-6">
             {/* Pricing Card */}
             <div className="bg-white/5 backdrop-blur-md border border-white/10 rounded-xl p-6">
-              <h3 className="text-lg font-bold bg-gradient-to-b from-white to-white/70 bg-clip-text text-transparent mb-4">Pricing</h3>
+              <h3 className="text-lg font-bold bg-gradient-to-b from-white to-white/70 bg-clip-text text-transparent mb-4">
+                Pricing
+              </h3>
               <div className="mb-6">
                 <div className="flex items-baseline space-x-2">
                   <span className="text-3xl font-bold bg-gradient-to-r from-lyra-purple-start to-lyra-purple-end bg-clip-text text-transparent">

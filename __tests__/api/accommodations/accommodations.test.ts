@@ -7,7 +7,7 @@
  */
 
 import { GET as ListAccommodations, POST as CreateAccommodation } from '@/app/api/accommodations/route';
-import { GET as GetAccommodation, PUT as UpdateAccommodation, DELETE as DeleteAccommodation } from '@/app/api/accommodations/[id]/route';
+import { PUT as UpdateAccommodation, DELETE as DeleteAccommodation } from '@/app/api/accommodations/[id]/route';
 import {
   createMockRequest,
   createAuthenticatedRequest,

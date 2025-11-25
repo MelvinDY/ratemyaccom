@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { Github, Twitter, Linkedin, Mail, Heart } from 'lucide-react';
 
@@ -10,6 +11,19 @@ export default function Footer() {
   // Page-specific theme configuration
   const getPageTheme = () => {
     if (pathname === '/about' || pathname?.startsWith('/about')) {
+      return {
+        bg: 'bg-gradient-to-br from-slate-900 via-indigo-900 to-blue-900',
+        border: 'border-blue-500/20',
+        accentColor: 'text-blue-400',
+        accentHover: 'hover:text-blue-300',
+        linkHover: 'hover:text-blue-400',
+        iconBg: 'bg-blue-500/10',
+        iconBorder: 'border-blue-500/20',
+        iconHover: 'hover:bg-blue-500/20 hover:border-blue-400/40',
+      };
+    }
+
+    if (pathname === '/support' || pathname?.startsWith('/support')) {
       return {
         bg: 'bg-gradient-to-br from-slate-900 via-indigo-900 to-blue-900',
         border: 'border-blue-500/20',
@@ -62,10 +76,10 @@ export default function Footer() {
       { href: '/browse?university=macquarie', label: 'Macquarie University' },
     ],
     legal: [
-      { href: '/help', label: 'Help Center' },
-      { href: '/contact', label: 'Contact Us' },
-      { href: '/privacy', label: 'Privacy Policy' },
-      { href: '/terms', label: 'Terms of Service' },
+      { href: '/support', label: 'Help Center' },
+      { href: '/support', label: 'Contact Us' },
+      { href: '/support', label: 'Privacy Policy' },
+      { href: '/support', label: 'Terms of Service' },
     ],
   };
 
@@ -84,9 +98,15 @@ export default function Footer() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-12 lg:gap-8">
             {/* Brand Section - Larger on desktop */}
             <div className="lg:col-span-5">
-              <Link href="/" className="inline-flex items-center space-x-2 group mb-6">
-                <div className="bg-gradient-to-r from-blue-600 via-indigo-600 to-teal-600 text-white font-bold text-xl px-3 py-1.5 rounded-lg shadow-lg group-hover:shadow-2xl group-hover:scale-105 transition-all duration-300">
-                  RMA
+              <Link href="/" className="inline-flex items-center space-x-3 group mb-6">
+                <div className="relative w-12 h-12 rounded-lg overflow-hidden shadow-lg group-hover:shadow-2xl group-hover:scale-105 transition-all duration-300">
+                  <Image
+                    src="/logo.png"
+                    alt="RMA Logo"
+                    fill
+                    sizes="48px"
+                    className="object-contain"
+                  />
                 </div>
                 <span className="text-xl font-bold bg-gradient-to-b from-white to-white/70 bg-clip-text text-transparent">
                   Rate My Accom NSW
@@ -157,7 +177,7 @@ export default function Footer() {
               <h4 className="font-bold text-lg mb-5 text-white">Support & Legal</h4>
               <ul className="space-y-3">
                 {footerLinks.legal.map((link) => (
-                  <li key={link.href}>
+                  <li key={link.label}>
                     <Link
                       href={link.href}
                       className={`text-white/70 ${theme.linkHover} transition-all duration-300 text-sm font-medium inline-flex items-center group`}

@@ -37,6 +37,10 @@ export const mockUser = {
   role: 'USER' as const,
   provider: null,
   providerId: null,
+  failedLoginAttempts: 0,
+  lastFailedLogin: null,
+  lockedUntil: null,
+  lockoutCount: 0,
   createdAt: new Date('2024-01-01'),
   updatedAt: new Date('2024-01-01'),
 };

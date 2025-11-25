@@ -2,45 +2,91 @@
  * CSRF Token Utilities
  * Handles CSRF token generation and validation for protecting against
  * Cross-Site Request Forgery attacks
+ *
+ * Uses Web Crypto API for compatibility with both Node.js and Edge Runtime
  */
 
-import crypto from 'crypto';
 import { NextRequest, NextResponse } from 'next/server';
 
-const CSRF_SECRET = process.env.CSRF_SECRET || process.env.NEXTAUTH_SECRET || 'csrf-secret-change-in-production';
+const CSRF_SECRET =
+  process.env.CSRF_SECRET || process.env.NEXTAUTH_SECRET || 'csrf-secret-change-in-production';
 const CSRF_TOKEN_LENGTH = 32;
 const CSRF_COOKIE_NAME = 'csrf_token';
 const CSRF_HEADER_NAME = 'x-csrf-token';
 
 /**
- * Generate a random CSRF token
+ * Generate a random CSRF token using Web Crypto API
  */
 export function generateCsrfToken(): string {
-  return crypto.randomBytes(CSRF_TOKEN_LENGTH).toString('hex');
+  const buffer = new Uint8Array(CSRF_TOKEN_LENGTH);
+  crypto.getRandomValues(buffer);
+  return Array.from(buffer, (byte) => byte.toString(16).padStart(2, '0')).join('');
 }
 
 /**
- * Generate HMAC signature for CSRF token
+ * Convert string to Uint8Array for Web Crypto API
+ */
+function stringToUint8Array(str: string): Uint8Array {
+  const encoder = new TextEncoder();
+  return encoder.encode(str);
+}
+
+/**
+ * Convert ArrayBuffer to hex string
+ */
+function arrayBufferToHex(buffer: ArrayBuffer): string {
+  return Array.from(new Uint8Array(buffer), (byte) => byte.toString(16).padStart(2, '0')).join('');
+}
+
+/**
+ * Generate HMAC signature for CSRF token using Web Crypto API
  * This creates a cryptographically secure hash that ties the token to the secret
  */
-export function signCsrfToken(token: string): string {
-  return crypto.createHmac('sha256', CSRF_SECRET).update(token).digest('hex');
+export async function signCsrfToken(token: string): Promise<string> {
+  const key = await crypto.subtle.importKey(
+    'raw',
+    stringToUint8Array(CSRF_SECRET),
+    { name: 'HMAC', hash: 'SHA-256' },
+    false,
+    ['sign']
+  );
+
+  const signature = await crypto.subtle.sign('HMAC', key, stringToUint8Array(token));
+
+  return arrayBufferToHex(signature);
 }
 
 /**
  * Verify CSRF token signature
  */
-export function verifyCsrfToken(token: string, signature: string): boolean {
-  const expectedSignature = signCsrfToken(token);
-
-  // Use timing-safe comparison to prevent timing attacks
+export async function verifyCsrfToken(token: string, signature: string): Promise<boolean> {
   try {
-    return crypto.timingSafeEqual(
-      Buffer.from(signature, 'hex'),
-      Buffer.from(expectedSignature, 'hex')
+    const expectedSignature = await signCsrfToken(token);
+
+    // Timing-safe comparison using Web Crypto API
+    const key = await crypto.subtle.importKey(
+      'raw',
+      stringToUint8Array(CSRF_SECRET),
+      { name: 'HMAC', hash: 'SHA-256' },
+      false,
+      ['verify']
     );
-  } catch (error) {
-    // If buffers are different lengths, timingSafeEqual throws
+
+    // Convert hex signature back to Uint8Array
+    const signatureArray = new Uint8Array(
+      signature.match(/.{1,2}/g)?.map((byte) => parseInt(byte, 16)) || []
+    );
+
+    const isValid = await crypto.subtle.verify(
+      'HMAC',
+      key,
+      signatureArray,
+      stringToUint8Array(token)
+    );
+
+    // Double check with string comparison as fallback
+    return isValid && expectedSignature === signature;
+  } catch {
     return false;
   }
 }
@@ -49,16 +95,16 @@ export function verifyCsrfToken(token: string, signature: string): boolean {
  * Create a complete CSRF token with signature
  * Format: token.signature
  */
-export function createCsrfToken(): string {
+export async function createCsrfToken(): Promise<string> {
   const token = generateCsrfToken();
-  const signature = signCsrfToken(token);
+  const signature = await signCsrfToken(token);
   return `${token}.${signature}`;
 }
 
 /**
  * Validate a complete CSRF token
  */
-export function validateCsrfToken(fullToken: string): boolean {
+export async function validateCsrfToken(fullToken: string): Promise<boolean> {
   if (!fullToken || typeof fullToken !== 'string') {
     return false;
   }
@@ -102,7 +148,7 @@ export function getCsrfTokenFromCookies(request: NextRequest): string | null {
  * Validate CSRF token from request
  * Compares the token in the request header with the token in the cookie
  */
-export function validateCsrfFromRequest(request: NextRequest): boolean {
+export async function validateCsrfFromRequest(request: NextRequest): Promise<boolean> {
   const requestToken = getCsrfTokenFromRequest(request);
   const cookieToken = getCsrfTokenFromCookies(request);
 
@@ -111,7 +157,12 @@ export function validateCsrfFromRequest(request: NextRequest): boolean {
   }
 
   // Validate both tokens individually
-  if (!validateCsrfToken(requestToken) || !validateCsrfToken(cookieToken)) {
+  const [requestValid, cookieValid] = await Promise.all([
+    validateCsrfToken(requestToken),
+    validateCsrfToken(cookieToken),
+  ]);
+
+  if (!requestValid || !cookieValid) {
     return false;
   }
 
@@ -156,21 +207,31 @@ export function createCsrfErrorResponse(): NextResponse {
 /**
  * Middleware helper to validate CSRF for protected routes
  */
-export function validateCsrfMiddleware(request: NextRequest): NextResponse | null {
+export async function validateCsrfMiddleware(request: NextRequest): Promise<NextResponse | null> {
   // Only check state-changing methods
   if (!requiresCsrfProtection(request.method)) {
     return null;
   }
 
-  // Skip CSRF check for certain paths (like webhook endpoints)
+  // Skip CSRF check for certain paths (like webhook endpoints and auth endpoints)
   const path = request.nextUrl.pathname;
-  const skipPaths = ['/api/webhooks/', '/api/health'];
+  const skipPaths = [
+    '/api/webhooks/',
+    '/api/health',
+    '/api/auth/register',
+    '/api/auth/login',
+    '/api/auth/verify',
+    '/api/auth/forgot-password',
+    '/api/auth/reset-password',
+    '/api/auth/google',
+  ];
   if (skipPaths.some((skipPath) => path.startsWith(skipPath))) {
     return null;
   }
 
   // Validate CSRF token
-  if (!validateCsrfFromRequest(request)) {
+  const isValid = await validateCsrfFromRequest(request);
+  if (!isValid) {
     console.warn(`CSRF validation failed for ${request.method} ${path}`);
     return createCsrfErrorResponse();
   }

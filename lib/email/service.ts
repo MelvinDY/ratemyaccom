@@ -2,9 +2,7 @@ import { Resend } from 'resend';
 import { emailTemplates } from './templates';
 
 // Initialize Resend with API key
-const resend = process.env.RESEND_API_KEY
-  ? new Resend(process.env.RESEND_API_KEY)
-  : null;
+const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null;
 
 const FROM_EMAIL = process.env.FROM_EMAIL || 'noreply@ratemyaccom.com';
 const APP_NAME = 'RateMyAccom';
@@ -77,10 +75,7 @@ export async function sendVerificationEmail(
 /**
  * Send password reset email to user
  */
-export async function sendPasswordResetEmail(
-  email: string,
-  resetToken: string
-): Promise<void> {
+export async function sendPasswordResetEmail(email: string, resetToken: string): Promise<void> {
   const resetUrl = `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/auth/reset-password?token=${resetToken}`;
 
   const html = emailTemplates.passwordReset({
@@ -132,6 +127,25 @@ export async function sendPasswordChangedEmail(email: string): Promise<void> {
 }
 
 /**
+ * Send OTP code for email sign-in
+ */
+export async function sendOtpEmail(email: string, name: string, otpCode: string): Promise<void> {
+  const html = emailTemplates.otpLogin({
+    name,
+    appName: APP_NAME,
+    otpCode,
+    expiryMinutes: 10,
+  });
+
+  await sendEmail({
+    to: email,
+    subject: `${otpCode} is your ${APP_NAME} login code`,
+    html,
+    text: `Hi ${name}, your ${APP_NAME} login code is: ${otpCode}. This code will expire in 10 minutes. If you didn't request this code, please ignore this email.`,
+  });
+}
+
+/**
  * Send email when account is locked due to failed login attempts
  * KAN-24: Account Lockout
  */
@@ -146,9 +160,7 @@ export async function sendAccountLockedEmail(
     timeStyle: 'short',
   });
 
-  const remainingMinutes = Math.ceil(
-    (lockedUntil.getTime() - Date.now()) / (1000 * 60)
-  );
+  const remainingMinutes = Math.ceil((lockedUntil.getTime() - Date.now()) / (1000 * 60));
 
   const html = emailTemplates.accountLocked({
     name,

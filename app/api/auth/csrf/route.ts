@@ -17,7 +17,7 @@ export const dynamic = 'force-dynamic';
 export async function GET(_request: NextRequest) {
   try {
     // Generate new CSRF token
-    const csrfToken = createCsrfToken();
+    const csrfToken = await createCsrfToken();
 
     // Create response with token
     const response = NextResponse.json(

@@ -2,14 +2,14 @@ import { z } from 'zod';
 
 /**
  * Email validation schema
- * Ensures student email addresses from NSW universities
+ * Ensures student email addresses from supported Sydney universities
  */
 export const emailSchema = z
   .string()
   .email('Invalid email address')
   .regex(
-    /^[a-zA-Z0-9._%+-]+@(student\.)?(unsw|usyd|uts|mq|wsu|acu|nd|uow|newcastle|une|csu|scu|uon)\.edu\.au$/i,
-    'Must be a valid NSW university student email address'
+    /^[a-zA-Z0-9._%+-]+@(student\.)?(unsw|usyd|uts|mq|westernsydney)\.edu\.au$/i,
+    'Must be a valid university student email address (UNSW, USYD, UTS, Macquarie, or Western Sydney)'
   );
 
 /**
@@ -105,22 +105,9 @@ export const searchQuerySchema = z
 
 /**
  * University selection schema
+ * Currently supported: UNSW, USYD, UTS, Macquarie, Western Sydney
  */
-export const universitySchema = z.enum([
-  'UNSW',
-  'USYD',
-  'UTS',
-  'MQ',
-  'WSU',
-  'ACU',
-  'ND',
-  'UOW',
-  'Newcastle',
-  'UNE',
-  'CSU',
-  'SCU',
-  'UON',
-]);
+export const universitySchema = z.enum(['UNSW', 'USYD', 'UTS', 'MQ', 'WSU']);
 
 /**
  * Complete review submission schema

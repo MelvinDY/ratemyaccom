@@ -3,7 +3,13 @@
 import { SearchFilters } from '@/types';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
 import { X } from 'lucide-react';
 
@@ -18,8 +24,9 @@ const UNIVERSITIES = [
   'All Universities',
   'University of New South Wales (UNSW)',
   'University of Sydney',
-  'Macquarie University',
   'University of Technology Sydney (UTS)',
+  'Macquarie University',
+  'Western Sydney University',
 ];
 
 // Rating options
@@ -31,7 +38,11 @@ const RATINGS = [
   { label: '1+ Stars', value: '1' },
 ];
 
-export default function BrowseFilters({ filters, onFilterChange, onClearFilters }: BrowseFiltersProps) {
+export default function BrowseFilters({
+  filters,
+  onFilterChange,
+  onClearFilters,
+}: BrowseFiltersProps) {
   const handleUniversityChange = (value: string) => {
     const newFilters = { ...filters };
     if (value === 'All Universities') {
@@ -90,7 +101,9 @@ export default function BrowseFilters({ filters, onFilterChange, onClearFilters 
   return (
     <div className="w-full bg-white/5 backdrop-blur-md rounded-2xl shadow-lg shadow-black/20 p-6 border border-white/10 transition-all duration-300 hover:bg-white/[0.07] hover:border-white/20">
       <div className="flex items-center justify-between mb-6">
-        <h2 className="text-xl font-bold bg-gradient-to-b from-white to-white/70 bg-clip-text text-transparent">Filters</h2>
+        <h2 className="text-xl font-bold bg-gradient-to-b from-white to-white/70 bg-clip-text text-transparent">
+          Filters
+        </h2>
         {hasActiveFilters && (
           <Button
             variant="ghost"
@@ -124,7 +137,11 @@ export default function BrowseFilters({ filters, onFilterChange, onClearFilters 
             </SelectTrigger>
             <SelectContent className="bg-charcoal-light border-white/10 backdrop-blur-md">
               {UNIVERSITIES.map((uni) => (
-                <SelectItem key={uni} value={uni} className="text-white hover:bg-white/10 focus:bg-white/10">
+                <SelectItem
+                  key={uni}
+                  value={uni}
+                  className="text-white hover:bg-white/10 focus:bg-white/10"
+                >
                   {uni}
                 </SelectItem>
               ))}
@@ -150,9 +167,7 @@ export default function BrowseFilters({ filters, onFilterChange, onClearFilters 
 
         {/* Price Range Filter */}
         <div className="space-y-4">
-          <Label className="text-sm font-semibold text-white/80">
-            Price Range (per week)
-          </Label>
+          <Label className="text-sm font-semibold text-white/80">Price Range (per week)</Label>
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="priceMin" className="text-xs text-white/60">
@@ -194,10 +209,7 @@ export default function BrowseFilters({ filters, onFilterChange, onClearFilters 
           <Label htmlFor="rating" className="text-sm font-semibold text-white/80">
             Minimum Rating
           </Label>
-          <Select
-            value={filters.rating?.toString() || '0'}
-            onValueChange={handleRatingChange}
-          >
+          <Select value={filters.rating?.toString() || '0'} onValueChange={handleRatingChange}>
             <SelectTrigger
               id="rating"
               className="w-full bg-white/5 backdrop-blur-sm border-white/10 text-white hover:bg-white/10 hover:border-white/20 focus:border-lyra-purple-start/50 focus:ring-2 focus:ring-lyra-purple-start/30 transition-all duration-300 rounded-xl"
@@ -207,7 +219,11 @@ export default function BrowseFilters({ filters, onFilterChange, onClearFilters 
             </SelectTrigger>
             <SelectContent className="bg-charcoal-light border-white/10 backdrop-blur-md">
               {RATINGS.map((rating) => (
-                <SelectItem key={rating.value} value={rating.value} className="text-white hover:bg-white/10 focus:bg-white/10">
+                <SelectItem
+                  key={rating.value}
+                  value={rating.value}
+                  className="text-white hover:bg-white/10 focus:bg-white/10"
+                >
                   {rating.label}
                 </SelectItem>
               ))}

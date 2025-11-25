@@ -18,7 +18,9 @@ const apiClient = axios.create({
  * Get CSRF token from cookies
  */
 function getCsrfToken(): string | null {
-  if (typeof window === 'undefined') return null;
+  if (typeof window === 'undefined') {
+    return null;
+  }
 
   const csrfToken = document.cookie
     .split('; ')
@@ -33,7 +35,7 @@ function getCsrfToken(): string | null {
  */
 async function fetchCsrfToken(): Promise<string | null> {
   try {
-    const response = await axios.get('/api/auth/csrf', {
+    const response = await axios.get('/auth/csrf', {
       baseURL: process.env.NEXT_PUBLIC_API_URL || '/api',
       withCredentials: true,
     });

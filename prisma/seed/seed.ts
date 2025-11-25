@@ -1,6 +1,7 @@
 /**
  * Database Seed Script
  * Seeds the database with initial data including amenities and sample accommodations
+ * for 5 Sydney universities: UNSW, USYD, UTS, Macquarie, Western Sydney
  *
  * Run with: npx tsx prisma/seed/seed.ts
  */
@@ -8,6 +9,27 @@
 import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
+
+// Helper function to add amenities to an accommodation
+async function addAmenitiesToAccommodation(
+  accommodationId: string,
+  amenityNames: string[],
+  amenities: { id: string; name: string }[],
+  unavailable: string[] = []
+) {
+  for (const amenityName of amenityNames) {
+    const amenity = amenities.find((a) => a.name === amenityName);
+    if (amenity) {
+      await prisma.accommodationAmenity.create({
+        data: {
+          accommodationId,
+          amenityId: amenity.id,
+          available: !unavailable.includes(amenityName),
+        },
+      });
+    }
+  }
+}
 
 async function main() {
   console.log('🌱 Starting database seed...');
@@ -85,6 +107,36 @@ async function main() {
     }),
     prisma.user.create({
       data: {
+        email: 'emma.w@student.uts.edu.au',
+        name: 'Emma Wilson',
+        university: 'UTS',
+        studentId: '14123456',
+        verified: true,
+        role: 'USER',
+      },
+    }),
+    prisma.user.create({
+      data: {
+        email: 'james.l@students.mq.edu.au',
+        name: 'James Liu',
+        university: 'Macquarie University',
+        studentId: '45123456',
+        verified: true,
+        role: 'USER',
+      },
+    }),
+    prisma.user.create({
+      data: {
+        email: 'olivia.n@student.westernsydney.edu.au',
+        name: 'Olivia Nguyen',
+        university: 'Western Sydney University',
+        studentId: '19123456',
+        verified: true,
+        role: 'USER',
+      },
+    }),
+    prisma.user.create({
+      data: {
         email: 'admin@ratemyaccom.com',
         name: 'Admin User',
         verified: true,
@@ -97,6 +149,10 @@ async function main() {
 
   // Create Sample Accommodations
   console.log('🏠 Creating sample accommodations...');
+
+  // ==========================================
+  // UNSW ACCOMMODATIONS
+  // ==========================================
 
   // UNSW Village
   const unswVillage = await prisma.accommodation.create({
@@ -111,7 +167,7 @@ async function main() {
       latitude: -33.9173,
       longitude: 151.2313,
       description:
-        'Modern student accommodation located on the UNSW campus, offering a vibrant community with excellent facilities and convenient access to university resources.',
+        'Modern student accommodation located on the UNSW campus, offering a vibrant community with excellent facilities and convenient access to university resources. Features fully furnished rooms with private bathrooms, shared kitchens, and a range of social and study spaces.',
       type: 'ON_CAMPUS',
       images: [
         '/images/unsw-village-1.jpg',
@@ -143,21 +199,140 @@ async function main() {
       featured: true,
     },
   });
+  await addAmenitiesToAccommodation(
+    unswVillage.id,
+    [
+      'WiFi',
+      'Gym',
+      'Study Rooms',
+      'Laundry',
+      'Common Kitchen',
+      'Parking',
+      'Security',
+      'Social Events',
+      'Air Conditioning',
+    ],
+    amenities
+  );
 
-  // Add amenities to UNSW Village
-  const unswVillageAmenities = ['WiFi', 'Gym', 'Study Rooms', 'Laundry', 'Common Kitchen', 'Parking', 'Security', 'Social Events'];
-  for (const amenityName of unswVillageAmenities) {
-    const amenity = amenities.find((a) => a.name === amenityName);
-    if (amenity) {
-      await prisma.accommodationAmenity.create({
-        data: {
-          accommodationId: unswVillage.id,
-          amenityId: amenity.id,
-          available: true,
-        },
-      });
-    }
-  }
+  // UNSW Kensington Colleges
+  const unswKensingtonColleges = await prisma.accommodation.create({
+    data: {
+      name: 'UNSW Kensington Colleges',
+      slug: 'unsw-kensington-colleges',
+      university: 'University of New South Wales (UNSW)',
+      address: 'Gate 14, High Street',
+      suburb: 'Kensington',
+      state: 'NSW',
+      postcode: '2033',
+      latitude: -33.9188,
+      longitude: 151.228,
+      description:
+        'Traditional collegiate-style living with a strong sense of community. Includes Basser College, Goldstein College, and Philip Baxter College. Offers catered meals and pastoral care programs.',
+      type: 'COLLEGE',
+      images: ['/images/unsw-kensington-1.jpg', '/images/unsw-kensington-2.jpg'],
+      priceMin: 450,
+      priceMax: 650,
+      currency: 'AUD',
+      pricePeriod: 'WEEK',
+      capacity: 550,
+      roomTypes: ['Single', 'Twin Share'],
+      contactInfo: {
+        phone: '(02) 9385 5655',
+        email: 'colleges@unsw.edu.au',
+        website: 'https://www.kensingtoncolleges.unsw.edu.au',
+      },
+      ratingOverall: 4.5,
+      ratingCleanliness: 4.4,
+      ratingLocation: 4.9,
+      ratingValue: 4.1,
+      ratingAmenities: 4.6,
+      ratingManagement: 4.5,
+      ratingSafety: 4.8,
+      totalReviews: 0,
+      distanceToCampus: 0.1,
+      distanceToTransport: 0.6,
+      verified: true,
+      featured: false,
+    },
+  });
+  await addAmenitiesToAccommodation(
+    unswKensingtonColleges.id,
+    [
+      'WiFi',
+      'Gym',
+      'Study Rooms',
+      'Laundry',
+      'Security',
+      'Social Events',
+      'Meal Plans',
+      'Music Rooms',
+      'Games Room',
+    ],
+    amenities
+  );
+
+  // Iglu Kensington
+  const igluKensington = await prisma.accommodation.create({
+    data: {
+      name: 'Iglu Kensington',
+      slug: 'iglu-kensington',
+      university: 'University of New South Wales (UNSW)',
+      address: '290 Anzac Parade',
+      suburb: 'Kensington',
+      state: 'NSW',
+      postcode: '2033',
+      latitude: -33.9159,
+      longitude: 151.2282,
+      description:
+        'Modern purpose-built student accommodation near UNSW with premium facilities. Features fully furnished apartments with modern kitchens, ensuite bathrooms, and a vibrant student community.',
+      type: 'OFF_CAMPUS',
+      images: ['/images/iglu-kensington-1.jpg', '/images/iglu-kensington-2.jpg'],
+      priceMin: 420,
+      priceMax: 680,
+      currency: 'AUD',
+      pricePeriod: 'WEEK',
+      capacity: 400,
+      roomTypes: ['Studio', 'Ensuite', '2-Bedroom Apartment'],
+      contactInfo: {
+        phone: '1300 IGLU AU',
+        email: 'kensington@iglu.com.au',
+        website: 'https://iglu.com.au/locations/kensington',
+      },
+      ratingOverall: 4.2,
+      ratingCleanliness: 4.6,
+      ratingLocation: 4.5,
+      ratingValue: 3.8,
+      ratingAmenities: 4.7,
+      ratingManagement: 4.0,
+      ratingSafety: 4.5,
+      totalReviews: 0,
+      distanceToCampus: 0.4,
+      distanceToTransport: 0.3,
+      verified: true,
+      featured: false,
+    },
+  });
+  await addAmenitiesToAccommodation(
+    igluKensington.id,
+    [
+      'WiFi',
+      'Gym',
+      'Study Rooms',
+      'Laundry',
+      'Common Kitchen',
+      'Security',
+      'Social Events',
+      'Rooftop Terrace',
+      'Bike Storage',
+      'Air Conditioning',
+    ],
+    amenities
+  );
+
+  // ==========================================
+  // UNIVERSITY OF SYDNEY ACCOMMODATIONS
+  // ==========================================
 
   // UniLodge on Broadway
   const unilodgeBroadway = await prisma.accommodation.create({
@@ -172,7 +347,7 @@ async function main() {
       latitude: -33.8847,
       longitude: 151.1991,
       description:
-        'Purpose-built student accommodation in the heart of Sydney, close to University of Sydney and UTS. Features modern amenities and a vibrant student community.',
+        'Purpose-built student accommodation in the heart of Sydney, close to University of Sydney. Features modern amenities, a vibrant student community, and easy access to public transport.',
       type: 'OFF_CAMPUS',
       images: ['/images/unilodge-broadway-1.jpg', '/images/unilodge-broadway-2.jpg'],
       priceMin: 400,
@@ -200,21 +375,315 @@ async function main() {
       featured: true,
     },
   });
+  await addAmenitiesToAccommodation(
+    unilodgeBroadway.id,
+    [
+      'WiFi',
+      'Gym',
+      'Study Rooms',
+      'Laundry',
+      'Common Kitchen',
+      'Security',
+      'Social Events',
+      'Cinema Room',
+      'Rooftop Terrace',
+      'Air Conditioning',
+    ],
+    amenities,
+    ['Parking']
+  );
 
-  // Add amenities to UniLodge
-  const unilodgeAmenities = ['WiFi', 'Gym', 'Study Rooms', 'Laundry', 'Common Kitchen', 'Security', 'Social Events', 'Cinema Room', 'Rooftop Terrace'];
-  for (const amenityName of unilodgeAmenities) {
-    const amenity = amenities.find((a) => a.name === amenityName);
-    if (amenity) {
-      await prisma.accommodationAmenity.create({
-        data: {
-          accommodationId: unilodgeBroadway.id,
-          amenityId: amenity.id,
-          available: amenityName !== 'Parking', // Parking not available
-        },
-      });
-    }
-  }
+  // St John's College
+  const stJohnsCollege = await prisma.accommodation.create({
+    data: {
+      name: "St John's College",
+      slug: 'st-johns-college-usyd',
+      university: 'University of Sydney',
+      address: 'Missenden Road',
+      suburb: 'Camperdown',
+      state: 'NSW',
+      postcode: '2050',
+      latitude: -33.8898,
+      longitude: 151.188,
+      description:
+        "A historic residential college affiliated with the University of Sydney, offering a traditional collegiate experience with academic support, pastoral care, and a strong sense of community. Founded in 1857, it's one of Australia's oldest colleges.",
+      type: 'COLLEGE',
+      images: ['/images/st-johns-1.jpg', '/images/st-johns-2.jpg'],
+      priceMin: 550,
+      priceMax: 750,
+      currency: 'AUD',
+      pricePeriod: 'WEEK',
+      capacity: 250,
+      roomTypes: ['Single', 'Twin Share'],
+      contactInfo: {
+        phone: '(02) 9394 5600',
+        email: 'reception@stjohnscollege.edu.au',
+        website: 'https://www.stjohnscollege.edu.au',
+      },
+      ratingOverall: 4.6,
+      ratingCleanliness: 4.5,
+      ratingLocation: 4.8,
+      ratingValue: 4.2,
+      ratingAmenities: 4.4,
+      ratingManagement: 4.7,
+      ratingSafety: 4.9,
+      totalReviews: 0,
+      distanceToCampus: 0.3,
+      distanceToTransport: 0.5,
+      verified: true,
+      featured: true,
+    },
+  });
+  await addAmenitiesToAccommodation(
+    stJohnsCollege.id,
+    [
+      'WiFi',
+      'Gym',
+      'Study Rooms',
+      'Laundry',
+      'Security',
+      'Social Events',
+      'Meal Plans',
+      'Music Rooms',
+      'Games Room',
+      'BBQ Area',
+    ],
+    amenities
+  );
+
+  // Queen Mary Building
+  const queenMaryBuilding = await prisma.accommodation.create({
+    data: {
+      name: 'Queen Mary Building',
+      slug: 'queen-mary-building',
+      university: 'University of Sydney',
+      address: 'Grose Farm Lane',
+      suburb: 'Camperdown',
+      state: 'NSW',
+      postcode: '2050',
+      latitude: -33.8879,
+      longitude: 151.1858,
+      description:
+        'Heritage-listed building converted to student accommodation, offering affordable self-catered living close to the University of Sydney main campus. Features a mix of single rooms and shared apartments.',
+      type: 'ON_CAMPUS',
+      images: ['/images/queen-mary-1.jpg', '/images/queen-mary-2.jpg'],
+      priceMin: 280,
+      priceMax: 400,
+      currency: 'AUD',
+      pricePeriod: 'WEEK',
+      capacity: 180,
+      roomTypes: ['Single', 'Shared Apartment'],
+      contactInfo: {
+        phone: '(02) 9351 2389',
+        email: 'housing@sydney.edu.au',
+        website: 'https://www.sydney.edu.au/campus-life/accommodation.html',
+      },
+      ratingOverall: 4.0,
+      ratingCleanliness: 3.9,
+      ratingLocation: 4.7,
+      ratingValue: 4.4,
+      ratingAmenities: 3.8,
+      ratingManagement: 4.1,
+      ratingSafety: 4.3,
+      totalReviews: 0,
+      distanceToCampus: 0.1,
+      distanceToTransport: 0.7,
+      verified: true,
+      featured: false,
+    },
+  });
+  await addAmenitiesToAccommodation(
+    queenMaryBuilding.id,
+    ['WiFi', 'Study Rooms', 'Laundry', 'Common Kitchen', 'Security', 'Bike Storage', 'Heating'],
+    amenities
+  );
+
+  // ==========================================
+  // UTS ACCOMMODATIONS
+  // ==========================================
+
+  // Yura Mudang (UTS Housing)
+  const yuraMudang = await prisma.accommodation.create({
+    data: {
+      name: 'Yura Mudang (UTS Housing)',
+      slug: 'yura-mudang-uts',
+      university: 'University of Technology Sydney (UTS)',
+      address: '635 Harris Street',
+      suburb: 'Ultimo',
+      state: 'NSW',
+      postcode: '2007',
+      latitude: -33.8833,
+      longitude: 151.1986,
+      description:
+        "UTS's flagship on-campus student accommodation offering modern, purpose-built apartments with stunning city views. Features fully furnished studios and multi-share apartments with private bedrooms and shared living spaces.",
+      type: 'ON_CAMPUS',
+      images: [
+        '/images/yura-mudang-1.jpg',
+        '/images/yura-mudang-2.jpg',
+        '/images/yura-mudang-3.jpg',
+      ],
+      priceMin: 380,
+      priceMax: 580,
+      currency: 'AUD',
+      pricePeriod: 'WEEK',
+      capacity: 720,
+      roomTypes: ['Studio', '4-Share Apartment', '6-Share Apartment'],
+      contactInfo: {
+        phone: '(02) 9514 1588',
+        email: 'housing@uts.edu.au',
+        website: 'https://www.uts.edu.au/current-students/support/accommodation',
+      },
+      ratingOverall: 4.4,
+      ratingCleanliness: 4.5,
+      ratingLocation: 4.9,
+      ratingValue: 4.2,
+      ratingAmenities: 4.6,
+      ratingManagement: 4.3,
+      ratingSafety: 4.7,
+      totalReviews: 0,
+      distanceToCampus: 0.1,
+      distanceToTransport: 0.2,
+      verified: true,
+      featured: true,
+    },
+  });
+  await addAmenitiesToAccommodation(
+    yuraMudang.id,
+    [
+      'WiFi',
+      'Gym',
+      'Study Rooms',
+      'Laundry',
+      'Common Kitchen',
+      'Security',
+      'Social Events',
+      'Rooftop Terrace',
+      'BBQ Area',
+      'Air Conditioning',
+      'Bike Storage',
+    ],
+    amenities
+  );
+
+  // Urbanest Darling House
+  const urbanestDarling = await prisma.accommodation.create({
+    data: {
+      name: 'Urbanest Darling House',
+      slug: 'urbanest-darling-house',
+      university: 'University of Technology Sydney (UTS)',
+      address: '88 Hay Street',
+      suburb: 'Haymarket',
+      state: 'NSW',
+      postcode: '2000',
+      latitude: -33.8794,
+      longitude: 151.2041,
+      description:
+        'Premium student accommodation in the heart of Sydney CBD, minutes from UTS and Central Station. Features modern studios and apartments with stunning views, premium facilities, and an active community program.',
+      type: 'OFF_CAMPUS',
+      images: ['/images/urbanest-darling-1.jpg', '/images/urbanest-darling-2.jpg'],
+      priceMin: 450,
+      priceMax: 720,
+      currency: 'AUD',
+      pricePeriod: 'WEEK',
+      capacity: 600,
+      roomTypes: ['Studio', 'Twin Studio', '2-Bedroom Apartment'],
+      contactInfo: {
+        phone: '1800 827 867',
+        email: 'darlinghouse@urbanest.com.au',
+        website: 'https://www.urbanest.com.au/darling-house',
+      },
+      ratingOverall: 4.3,
+      ratingCleanliness: 4.6,
+      ratingLocation: 4.9,
+      ratingValue: 3.7,
+      ratingAmenities: 4.7,
+      ratingManagement: 4.2,
+      ratingSafety: 4.6,
+      totalReviews: 0,
+      distanceToCampus: 0.5,
+      distanceToTransport: 0.1,
+      verified: true,
+      featured: false,
+    },
+  });
+  await addAmenitiesToAccommodation(
+    urbanestDarling.id,
+    [
+      'WiFi',
+      'Gym',
+      'Study Rooms',
+      'Laundry',
+      'Common Kitchen',
+      'Security',
+      'Social Events',
+      'Cinema Room',
+      'Games Room',
+      'Air Conditioning',
+      '24/7 Reception',
+    ],
+    amenities
+  );
+
+  // Iglu Central
+  const igluCentral = await prisma.accommodation.create({
+    data: {
+      name: 'Iglu Central',
+      slug: 'iglu-central-uts',
+      university: 'University of Technology Sydney (UTS)',
+      address: '187 Thomas Street',
+      suburb: 'Haymarket',
+      state: 'NSW',
+      postcode: '2000',
+      latitude: -33.8816,
+      longitude: 151.2023,
+      description:
+        'Vibrant student living in Sydney CBD, perfectly positioned between UTS and the University of Sydney. Modern apartments with community spaces designed for student life.',
+      type: 'OFF_CAMPUS',
+      images: ['/images/iglu-central-1.jpg', '/images/iglu-central-2.jpg'],
+      priceMin: 430,
+      priceMax: 690,
+      currency: 'AUD',
+      pricePeriod: 'WEEK',
+      capacity: 350,
+      roomTypes: ['Studio', 'Ensuite', '2-Bedroom Twin Share'],
+      contactInfo: {
+        phone: '1300 IGLU AU',
+        email: 'central@iglu.com.au',
+        website: 'https://iglu.com.au/locations/central',
+      },
+      ratingOverall: 4.2,
+      ratingCleanliness: 4.4,
+      ratingLocation: 4.8,
+      ratingValue: 3.9,
+      ratingAmenities: 4.5,
+      ratingManagement: 4.1,
+      ratingSafety: 4.4,
+      totalReviews: 0,
+      distanceToCampus: 0.4,
+      distanceToTransport: 0.2,
+      verified: true,
+      featured: false,
+    },
+  });
+  await addAmenitiesToAccommodation(
+    igluCentral.id,
+    [
+      'WiFi',
+      'Gym',
+      'Study Rooms',
+      'Laundry',
+      'Common Kitchen',
+      'Security',
+      'Social Events',
+      'Rooftop Terrace',
+      'Air Conditioning',
+    ],
+    amenities
+  );
+
+  // ==========================================
+  // MACQUARIE UNIVERSITY ACCOMMODATIONS
+  // ==========================================
 
   // Macquarie University Village
   const mqVillage = await prisma.accommodation.create({
@@ -229,7 +698,7 @@ async function main() {
       latitude: -33.7747,
       longitude: 151.1143,
       description:
-        'On-campus accommodation offering a true university experience with modern facilities, diverse community, and easy access to all campus amenities.',
+        'On-campus accommodation offering a true university experience with modern facilities, diverse community, and easy access to all campus amenities. Located within walking distance to the Metro station.',
       type: 'ON_CAMPUS',
       images: ['/images/mq-village-1.jpg', '/images/mq-village-2.jpg', '/images/mq-village-3.jpg'],
       priceMin: 320,
@@ -252,32 +721,326 @@ async function main() {
       ratingSafety: 4.6,
       totalReviews: 0,
       distanceToCampus: 0.1,
+      distanceToTransport: 0.4,
+      verified: true,
+      featured: true,
+    },
+  });
+  await addAmenitiesToAccommodation(
+    mqVillage.id,
+    [
+      'WiFi',
+      'Gym',
+      'Study Rooms',
+      'Laundry',
+      'Common Kitchen',
+      'Parking',
+      'Security',
+      'Social Events',
+      'Meal Plans',
+      'Music Rooms',
+      'BBQ Area',
+    ],
+    amenities
+  );
+
+  // Dunmore Lang College
+  const dunmoreLang = await prisma.accommodation.create({
+    data: {
+      name: 'Dunmore Lang College',
+      slug: 'dunmore-lang-college',
+      university: 'Macquarie University',
+      address: '130 Herring Road',
+      suburb: 'North Ryde',
+      state: 'NSW',
+      postcode: '2109',
+      latitude: -33.7765,
+      longitude: 151.1125,
+      description:
+        'A residential college offering a supportive academic community with tutorial programs, catered meals, and regular social events. Strong focus on academic achievement and personal development.',
+      type: 'COLLEGE',
+      images: ['/images/dunmore-lang-1.jpg', '/images/dunmore-lang-2.jpg'],
+      priceMin: 400,
+      priceMax: 550,
+      currency: 'AUD',
+      pricePeriod: 'WEEK',
+      capacity: 280,
+      roomTypes: ['Single', 'Accessible'],
+      contactInfo: {
+        phone: '(02) 9878 9600',
+        email: 'info@dlc.edu.au',
+        website: 'https://www.dlc.edu.au',
+      },
+      ratingOverall: 4.5,
+      ratingCleanliness: 4.4,
+      ratingLocation: 4.7,
+      ratingValue: 4.4,
+      ratingAmenities: 4.3,
+      ratingManagement: 4.6,
+      ratingSafety: 4.8,
+      totalReviews: 0,
+      distanceToCampus: 0.2,
+      distanceToTransport: 0.5,
+      verified: true,
+      featured: false,
+    },
+  });
+  await addAmenitiesToAccommodation(
+    dunmoreLang.id,
+    [
+      'WiFi',
+      'Gym',
+      'Study Rooms',
+      'Laundry',
+      'Security',
+      'Social Events',
+      'Meal Plans',
+      'Games Room',
+      'BBQ Area',
+      'Parking',
+    ],
+    amenities
+  );
+
+  // Robert Menzies College
+  const robertMenzies = await prisma.accommodation.create({
+    data: {
+      name: 'Robert Menzies College',
+      slug: 'robert-menzies-college',
+      university: 'Macquarie University',
+      address: '55 Waterloo Road',
+      suburb: 'North Ryde',
+      state: 'NSW',
+      postcode: '2109',
+      latitude: -33.7758,
+      longitude: 151.1138,
+      description:
+        'A vibrant residential college committed to academic excellence and community engagement. Offers a collegiate experience with tutorials, mentoring, and a rich calendar of cultural and social activities.',
+      type: 'COLLEGE',
+      images: ['/images/robert-menzies-1.jpg', '/images/robert-menzies-2.jpg'],
+      priceMin: 420,
+      priceMax: 580,
+      currency: 'AUD',
+      pricePeriod: 'WEEK',
+      capacity: 320,
+      roomTypes: ['Single', 'Twin Share', 'Accessible'],
+      contactInfo: {
+        phone: '(02) 9878 4800',
+        email: 'admin@rmc.edu.au',
+        website: 'https://www.rmc.edu.au',
+      },
+      ratingOverall: 4.4,
+      ratingCleanliness: 4.3,
+      ratingLocation: 4.6,
+      ratingValue: 4.2,
+      ratingAmenities: 4.5,
+      ratingManagement: 4.4,
+      ratingSafety: 4.7,
+      totalReviews: 0,
+      distanceToCampus: 0.3,
+      distanceToTransport: 0.6,
+      verified: true,
+      featured: false,
+    },
+  });
+  await addAmenitiesToAccommodation(
+    robertMenzies.id,
+    [
+      'WiFi',
+      'Gym',
+      'Study Rooms',
+      'Laundry',
+      'Security',
+      'Social Events',
+      'Meal Plans',
+      'Music Rooms',
+      'Games Room',
+      'Swimming Pool',
+    ],
+    amenities
+  );
+
+  // ==========================================
+  // WESTERN SYDNEY UNIVERSITY ACCOMMODATIONS
+  // ==========================================
+
+  // WSU Village Penrith
+  const wsuVillagePenrith = await prisma.accommodation.create({
+    data: {
+      name: 'WSU Village Penrith',
+      slug: 'wsu-village-penrith',
+      university: 'Western Sydney University',
+      address: 'Second Avenue',
+      suburb: 'Kingswood',
+      state: 'NSW',
+      postcode: '2747',
+      latitude: -33.756,
+      longitude: 150.74,
+      description:
+        'Modern on-campus accommodation at WSU Penrith campus, offering affordable living with excellent facilities. Features self-catered apartments and a supportive student community.',
+      type: 'ON_CAMPUS',
+      images: ['/images/wsu-penrith-1.jpg', '/images/wsu-penrith-2.jpg'],
+      priceMin: 220,
+      priceMax: 350,
+      currency: 'AUD',
+      pricePeriod: 'WEEK',
+      capacity: 400,
+      roomTypes: ['Single', 'Twin Share', '4-Share Apartment'],
+      contactInfo: {
+        phone: '(02) 4736 0266',
+        email: 'housing@westernsydney.edu.au',
+        website: 'https://www.westernsydney.edu.au/accommodation',
+      },
+      ratingOverall: 4.1,
+      ratingCleanliness: 4.0,
+      ratingLocation: 4.3,
+      ratingValue: 4.6,
+      ratingAmenities: 4.0,
+      ratingManagement: 4.2,
+      ratingSafety: 4.4,
+      totalReviews: 0,
+      distanceToCampus: 0.1,
       distanceToTransport: 0.8,
       verified: true,
       featured: true,
     },
   });
+  await addAmenitiesToAccommodation(
+    wsuVillagePenrith.id,
+    [
+      'WiFi',
+      'Study Rooms',
+      'Laundry',
+      'Common Kitchen',
+      'Parking',
+      'Security',
+      'Social Events',
+      'BBQ Area',
+      'Air Conditioning',
+    ],
+    amenities
+  );
 
-  // Add amenities to MQ Village
-  const mqAmenities = ['WiFi', 'Gym', 'Study Rooms', 'Laundry', 'Common Kitchen', 'Parking', 'Security', 'Social Events', 'Meal Plans', 'Music Rooms'];
-  for (const amenityName of mqAmenities) {
-    const amenity = amenities.find((a) => a.name === amenityName);
-    if (amenity) {
-      await prisma.accommodationAmenity.create({
-        data: {
-          accommodationId: mqVillage.id,
-          amenityId: amenity.id,
-          available: true,
-        },
-      });
-    }
-  }
+  // WSU Village Parramatta
+  const wsuVillageParramatta = await prisma.accommodation.create({
+    data: {
+      name: 'WSU Village Parramatta',
+      slug: 'wsu-village-parramatta',
+      university: 'Western Sydney University',
+      address: 'James Ruse Drive',
+      suburb: 'Parramatta',
+      state: 'NSW',
+      postcode: '2150',
+      latitude: -33.8136,
+      longitude: 151.0034,
+      description:
+        'Student accommodation at the Parramatta City campus, close to the vibrant Parramatta CBD. Offers modern facilities and easy access to shopping, dining, and public transport.',
+      type: 'ON_CAMPUS',
+      images: ['/images/wsu-parramatta-1.jpg', '/images/wsu-parramatta-2.jpg'],
+      priceMin: 250,
+      priceMax: 380,
+      currency: 'AUD',
+      pricePeriod: 'WEEK',
+      capacity: 350,
+      roomTypes: ['Studio', 'Single', '2-Bedroom Apartment'],
+      contactInfo: {
+        phone: '(02) 9685 9888',
+        email: 'housing@westernsydney.edu.au',
+        website: 'https://www.westernsydney.edu.au/accommodation',
+      },
+      ratingOverall: 4.2,
+      ratingCleanliness: 4.2,
+      ratingLocation: 4.5,
+      ratingValue: 4.5,
+      ratingAmenities: 4.1,
+      ratingManagement: 4.2,
+      ratingSafety: 4.3,
+      totalReviews: 0,
+      distanceToCampus: 0.2,
+      distanceToTransport: 0.4,
+      verified: true,
+      featured: false,
+    },
+  });
+  await addAmenitiesToAccommodation(
+    wsuVillageParramatta.id,
+    [
+      'WiFi',
+      'Gym',
+      'Study Rooms',
+      'Laundry',
+      'Common Kitchen',
+      'Security',
+      'Social Events',
+      'Air Conditioning',
+      'Bike Storage',
+    ],
+    amenities
+  );
 
-  console.log('✅ Created 3 sample accommodations');
+  // UniLodge @ WSU Bankstown
+  const unilodgeBankstown = await prisma.accommodation.create({
+    data: {
+      name: 'UniLodge @ WSU Bankstown',
+      slug: 'unilodge-wsu-bankstown',
+      university: 'Western Sydney University',
+      address: '26 College Parade',
+      suburb: 'Milperra',
+      state: 'NSW',
+      postcode: '2214',
+      latitude: -33.9343,
+      longitude: 151.0432,
+      description:
+        'Purpose-built student accommodation near WSU Bankstown campus. Features modern apartments with all utilities included and regular community events.',
+      type: 'OFF_CAMPUS',
+      images: ['/images/unilodge-bankstown-1.jpg', '/images/unilodge-bankstown-2.jpg'],
+      priceMin: 230,
+      priceMax: 320,
+      currency: 'AUD',
+      pricePeriod: 'WEEK',
+      capacity: 280,
+      roomTypes: ['Single', 'Twin Share', 'Accessible'],
+      contactInfo: {
+        phone: '1300 134 693',
+        email: 'bankstown@unilodge.com.au',
+        website: 'https://www.unilodge.com.au/bankstown',
+      },
+      ratingOverall: 4.0,
+      ratingCleanliness: 4.1,
+      ratingLocation: 4.0,
+      ratingValue: 4.4,
+      ratingAmenities: 3.9,
+      ratingManagement: 4.0,
+      ratingSafety: 4.2,
+      totalReviews: 0,
+      distanceToCampus: 0.5,
+      distanceToTransport: 0.6,
+      verified: true,
+      featured: false,
+    },
+  });
+  await addAmenitiesToAccommodation(
+    unilodgeBankstown.id,
+    [
+      'WiFi',
+      'Study Rooms',
+      'Laundry',
+      'Common Kitchen',
+      'Parking',
+      'Security',
+      'Social Events',
+      'BBQ Area',
+    ],
+    amenities
+  );
+
+  console.log('✅ Created 15 sample accommodations across 5 universities');
 
   // Create Sample Reviews
   console.log('📝 Creating sample reviews...');
-  const review1 = await prisma.review.create({
+
+  // UNSW Village Review
+  await prisma.review.create({
     data: {
       accommodationId: unswVillage.id,
       userId: users[0].id,
@@ -299,7 +1062,8 @@ async function main() {
     },
   });
 
-  const review2 = await prisma.review.create({
+  // UniLodge Broadway Review
+  await prisma.review.create({
     data: {
       accommodationId: unilodgeBroadway.id,
       userId: users[1].id,
@@ -321,7 +1085,76 @@ async function main() {
     },
   });
 
-  // Update accommodation review counts and ratings
+  // Yura Mudang Review
+  await prisma.review.create({
+    data: {
+      accommodationId: yuraMudang.id,
+      userId: users[2].id,
+      rating: 4.5,
+      ratingCleanliness: 5,
+      ratingLocation: 5,
+      ratingValue: 4,
+      ratingAmenities: 5,
+      ratingManagement: 4,
+      ratingSafety: 5,
+      title: 'Best UTS accommodation!',
+      text: 'Yura Mudang exceeded my expectations. The apartments are modern and well-designed with amazing city views. Being right next to the campus is incredibly convenient. The community events are fun and help you meet other students. Staff are helpful and responsive.',
+      pros: ['On campus', 'Modern apartments', 'Great views', 'Active community'],
+      cons: ['Can be expensive', 'Shared apartments can be hit or miss'],
+      verified: true,
+      roomType: 'Studio',
+      stayDuration: '1 year',
+      status: 'PUBLISHED',
+    },
+  });
+
+  // Macquarie Village Review
+  await prisma.review.create({
+    data: {
+      accommodationId: mqVillage.id,
+      userId: users[3].id,
+      rating: 4.3,
+      ratingCleanliness: 4,
+      ratingLocation: 5,
+      ratingValue: 4,
+      ratingAmenities: 4,
+      ratingManagement: 5,
+      ratingSafety: 4,
+      title: 'Great value for money',
+      text: 'Macquarie University Village offers excellent value. The location right on campus is perfect, and the new Metro station makes getting to the city easy. The management team is very responsive. Rooms are comfortable and the community is diverse and welcoming.',
+      pros: ['On campus', 'Metro access', 'Responsive management', 'Good value'],
+      cons: ['Older buildings', 'Limited parking', 'Far from CBD'],
+      verified: true,
+      roomType: 'Single',
+      stayDuration: '2 years',
+      status: 'PUBLISHED',
+    },
+  });
+
+  // WSU Village Review
+  await prisma.review.create({
+    data: {
+      accommodationId: wsuVillagePenrith.id,
+      userId: users[4].id,
+      rating: 4.0,
+      ratingCleanliness: 4,
+      ratingLocation: 4,
+      ratingValue: 5,
+      ratingAmenities: 4,
+      ratingManagement: 4,
+      ratingSafety: 4,
+      title: 'Affordable and comfortable',
+      text: "WSU Village is perfect for students on a budget. The accommodation is clean and comfortable with everything you need. Being on campus means no commute time. The community is friendly and there are regular events. Only downside is it's a bit far from the train station.",
+      pros: ['Very affordable', 'On campus', 'Friendly community', 'Good facilities'],
+      cons: ['Far from train station', 'Limited nightlife nearby', 'Need car for shopping'],
+      verified: true,
+      roomType: 'Twin Share',
+      stayDuration: '3 semesters',
+      status: 'PUBLISHED',
+    },
+  });
+
+  // Update accommodation review counts
   await prisma.accommodation.update({
     where: { id: unswVillage.id },
     data: { totalReviews: 1 },
@@ -332,7 +1165,22 @@ async function main() {
     data: { totalReviews: 1 },
   });
 
-  console.log('✅ Created 2 sample reviews');
+  await prisma.accommodation.update({
+    where: { id: yuraMudang.id },
+    data: { totalReviews: 1 },
+  });
+
+  await prisma.accommodation.update({
+    where: { id: mqVillage.id },
+    data: { totalReviews: 1 },
+  });
+
+  await prisma.accommodation.update({
+    where: { id: wsuVillagePenrith.id },
+    data: { totalReviews: 1 },
+  });
+
+  console.log('✅ Created 5 sample reviews');
 
   console.log('');
   console.log('✨ Database seeding completed successfully!');
@@ -340,8 +1188,15 @@ async function main() {
   console.log('📊 Summary:');
   console.log(`  - ${amenities.length} amenities`);
   console.log(`  - ${users.length} users`);
-  console.log('  - 3 accommodations');
-  console.log('  - 2 reviews');
+  console.log('  - 15 accommodations (3 per university)');
+  console.log('  - 5 reviews (1 per university)');
+  console.log('');
+  console.log('🏫 Universities covered:');
+  console.log('  - University of New South Wales (UNSW): 3 accommodations');
+  console.log('  - University of Sydney: 3 accommodations');
+  console.log('  - University of Technology Sydney (UTS): 3 accommodations');
+  console.log('  - Macquarie University: 3 accommodations');
+  console.log('  - Western Sydney University: 3 accommodations');
   console.log('');
 }
 

@@ -31,6 +31,13 @@ interface AccountLockedEmailProps {
   supportUrl: string;
 }
 
+interface OtpEmailProps {
+  name: string;
+  appName: string;
+  otpCode: string;
+  expiryMinutes: number;
+}
+
 const baseStyles = `
   body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
@@ -327,10 +334,74 @@ function accountLocked({
   `;
 }
 
+function otpLogin({ name, appName, otpCode, expiryMinutes }: OtpEmailProps): string {
+  return `
+    <!DOCTYPE html>
+    <html>
+      <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Your Login Code</title>
+        <style>${baseStyles}
+          .otp-code {
+            font-size: 32px;
+            font-weight: bold;
+            letter-spacing: 8px;
+            color: #8B5CF6;
+            background-color: #f3f4f6;
+            padding: 20px 30px;
+            border-radius: 8px;
+            display: inline-block;
+            margin: 20px 0;
+            font-family: 'Courier New', monospace;
+          }
+        </style>
+      </head>
+      <body>
+        <div class="container">
+          <div class="header">
+            <div class="logo">${appName}</div>
+            <h1>Your Login Code</h1>
+          </div>
+
+          <p>Hi ${name},</p>
+
+          <p>You requested to sign in to your ${appName} account. Use the code below to complete your login:</p>
+
+          <div style="text-align: center;">
+            <div class="otp-code">${otpCode}</div>
+          </div>
+
+          <p style="text-align: center; color: #6b7280; font-size: 14px;">
+            This code will expire in <strong>${expiryMinutes} minutes</strong>
+          </p>
+
+          <div class="warning">
+            <strong>⚠️ Security Note:</strong> If you didn't request this code, someone may be trying to access your account. Please ignore this email and consider changing your password.
+          </div>
+
+          <h3>Tips:</h3>
+          <ul>
+            <li>Never share this code with anyone</li>
+            <li>Our team will never ask for this code</li>
+            <li>This code can only be used once</li>
+          </ul>
+
+          <div class="footer">
+            <p>This email was sent by ${appName}</p>
+            <p>If you have any questions, please contact our support team.</p>
+          </div>
+        </div>
+      </body>
+    </html>
+  `;
+}
+
 export const emailTemplates = {
   verification,
   passwordReset,
   welcome,
   passwordChanged,
   accountLocked,
+  otpLogin,
 };

@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { useState, useEffect } from 'react';
@@ -10,6 +11,7 @@ const navLinks = [
   { href: '/', label: 'Home' },
   { href: '/browse', label: 'Browse' },
   { href: '/about', label: 'About' },
+  { href: '/support', label: 'Support' },
 ];
 
 export default function Header() {
@@ -30,7 +32,23 @@ export default function Header() {
   const getPageTheme = () => {
     if (pathname === '/about' || pathname?.startsWith('/about')) {
       return {
-        bg: scrolled ? 'bg-transparent backdrop-blur-xl' : 'bg-transparent',
+        bg: scrolled
+          ? 'bg-gradient-to-r from-slate-900 via-indigo-900 to-blue-900/95 backdrop-blur-xl'
+          : 'bg-gradient-to-r from-slate-900 via-indigo-900 to-blue-900',
+        border: scrolled ? 'border-blue-500/20' : 'border-transparent',
+        accentGradient: 'from-blue-600 via-indigo-600 to-teal-600',
+        navBg: 'bg-blue-500/10',
+        navBorder: 'border-blue-500/20',
+        navHover: 'hover:bg-blue-500/20',
+        activeText: 'text-blue-400',
+      };
+    }
+
+    if (pathname === '/support' || pathname?.startsWith('/support')) {
+      return {
+        bg: scrolled
+          ? 'bg-gradient-to-r from-slate-900 via-indigo-900 to-blue-900/95 backdrop-blur-xl'
+          : 'bg-gradient-to-r from-slate-900 via-indigo-900 to-blue-900',
         border: scrolled ? 'border-blue-500/20' : 'border-transparent',
         accentGradient: 'from-blue-600 via-indigo-600 to-teal-600',
         navBg: 'bg-blue-500/10',
@@ -74,11 +92,16 @@ export default function Header() {
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
           <div className="flex items-center">
-            <Link href="/" className="flex items-center space-x-2 group">
-              <div
-                className={`bg-gradient-to-r ${theme.accentGradient} text-white font-bold text-xl px-3 py-1 rounded-lg shadow-lg group-hover:shadow-2xl group-hover:scale-105 transition-all duration-300`}
-              >
-                RMA
+            <Link href="/" className="flex items-center space-x-3 group">
+              <div className="relative w-12 h-12 rounded-lg overflow-hidden shadow-lg group-hover:shadow-2xl group-hover:scale-105 transition-all duration-300">
+                <Image
+                  src="/logo.png"
+                  alt="RMA Logo"
+                  fill
+                  sizes="48px"
+                  className="object-contain"
+                  priority
+                />
               </div>
               <span className="text-xl font-bold bg-gradient-to-b from-white to-white/70 bg-clip-text text-transparent hidden sm:block">
                 Rate My Accom NSW
@@ -113,14 +136,18 @@ export default function Header() {
 
           {/* Action Buttons */}
           <div className="hidden md:flex items-center space-x-3">
-            <button className="border-2 border-white/20 text-white/90 px-4 py-2 rounded-xl font-medium hover:bg-white/10 hover:border-white/30 backdrop-blur-sm transition-all duration-300 text-sm">
-              Sign In
-            </button>
-            <button
-              className={`bg-gradient-to-r ${theme.accentGradient} text-white px-4 py-2 rounded-xl font-medium hover:shadow-lg hover:shadow-lyra-purple-start/50 hover:scale-105 transition-all duration-300 text-sm`}
-            >
-              Write Review
-            </button>
+            <Link href="/login">
+              <button className="border-2 border-white/20 text-white/90 px-4 py-2 rounded-xl font-medium hover:bg-white/10 hover:border-white/30 backdrop-blur-sm transition-all duration-300 text-sm">
+                Sign In
+              </button>
+            </Link>
+            <Link href="/write-review">
+              <button
+                className={`bg-gradient-to-r ${theme.accentGradient} text-white px-4 py-2 rounded-xl font-medium hover:shadow-lg hover:scale-105 transition-all duration-300 text-sm`}
+              >
+                Write Review
+              </button>
+            </Link>
           </div>
 
           {/* Mobile Menu Button */}
@@ -154,14 +181,18 @@ export default function Header() {
               );
             })}
             <div className="pt-4 space-y-2 border-t border-white/10 mt-4">
-              <button className="w-full border-2 border-white/20 text-white/90 px-4 py-3 rounded-xl font-medium hover:bg-white/10 backdrop-blur-sm transition-all duration-300">
-                Sign In
-              </button>
-              <button
-                className={`w-full bg-gradient-to-r ${theme.accentGradient} text-white px-4 py-3 rounded-xl font-medium hover:shadow-lg transition-all duration-300`}
-              >
-                Write Review
-              </button>
+              <Link href="/login" onClick={() => setMobileMenuOpen(false)}>
+                <button className="w-full border-2 border-white/20 text-white/90 px-4 py-3 rounded-xl font-medium hover:bg-white/10 backdrop-blur-sm transition-all duration-300">
+                  Sign In
+                </button>
+              </Link>
+              <Link href="/write-review" onClick={() => setMobileMenuOpen(false)}>
+                <button
+                  className={`w-full bg-gradient-to-r ${theme.accentGradient} text-white px-4 py-3 rounded-xl font-medium hover:shadow-lg transition-all duration-300`}
+                >
+                  Write Review
+                </button>
+              </Link>
             </div>
           </div>
         )}

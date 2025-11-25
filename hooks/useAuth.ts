@@ -11,10 +11,15 @@ interface AuthState {
   isAuthenticated: boolean;
   isLoading: boolean;
   error: string | null;
+  otpSent: boolean;
+  otpEmail: string | null;
   login: (credentials: UserLogin) => Promise<void>;
   register: (userData: UserRegistration) => Promise<void>;
   logout: () => Promise<void>;
   updateProfile: (data: Partial<User>) => Promise<void>;
+  requestOtp: (email: string) => Promise<void>;
+  verifyOtp: (email: string, code: string) => Promise<void>;
+  clearOtpState: () => void;
   clearError: () => void;
 }
 
@@ -28,6 +33,8 @@ export const useAuth = create<AuthState>()(
       isAuthenticated: false,
       isLoading: false,
       error: null,
+      otpSent: false,
+      otpEmail: null,
 
       login: async (credentials: UserLogin) => {
         set({ isLoading: true, error: null });
@@ -112,6 +119,55 @@ export const useAuth = create<AuthState>()(
           throw error;
         }
       },
+
+      requestOtp: async (email: string) => {
+        set({ isLoading: true, error: null, otpSent: false });
+        try {
+          await api.post<{
+            success: boolean;
+            message: string;
+          }>('/auth/otp/request', { email });
+
+          set({
+            otpSent: true,
+            otpEmail: email,
+            isLoading: false,
+          });
+        } catch (error) {
+          set({
+            error: error instanceof Error ? error.message : 'Failed to send OTP',
+            isLoading: false,
+            otpSent: false,
+          });
+          throw error;
+        }
+      },
+
+      verifyOtp: async (email: string, code: string) => {
+        set({ isLoading: true, error: null });
+        try {
+          const response = await api.post<{
+            success: boolean;
+            data: { user: User; accessToken: string };
+          }>('/auth/otp/verify', { email, code });
+
+          set({
+            user: response.data.user,
+            isAuthenticated: true,
+            isLoading: false,
+            otpSent: false,
+            otpEmail: null,
+          });
+        } catch (error) {
+          set({
+            error: error instanceof Error ? error.message : 'Invalid OTP',
+            isLoading: false,
+          });
+          throw error;
+        }
+      },
+
+      clearOtpState: () => set({ otpSent: false, otpEmail: null, error: null }),
 
       clearError: () => set({ error: null }),
     }),
