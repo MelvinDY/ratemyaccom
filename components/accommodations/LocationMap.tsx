@@ -68,7 +68,9 @@ export default function LocationMap({
   const [isLoaded, setIsLoaded] = useState(false);
 
   const campusInfo = CAMPUS_COORDINATES[university];
-  const accommodationCoords = coordinates || campusInfo; // Fallback to campus if no coords
+  // Fallback to campus if no coords, then to Sydney default
+  const defaultCoords = { lat: -33.8688, lng: 151.2093 }; // Sydney CBD
+  const accommodationCoords = coordinates ?? campusInfo ?? defaultCoords;
 
   useEffect(() => {
     // Dynamically import Leaflet components (client-side only)

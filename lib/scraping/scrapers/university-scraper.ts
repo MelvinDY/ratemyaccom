@@ -7,6 +7,7 @@ import { chromium, Page } from 'playwright';
 import { BaseScraper, ScrapedAccommodation, ScraperConfig } from '../base-scraper';
 import { accommodationRepository } from '@/lib/database/repositories/accommodation.repository';
 import { logger } from '../logger';
+import { AccommodationType, PricePeriod } from '@prisma/client';
 
 export class UniversityScraper extends BaseScraper {
   constructor() {
@@ -62,9 +63,9 @@ export class UniversityScraper extends BaseScraper {
         logger.info(`Scraping ${uni.name}...`);
 
         try {
-          const page = await this.browser.newPage({
-            userAgent: this.config.userAgent,
-          });
+          const page = await this.browser.newPage(
+            this.config.userAgent ? { userAgent: this.config.userAgent } : undefined
+          );
 
           await page.setViewportSize({ width: 1920, height: 1080 });
 
@@ -137,7 +138,7 @@ export class UniversityScraper extends BaseScraper {
     // This is a generic implementation - you'll need to customize for each university
     const listings = await page.$$('.accommodation-listing, .residence-card, article');
 
-    for (const listing of listings) {
+    for (const _listing of listings) {
       try {
         const data = await this.extractAccommodationData(page);
         if (data) {
@@ -158,6 +159,10 @@ export class UniversityScraper extends BaseScraper {
   protected async extractAccommodationData(page: Page): Promise<ScrapedAccommodation | null> {
     try {
       // Generic selectors - customize for each university website
+      const phoneText = await this.extractText(page, '.phone, [href^="tel:"]');
+      const emailText = await this.extractText(page, '.email, [href^="mailto:"]');
+      const websiteText = await this.extractText(page, '.website, [href^="http"]');
+
       const data: Partial<ScrapedAccommodation> = {
         name: await this.extractText(page, 'h1, .title, .accommodation-name'),
         description: await this.extractText(page, '.description, .about, p'),
@@ -165,16 +170,16 @@ export class UniversityScraper extends BaseScraper {
         sourceUrl: page.url(),
         images: await this.extractImages(page),
         contactInfo: {
-          phone: await this.extractText(page, '.phone, [href^="tel:"]'),
-          email: await this.extractText(page, '.email, [href^="mailto:"]'),
-          website: await this.extractText(page, '.website, [href^="http"]'),
+          ...(phoneText && { phone: phoneText }),
+          ...(emailText && { email: emailText }),
+          ...(websiteText && { website: websiteText }),
         },
         amenities: await this.extractAmenities(page),
         roomTypes: await this.extractRoomTypes(page),
-        type: 'on-campus',
+        type: 'ON_CAMPUS',
         priceMin: 0,
         priceMax: 0,
-        pricePeriod: 'week',
+        pricePeriod: 'WEEK',
         suburb: '',
         state: '',
         postcode: '',
@@ -191,9 +196,11 @@ export class UniversityScraper extends BaseScraper {
       // Parse address components
       if (data.address) {
         const addressParts = this.parseAddress(data.address);
-        data.suburb = addressParts.suburb;
-        data.state = addressParts.state;
-        data.postcode = addressParts.postcode;
+        if (addressParts) {
+          data.suburb = addressParts.suburb;
+          data.state = addressParts.state;
+          data.postcode = addressParts.postcode;
+        }
       }
 
       return data as ScrapedAccommodation;
@@ -282,11 +289,11 @@ export class UniversityScraper extends BaseScraper {
     suburb: string;
     state: string;
     postcode: string;
-  } {
+  } | null {
     // Australian address format: "Street, Suburb State Postcode"
     const match = address.match(/,?\s*([A-Za-z\s]+)\s+(NSW|VIC|QLD|SA|WA|TAS|NT|ACT)\s+(\d{4})/i);
 
-    if (match) {
+    if (match && match[1] && match[2] && match[3]) {
       return {
         suburb: match[1].trim(),
         state: match[2].toUpperCase(),
@@ -294,11 +301,7 @@ export class UniversityScraper extends BaseScraper {
       };
     }
 
-    return {
-      suburb: '',
-      state: 'NSW',
-      postcode: '2000',
-    };
+    return null;
   }
 
   /**
@@ -336,7 +339,7 @@ export class UniversityScraper extends BaseScraper {
         images: data.images,
         priceMin: data.priceMin,
         priceMax: data.priceMax,
-        pricePeriod: data.pricePeriod.toUpperCase() as any,
+        pricePeriod: data.pricePeriod.toUpperCase() as PricePeriod,
         capacity: data.capacity || 100,
         roomTypes: data.roomTypes,
         contactInfo: data.contactInfo as any,
@@ -358,8 +361,8 @@ export class UniversityScraper extends BaseScraper {
   /**
    * Helper: Map accommodation type
    */
-  private mapAccommodationType(type: string): any {
-    const mapping: Record<string, string> = {
+  private mapAccommodationType(type: string): AccommodationType {
+    const mapping: Record<string, AccommodationType> = {
       'on-campus': 'ON_CAMPUS',
       'off-campus': 'OFF_CAMPUS',
       'private': 'PRIVATE',

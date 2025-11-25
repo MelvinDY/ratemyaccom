@@ -7,7 +7,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/database/prisma';
-import { requireAuth, requireOwnership } from '@/lib/auth/middleware';
+import { requireOwnership } from '@/lib/auth/middleware';
 
 export const dynamic = 'force-dynamic';
 
@@ -17,7 +17,7 @@ export const dynamic = 'force-dynamic';
  * KAN-18
  */
 export async function GET(
-  request: NextRequest,
+  _request: NextRequest,
   { params }: { params: { id: string } }
 ) {
   try {

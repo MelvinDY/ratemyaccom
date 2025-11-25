@@ -3,24 +3,15 @@
  * Scrapes accommodation data from USYD housing pages
  */
 
-import { chromium, Page } from 'playwright';
+import { chromium } from 'playwright';
 import { BaseScraper, ScrapedAccommodation, ScraperConfig } from '../base-scraper';
 import { prisma } from '@/lib/database/prisma';
 import { logger } from '../logger';
 import {
-  extractText,
-  extractTextMultiple,
-  extractAllText,
-  extractImages,
-  extractPriceRange,
-  extractEmail,
-  extractPhone,
-  cleanText,
   generateSlug,
-  waitForSelector,
   delay,
 } from '../utils/helpers';
-import { validateAccommodationData, validateAmenities } from '../utils/validation';
+import { validateAccommodationData } from '../utils/validation';
 
 interface USYDAccommodationPage {
   name: string;
@@ -29,7 +20,6 @@ interface USYDAccommodationPage {
 
 export class USYDScraper extends BaseScraper {
   private readonly UNIVERSITY_NAME = 'University of Sydney';
-  private readonly BASE_URL = 'https://www.sydney.edu.au';
 
   constructor() {
     const config: ScraperConfig = {
@@ -98,7 +88,7 @@ export class USYDScraper extends BaseScraper {
             const validation = validateAccommodationData(data);
 
             if (validation.success && validation.data) {
-              const result = await this.importAccommodation(validation.data);
+              const result = await this.importAccommodation(validation.data as ScrapedAccommodation);
 
               if (result.success) {
                 stats.imported++;
@@ -111,7 +101,7 @@ export class USYDScraper extends BaseScraper {
               }
             } else {
               stats.failed++;
-              const errors = validation.errors?.errors.map(e => `${e.path.join('.')}: ${e.message}`).join(', ');
+              const errors = validation.errors?.issues.map((e) => `${e.path.join('.')}: ${e.message}`).join(', ');
               await this.logImport('SKIP', 'VALIDATION_ERROR', data, undefined, errors);
               logger.error(`❌ Validation failed: ${accom.name} - ${errors}`);
             }
@@ -242,23 +232,23 @@ export class USYDScraper extends BaseScraper {
       university: this.UNIVERSITY_NAME,
       address: details.address!,
       suburb: details.suburb!,
-      state: details.state as 'NSW',
+      state: details.state!,
       postcode: details.postcode!,
       description: details.description!,
       type: details.type!,
-      images: [], // Would need to scrape actual pages for images
+      images: [],
       priceMin: details.priceMin!,
       priceMax: details.priceMax!,
       pricePeriod: details.pricePeriod!,
       capacity: details.capacity,
       roomTypes: details.roomTypes!,
-      contactInfo: details.contactInfo!,
+      contactInfo: details.contactInfo || {},
       amenities: details.amenities || [],
       sourceUrl: accom.url,
-    };
+    } as ScrapedAccommodation;
   }
 
-  protected async extractAccommodationData(page: Page): Promise<ScrapedAccommodation | null> {
+  protected async extractAccommodationData(_page: unknown): Promise<ScrapedAccommodation | null> {
     // This method is required by BaseScraper but not used for USYD
     // since we're using predefined data
     return null;

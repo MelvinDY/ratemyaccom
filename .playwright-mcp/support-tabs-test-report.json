@@ -1,0 +1,37 @@
+{
+  "timestamp": "2025-11-24T16:41:06.018Z",
+  "url": "http://localhost:3001/support",
+  "testsPassed": 10,
+  "testsFailed": 0,
+  "tabs": {
+    "help": {
+      "contentVisible": true,
+      "faqCount": 14,
+      "working": true
+    },
+    "contact": {
+      "contentVisible": true,
+      "formFieldsVisible": true,
+      "working": true
+    },
+    "privacy": {
+      "contentVisible": true,
+      "sectionsVisible": true,
+      "working": true
+    },
+    "terms": {
+      "contentVisible": true,
+      "sectionsVisible": true,
+      "working": true
+    }
+  },
+  "errors": [],
+  "screenshots": [
+    "support-full-page.png",
+    "support-help-tab-complete.png",
+    "support-contact-tab-complete.png",
+    "support-privacy-tab-complete.png",
+    "support-terms-tab-complete.png"
+  ],
+  "overallStatus": "PASS"
+}

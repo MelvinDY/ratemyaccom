@@ -24,15 +24,16 @@ export function createMockRequest(options: {
     cookies = {},
   } = options;
 
-  const init: RequestInit = {
-    method,
-    headers: new Headers(headers),
-  };
-
+  const initHeaders = new Headers(headers);
   if (body) {
-    init.body = JSON.stringify(body);
-    (init.headers as Headers).set('Content-Type', 'application/json');
+    initHeaders.set('Content-Type', 'application/json');
   }
+
+  const init: any = {
+    method,
+    headers: initHeaders,
+    ...(body ? { body: JSON.stringify(body) } : {}),
+  };
 
   const request = new NextRequest(url, init);
 

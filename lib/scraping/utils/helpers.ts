@@ -33,7 +33,7 @@ export function cleanText(text: string | null | undefined): string {
 export function extractPrice(text: string): number | null {
   const cleaned = text.replace(/,/g, '');
   const match = cleaned.match(/\$?(\d+(?:\.\d{2})?)/);
-  return match ? parseFloat(match[1]) : null;
+  return match && match[1] ? parseFloat(match[1]) : null;
 }
 
 /**
@@ -43,14 +43,16 @@ export function extractPrice(text: string): number | null {
  */
 export function extractPriceRange(text: string): { min: number; max: number } | null {
   const prices: number[] = [];
-  const matches = text.matchAll(/\$(\d+(?:,\d{3})*(?:\.\d{2})?)/g);
+  const matches = Array.from(text.matchAll(/\$(\d+(?:,\d{3})*(?:\.\d{2})?)/g));
 
   for (const match of matches) {
-    const price = parseFloat(match[1].replace(/,/g, ''));
-    // Filter out unrealistic prices (phone numbers, IDs, etc.)
-    // Student accommodation typically ranges from $100 to $2000 per week
-    if (!isNaN(price) && price >= 100 && price <= 2000) {
-      prices.push(price);
+    if (match[1]) {
+      const price = parseFloat(match[1].replace(/,/g, ''));
+      // Filter out unrealistic prices (phone numbers, IDs, etc.)
+      // Student accommodation typically ranges from $100 to $2000 per week
+      if (!isNaN(price) && price >= 100 && price <= 2000) {
+        prices.push(price);
+      }
     }
   }
 
@@ -78,7 +80,7 @@ export function parseAustralianAddress(address: string): {
   // Match pattern: "Street, Suburb State Postcode"
   const match = cleaned.match(/^(.+?),\s*(.+?)\s+(NSW|VIC|QLD|SA|WA|TAS|ACT|NT)\s+(\d{4})$/i);
 
-  if (match) {
+  if (match && match[1] && match[2] && match[3] && match[4]) {
     return {
       street: match[1].trim(),
       suburb: match[2].trim(),
@@ -90,7 +92,7 @@ export function parseAustralianAddress(address: string): {
   // Try alternative pattern: "Suburb State Postcode" (no street)
   const altMatch = cleaned.match(/(.+?)\s+(NSW|VIC|QLD|SA|WA|TAS|ACT|NT)\s+(\d{4})$/i);
 
-  if (altMatch) {
+  if (altMatch && altMatch[1] && altMatch[2] && altMatch[3]) {
     return {
       street: '',
       suburb: altMatch[1].trim(),
@@ -278,7 +280,7 @@ export async function scrollToLoadImages(page: Page): Promise<void> {
  */
 export function extractEmail(text: string): string | null {
   const match = text.match(/([a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9_-]+)/);
-  return match ? match[1] : null;
+  return match && match[1] ? match[1] : null;
 }
 
 /**

@@ -15,7 +15,7 @@ async function setupDatabase() {
   try {
     // 1. Check database connection
     console.log('1. Checking database connection...');
-    const healthCheck = await prisma.$queryRaw`SELECT 1 as health`;
+    await prisma.$queryRaw`SELECT 1 as health`;
     console.log('   ✓ Database connected successfully\n');
 
     // 2. Create common amenities

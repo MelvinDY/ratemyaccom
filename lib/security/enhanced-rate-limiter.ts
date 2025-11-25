@@ -191,8 +191,12 @@ export function getUserId(request: NextRequest): string | null {
   try {
     // Decode JWT without verification (just to get userId)
     // We only need the userId for rate limiting, not security
+    const parts = authToken.split('.');
+    if (parts.length < 2 || !parts[1]) {
+      return null;
+    }
     const payload = JSON.parse(
-      Buffer.from(authToken.split('.')[1], 'base64').toString()
+      Buffer.from(parts[1], 'base64').toString()
     );
     return payload.userId || null;
   } catch {
@@ -210,8 +214,12 @@ export function isAdmin(request: NextRequest): boolean {
   }
 
   try {
+    const parts = authToken.split('.');
+    if (parts.length < 2 || !parts[1]) {
+      return false;
+    }
     const payload = JSON.parse(
-      Buffer.from(authToken.split('.')[1], 'base64').toString()
+      Buffer.from(parts[1], 'base64').toString()
     );
     return payload.role === 'ADMIN' || payload.role === 'MODERATOR';
   } catch {
@@ -298,8 +306,8 @@ export async function applyRateLimit(
 
   // Determine rate limit configuration
   const rateLimitKey = overrideKey || getRateLimitKey(request);
-  const config = RATE_LIMIT_CONFIGS[rateLimitKey] || RATE_LIMIT_CONFIGS['api:default'];
-  const limiter = rateLimiters[rateLimitKey] || rateLimiters['api:default'];
+  const config = RATE_LIMIT_CONFIGS[rateLimitKey] ?? RATE_LIMIT_CONFIGS['api:default']!;
+  const limiter = rateLimiters[rateLimitKey] ?? rateLimiters['api:default']!;
 
   // Determine identifier (IP or user ID)
   let identifier: string;
@@ -324,7 +332,7 @@ export async function applyRateLimit(
     };
   } catch (error) {
     if (error instanceof Error && 'msBeforeNext' in error) {
-      const rateLimitError = error as RateLimiterRes;
+      const rateLimitError = error as unknown as RateLimiterRes;
       const retryAfter = Math.ceil(rateLimitError.msBeforeNext / 1000);
 
       return {
@@ -392,7 +400,7 @@ export async function getRateLimitStatus(
   resetTime: Date;
 }> {
   const limiter = rateLimiters[rateLimitKey];
-  const config = RATE_LIMIT_CONFIGS[rateLimitKey] || RATE_LIMIT_CONFIGS['api:default'];
+  const config = RATE_LIMIT_CONFIGS[rateLimitKey] ?? RATE_LIMIT_CONFIGS['api:default']!;
 
   if (!limiter) {
     return {

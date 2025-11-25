@@ -65,10 +65,9 @@ async function getAccommodation(
         suburb: dbAccommodation.suburb,
         state: dbAccommodation.state,
         postcode: dbAccommodation.postcode,
-        coordinates:
-          dbAccommodation.latitude && dbAccommodation.longitude
-            ? { lat: dbAccommodation.latitude, lng: dbAccommodation.longitude }
-            : undefined,
+        ...(dbAccommodation.latitude && dbAccommodation.longitude
+          ? { coordinates: { lat: dbAccommodation.latitude, lng: dbAccommodation.longitude } }
+          : {}),
       },
       description: dbAccommodation.description,
       type: dbAccommodation.type.toLowerCase().replace('_', '-') as Accommodation['type'],
@@ -76,7 +75,7 @@ async function getAccommodation(
       amenities: dbAccommodation.amenities.map((aa) => ({
         id: aa.amenity.id,
         name: aa.amenity.name,
-        icon: aa.amenity.icon || undefined,
+        ...(aa.amenity.icon ? { icon: aa.amenity.icon } : {}),
         available: aa.available,
       })),
       pricing: {
@@ -120,7 +119,7 @@ async function getAccommodation(
       accommodationId: r.accommodationId,
       userId: r.userId,
       userName: r.user.name,
-      userUniversity: r.user.university || undefined,
+      ...(r.user.university ? { userUniversity: r.user.university } : {}),
       rating: r.rating,
       ratingBreakdown: {
         cleanliness: r.ratingCleanliness,
@@ -135,8 +134,8 @@ async function getAccommodation(
       pros: r.pros,
       cons: r.cons,
       verified: r.verified,
-      roomType: r.roomType || undefined,
-      stayDuration: r.stayDuration || undefined,
+      ...(r.roomType ? { roomType: r.roomType } : {}),
+      ...(r.stayDuration ? { stayDuration: r.stayDuration } : {}),
       createdAt: r.createdAt,
       updatedAt: r.updatedAt,
       helpful: r.helpful,
@@ -238,16 +237,18 @@ export default async function AccommodationPage({ params }: AccommodationPagePro
             <ImageGallery images={accommodation.images} name={accommodation.name} />
 
             {/* Location Map */}
-            <LocationMap
-              accommodationName={accommodation.name}
-              university={accommodation.university}
-              address={accommodation.location.address}
-              suburb={accommodation.location.suburb}
-              state={accommodation.location.state}
-              postcode={accommodation.location.postcode}
-              coordinates={accommodation.location.coordinates}
-              distanceToCampus={accommodation.distance.toCampus}
-            />
+            {accommodation.location.coordinates && (
+              <LocationMap
+                accommodationName={accommodation.name}
+                university={accommodation.university}
+                address={accommodation.location.address}
+                suburb={accommodation.location.suburb}
+                state={accommodation.location.state}
+                postcode={accommodation.location.postcode}
+                coordinates={accommodation.location.coordinates}
+                distanceToCampus={accommodation.distance.toCampus}
+              />
+            )}
 
             {/* About Section */}
             <section className="bg-white/5 backdrop-blur-md border border-white/10 rounded-xl p-6">

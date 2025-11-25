@@ -111,3 +111,36 @@ export interface PaginatedResponse<T> {
     totalPages: number;
   };
 }
+
+// Quiz types for ML recommendation system
+export interface QuizAnswer {
+  questionId: string;
+  value: string | number | string[];
+}
+
+export interface QuizPreferences {
+  university: string;
+  budgetMin: number;
+  budgetMax: number;
+  accommodationType: string[];
+  priorityFactors: {
+    cleanliness: number;
+    location: number;
+    value: number;
+    amenities: number;
+    management: number;
+    safety: number;
+  };
+  mustHaveAmenities: string[];
+  maxDistanceToCampus: number;
+  roomType: string;
+  socialPreference: 'quiet' | 'social' | 'balanced';
+  moveInDate: string;
+}
+
+export interface RecommendationScore {
+  accommodation: Accommodation;
+  score: number;
+  matchReasons: string[];
+  warnings: string[];
+}

@@ -8,8 +8,8 @@ import { JSDOM } from 'jsdom';
 const createDOMPurify = () => {
   if (typeof window === 'undefined') {
     // Server-side: Create a virtual DOM
-    const window = new JSDOM('').window;
-    return DOMPurify(window as unknown as Window);
+    const jsdomWindow = new JSDOM('').window;
+    return DOMPurify(jsdomWindow as any);
   }
   // Client-side: Use the real DOM
   return DOMPurify;

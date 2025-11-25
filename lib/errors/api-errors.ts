@@ -34,11 +34,11 @@ export class ValidationError extends ApiError {
     Object.setPrototypeOf(this, ValidationError.prototype);
   }
 
-  toJSON() {
+  override toJSON() {
     return {
       error: {
         message: this.message,
-        code: this.code,
+        code: this.code || 'VALIDATION_ERROR',
         statusCode: this.statusCode,
         fields: this.fields,
       },
@@ -80,11 +80,11 @@ export class RateLimitError extends ApiError {
     Object.setPrototypeOf(this, RateLimitError.prototype);
   }
 
-  toJSON() {
+  override toJSON() {
     return {
       error: {
         message: this.message,
-        code: this.code,
+        code: this.code || 'RATE_LIMIT_EXCEEDED',
         statusCode: this.statusCode,
         retryAfter: this.retryAfter?.toISOString(),
       },

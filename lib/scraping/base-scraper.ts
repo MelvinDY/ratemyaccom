@@ -17,6 +17,9 @@ export interface ScraperConfig {
   userAgent?: string;
 }
 
+export type AccommodationType = 'ON_CAMPUS' | 'OFF_CAMPUS' | 'PRIVATE' | 'COLLEGE';
+export type PricePeriod = 'WEEK' | 'MONTH' | 'SEMESTER' | 'YEAR';
+
 export interface ScrapedAccommodation {
   name: string;
   university: string;
@@ -25,14 +28,14 @@ export interface ScrapedAccommodation {
   state: string;
   postcode: string;
   description: string;
-  type: 'on-campus' | 'off-campus' | 'private' | 'college';
+  type: AccommodationType;
   images: string[];
   priceMin: number;
   priceMax: number;
-  pricePeriod: 'week' | 'month' | 'semester' | 'year';
+  pricePeriod: PricePeriod;
   capacity?: number;
   roomTypes: string[];
-  contactInfo: {
+  contactInfo?: {
     phone?: string;
     email?: string;
     website?: string;
@@ -60,7 +63,7 @@ export abstract class BaseScraper {
         data: {
           source: this.config.name,
           status: 'RUNNING',
-          config: this.config as Prisma.JsonValue,
+          config: this.config as unknown as Prisma.InputJsonValue,
           startedAt: new Date(),
         },
       });
@@ -210,17 +213,26 @@ export abstract class BaseScraper {
     errorMessage?: string,
     entityId?: string
   ): Promise<void> {
+    const logData: Prisma.DataImportLogCreateInput = {
+      source: this.config.name,
+      action,
+      entityType: 'accommodation',
+      rawData: rawData as Prisma.InputJsonValue,
+      status,
+    };
+
+    if (entityId) {
+      logData.entityId = entityId;
+    }
+    if (processedData) {
+      logData.processedData = processedData as Prisma.InputJsonValue;
+    }
+    if (errorMessage) {
+      logData.errorMessage = errorMessage;
+    }
+
     await prisma.dataImportLog.create({
-      data: {
-        source: this.config.name,
-        action,
-        entityType: 'accommodation',
-        entityId,
-        rawData,
-        processedData,
-        status,
-        errorMessage,
-      },
+      data: logData,
     });
   }
 

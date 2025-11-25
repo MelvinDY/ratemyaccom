@@ -79,16 +79,16 @@ export async function logAuditEvent(data: AuditLogData): Promise<void> {
         eventAction: data.eventAction,
         eventStatus: data.eventStatus,
         ipAddress: data.ipAddress,
-        userId: data.userId || null,
-        userEmail: data.userEmail || null,
-        userName: data.userName || null,
-        userRole: data.userRole || null,
-        userAgent: data.userAgent || null,
-        requestPath: data.requestPath || null,
-        requestMethod: data.requestMethod || null,
-        metadata: data.metadata || null,
-        message: data.message || null,
-        errorMessage: data.errorMessage || null,
+        ...(data.userId ? { userId: data.userId } : {}),
+        ...(data.userEmail ? { userEmail: data.userEmail } : {}),
+        ...(data.userName ? { userName: data.userName } : {}),
+        ...(data.userRole ? { userRole: data.userRole } : {}),
+        ...(data.userAgent ? { userAgent: data.userAgent } : {}),
+        ...(data.requestPath ? { requestPath: data.requestPath } : {}),
+        ...(data.requestMethod ? { requestMethod: data.requestMethod } : {}),
+        ...(data.metadata ? { metadata: data.metadata } : {}),
+        ...(data.message ? { message: data.message } : {}),
+        ...(data.errorMessage ? { errorMessage: data.errorMessage } : {}),
       },
     });
   } catch (error) {
@@ -152,7 +152,7 @@ export async function logLoginFailure(
     userEmail: email,
     message: `Failed login attempt for ${email}`,
     errorMessage: reason,
-    metadata,
+    ...(metadata ? { metadata } : {}),
   });
 }
 
@@ -303,10 +303,10 @@ export async function logPermissionDenied(
     eventType: AuditEventType.PERMISSION_DENIED,
     eventAction: 'denied',
     eventStatus: AuditEventStatus.WARNING,
-    userId: user?.id,
-    userEmail: user?.email,
-    userName: user?.name,
-    userRole: user?.role,
+    ...(user?.id ? { userId: user.id } : {}),
+    ...(user?.email ? { userEmail: user.email } : {}),
+    ...(user?.name ? { userName: user.name } : {}),
+    ...(user?.role ? { userRole: user.role } : {}),
     message: `Permission denied: ${reason}`,
     errorMessage: reason,
   });
@@ -359,8 +359,8 @@ export async function logRateLimitExceeded(
     eventType: AuditEventType.RATE_LIMIT_EXCEEDED,
     eventAction: 'blocked',
     eventStatus: AuditEventStatus.WARNING,
-    userId: user?.id,
-    userEmail: user?.email,
+    ...(user?.id ? { userId: user.id } : {}),
+    ...(user?.email ? { userEmail: user.email } : {}),
     message: `Rate limit exceeded for ${rateLimitKey}`,
     metadata: {
       rateLimitKey,
@@ -393,7 +393,7 @@ export async function logSuspiciousActivity(
     eventAction: 'detected',
     eventStatus: AuditEventStatus.WARNING,
     message: `Suspicious activity detected: ${reason}`,
-    metadata,
+    ...(metadata ? { metadata } : {}),
   });
 }
 

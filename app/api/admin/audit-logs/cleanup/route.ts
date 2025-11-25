@@ -131,7 +131,7 @@ export async function POST(request: NextRequest) {
       {
         id: payload.userId,
         email: payload.email,
-        name: payload.email.split('@')[0],
+        name: payload.email.split('@')[0] || 'Admin',
         role: payload.role,
       },
       'cleanup_audit_logs',

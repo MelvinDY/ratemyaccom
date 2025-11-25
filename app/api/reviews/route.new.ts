@@ -127,7 +127,7 @@ export async function POST(request: NextRequest) {
         {
           success: false,
           error: 'Invalid review data',
-          details: validationResult.error.errors,
+          details: validationResult.error.issues,
         },
         { status: 400 }
       );
@@ -170,8 +170,8 @@ export async function POST(request: NextRequest) {
       text: data.text,
       pros: data.pros,
       cons: data.cons,
-      roomType: data.roomType,
-      stayDuration: data.stayDuration,
+      ...(data.roomType ? { roomType: data.roomType } : {}),
+      ...(data.stayDuration ? { stayDuration: data.stayDuration } : {}),
       status: 'PUBLISHED', // or 'PENDING' if you want moderation
     });
 

@@ -9,12 +9,10 @@ import { prisma } from '@/lib/database/prisma';
 import { logger } from '../logger';
 import {
   extractText,
-  extractTextMultiple,
   extractAllText,
+  extractTextMultiple,
   extractImages,
-  extractPrice,
   extractPriceRange,
-  parseAustralianAddress,
   extractEmail,
   extractPhone,
   cleanText,
@@ -108,7 +106,7 @@ export class UNSWScraper extends BaseScraper {
 
             if (validation.success && validation.data) {
               // Import to database
-              const result = await this.importAccommodation(validation.data);
+              const result = await this.importAccommodation(validation.data as ScrapedAccommodation);
 
               if (result.success) {
                 stats.imported++;
@@ -121,7 +119,7 @@ export class UNSWScraper extends BaseScraper {
               }
             } else {
               stats.failed++;
-              const errors = validation.errors?.errors.map(e => `${e.path.join('.')}: ${e.message}`).join(', ');
+              const errors = validation.errors?.issues.map((e) => `${e.path.join('.')}: ${e.message}`).join(', ');
               await this.logImport('SKIP', 'VALIDATION_ERROR', data, undefined, errors);
               logger.error(`❌ Validation failed: ${accom.name} - ${errors}`);
             }
@@ -150,9 +148,9 @@ export class UNSWScraper extends BaseScraper {
   private async scrapeAccommodation(
     accom: UNSWAccommodationPage
   ): Promise<ScrapedAccommodation | null> {
-    const page = await this.browser!.newPage({
-      userAgent: this.config.userAgent,
-    });
+    const page = await this.browser!.newPage(
+      this.config.userAgent ? { userAgent: this.config.userAgent } : undefined
+    );
 
     try {
       await page.setViewportSize({ width: 1920, height: 1080 });
@@ -329,7 +327,7 @@ export class UNSWScraper extends BaseScraper {
       }
     }
 
-    return [...new Set(amenities)]; // Remove duplicates
+    return Array.from(new Set(amenities)); // Remove duplicates
   }
 
   /**
@@ -361,7 +359,7 @@ export class UNSWScraper extends BaseScraper {
       }
     }
 
-    return roomTypes.length > 0 ? [...new Set(roomTypes)] : ['Single'];
+    return roomTypes.length > 0 ? Array.from(new Set(roomTypes)) : ['Single'];
   }
 
   /**
@@ -422,8 +420,8 @@ export class UNSWScraper extends BaseScraper {
     const phone = extractPhone(bodyText);
 
     return {
-      phone: phone || undefined,
-      email: email || 'accommodation@unsw.edu.au',
+      ...(phone && { phone }),
+      email: email ?? 'accommodation@unsw.edu.au',
       website: this.BASE_URL + '/campus-life/accommodation',
     };
   }
@@ -453,7 +451,7 @@ export class UNSWScraper extends BaseScraper {
 
     // Look for capacity information
     const match = text.match(/(\d+)\s*(beds?|rooms?|residents?|students?)/i);
-    if (match) {
+    if (match && match[1]) {
       return parseInt(match[1], 10);
     }
 

@@ -368,7 +368,8 @@ export default function ReviewCard({ review }: ReviewCardProps) {
                 </Button>
                 <Button
                   onClick={handleReportSubmit}
-                  disabled={!selectedReason || isReportLoading}
+                  disabled={!selectedReason}
+                  loading={isReportLoading}
                   className="bg-red-600 hover:bg-red-700 text-white"
                 >
                   {isReportLoading ? 'Submitting...' : 'Submit Report'}

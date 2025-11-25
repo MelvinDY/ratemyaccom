@@ -52,6 +52,7 @@ export default function LoginPage() {
       const timer = setTimeout(() => setCountdown(countdown - 1), 1000);
       return () => clearTimeout(timer);
     }
+    return undefined;
   }, [countdown]);
 
   // Focus first OTP input when entering verify step
@@ -169,6 +170,7 @@ export default function LoginPage() {
       router.push('/');
     } catch (err) {
       console.error('Login failed:', err);
+      // Error is handled by useAuth hook
     }
   };
 

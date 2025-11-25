@@ -36,7 +36,7 @@ export async function GET(request: NextRequest) {
         {
           success: false,
           error: 'Invalid query parameters',
-          details: validationResult.error.errors,
+          details: validationResult.error.issues,
         },
         { status: 400 }
       );
@@ -97,7 +97,7 @@ export async function GET(request: NextRequest) {
           : undefined,
       },
       description: accom.description,
-      type: this.mapAccommodationTypeToFrontend(accom.type),
+      type: mapAccommodationTypeToFrontend(accom.type),
       images: accom.images,
       amenities: accom.amenities.map(a => ({
         id: a.amenity.id,
@@ -109,7 +109,7 @@ export async function GET(request: NextRequest) {
         min: accom.priceMin,
         max: accom.priceMax,
         currency: accom.currency,
-        period: this.mapPricePeriodToFrontend(accom.pricePeriod),
+        period: mapPricePeriodToFrontend(accom.pricePeriod),
       },
       capacity: accom.capacity,
       roomTypes: accom.roomTypes,
@@ -195,7 +195,7 @@ export async function POST(request: NextRequest) {
 
 // Helper function to map database enum to frontend type
 function mapAccommodationTypeToFrontend(type: string): 'on-campus' | 'off-campus' | 'private' | 'college' {
-  const mapping: Record<string, any> = {
+  const mapping: Record<string, 'on-campus' | 'off-campus' | 'private' | 'college'> = {
     'ON_CAMPUS': 'on-campus',
     'OFF_CAMPUS': 'off-campus',
     'PRIVATE': 'private',
@@ -206,7 +206,7 @@ function mapAccommodationTypeToFrontend(type: string): 'on-campus' | 'off-campus
 
 // Helper function to map database enum to frontend type
 function mapPricePeriodToFrontend(period: string): 'week' | 'month' | 'semester' | 'year' {
-  const mapping: Record<string, any> = {
+  const mapping: Record<string, 'week' | 'month' | 'semester' | 'year'> = {
     'WEEK': 'week',
     'MONTH': 'month',
     'SEMESTER': 'semester',

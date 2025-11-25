@@ -58,8 +58,8 @@ export async function POST(request: NextRequest) {
     });
 
     // Log logout event if user was authenticated
-    if (userInfo) {
-      await logLogout(request, userInfo);
+    if (userInfo && userInfo.name) {
+      await logLogout(request, userInfo as { id: string; email: string; name: string });
     }
 
     // TODO: Add token to blacklist in production

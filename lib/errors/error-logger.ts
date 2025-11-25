@@ -26,9 +26,9 @@ class ErrorLogger {
     const errorLog: ErrorLog = {
       timestamp: new Date(),
       error,
-      context,
+      ...(context ? { context } : {}),
       severity,
-      url: typeof window !== 'undefined' ? window.location.href : undefined,
+      ...(typeof window !== 'undefined' ? { url: window.location.href } : {}),
     };
 
     this.logs.push(errorLog);

@@ -65,11 +65,12 @@ export async function rateLimit(
     };
   } catch (error: unknown) {
     if (error instanceof Error && 'msBeforeNext' in error) {
+      const msBeforeNext = (error as any).msBeforeNext as number;
       return {
         success: false,
         limit: limiter.points,
         remaining: 0,
-        reset: new Date(Date.now() + error.msBeforeNext),
+        reset: new Date(Date.now() + msBeforeNext),
       };
     }
 

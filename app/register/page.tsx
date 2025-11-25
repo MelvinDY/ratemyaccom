@@ -389,7 +389,7 @@ export default function RegisterPage() {
             <Button
               type="submit"
               className="w-full bg-gradient-to-r from-lyra-purple-start to-lyra-purple-end hover:opacity-90 transition-opacity text-white font-semibold py-2"
-              disabled={isLoading}
+              loading={isLoading}
             >
               {isLoading ? 'Creating account...' : 'Create Account'}
             </Button>

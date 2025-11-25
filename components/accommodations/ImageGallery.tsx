@@ -51,14 +51,14 @@ export default function ImageGallery({ images, name }: ImageGalleryProps) {
           aria-label={`View ${name} photos in gallery`}
         >
           <div className="absolute inset-0 bg-gradient-to-br from-charcoal-light to-charcoal flex items-center justify-center">
-            {displayImages[selectedIndex].startsWith('/images/') ? (
+            {(displayImages[selectedIndex] ?? '').startsWith('/images/') ? (
               <div className="flex flex-col items-center text-white/40">
                 <ImageIcon className="w-16 h-16 mb-2" />
                 <span className="text-sm">Image coming soon</span>
               </div>
             ) : (
               <Image
-                src={displayImages[selectedIndex]}
+                src={displayImages[selectedIndex] ?? '/images/placeholder-accommodation.jpg'}
                 alt={`${name} - Photo ${selectedIndex + 1}`}
                 fill
                 className="object-cover transition-transform duration-300 group-hover:scale-105"
@@ -170,14 +170,14 @@ export default function ImageGallery({ images, name }: ImageGalleryProps) {
             aria-label={`${name} - Photo ${selectedIndex + 1} of ${displayImages.length}`}
           >
             <div className="relative w-full h-full flex items-center justify-center">
-              {displayImages[selectedIndex].startsWith('/images/') ? (
+              {(displayImages[selectedIndex] ?? '').startsWith('/images/') ? (
                 <div className="flex flex-col items-center text-white/40">
                   <ImageIcon className="w-24 h-24 mb-4" />
                   <span className="text-lg">Image coming soon</span>
                 </div>
               ) : (
                 <Image
-                  src={displayImages[selectedIndex]}
+                  src={displayImages[selectedIndex] ?? '/images/placeholder-accommodation.jpg'}
                   alt={`${name} - Photo ${selectedIndex + 1}`}
                   fill
                   className="object-contain"

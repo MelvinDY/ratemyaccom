@@ -5,7 +5,6 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { accommodationRepository } from '@/lib/database/repositories/accommodation.repository';
-import { reviewRepository } from '@/lib/database/repositories/review.repository';
 
 export const dynamic = 'force-dynamic';
 

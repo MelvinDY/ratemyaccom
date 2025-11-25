@@ -69,11 +69,16 @@ export function verifyToken(token: string): JWTPayload | null {
     }
 
     return null;
-  } catch (error) {
+  } catch {
     // Token is invalid or expired
     return null;
   }
 }
+
+/**
+ * Alias for verifyToken - verify access token
+ */
+export const verifyAccessToken = verifyToken;
 
 /**
  * Generate email verification token
@@ -106,7 +111,7 @@ export function verifyVerificationToken(token: string): string | null {
     }
 
     return null;
-  } catch (error) {
+  } catch {
     return null;
   }
 }
@@ -142,7 +147,7 @@ export function verifyPasswordResetToken(token: string): string | null {
     }
 
     return null;
-  } catch (error) {
+  } catch {
     return null;
   }
 }

@@ -40,9 +40,7 @@ export const AccommodationSchema = z.object({
   // Required location fields
   address: z.string().min(5, 'Address must be at least 5 characters'),
   suburb: z.string().min(2, 'Suburb required'),
-  state: z.enum(AustralianStates, {
-    errorMap: () => ({ message: 'Must be a valid Australian state code (NSW, VIC, QLD, etc.)' }),
-  }),
+  state: z.enum(AustralianStates),
   postcode: z.string().regex(/^\d{4}$/, 'Postcode must be 4 digits'),
 
   // Optional location fields
@@ -282,7 +280,7 @@ export function validateAmenities(amenities: string[]): string[] {
     .filter((a): a is string => a !== null);
 
   // Remove duplicates
-  return [...new Set(normalized)];
+  return Array.from(new Set(normalized));
 }
 
 /**

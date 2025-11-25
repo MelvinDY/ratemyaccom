@@ -4,25 +4,15 @@
  * UniLodge is a major student accommodation provider across Australia
  */
 
-import { chromium, Page } from 'playwright';
-import { BaseScraper, ScrapedAccommodation, ScraperConfig } from '../base-scraper';
+import { chromium } from 'playwright';
+import { BaseScraper, ScrapedAccommodation, ScraperConfig, AccommodationType, PricePeriod } from '../base-scraper';
 import { prisma } from '@/lib/database/prisma';
 import { logger } from '../logger';
 import {
-  extractText,
-  extractTextMultiple,
-  extractAllText,
-  extractImages,
-  extractPriceRange,
-  extractEmail,
-  extractPhone,
-  cleanText,
   generateSlug,
-  waitForSelector,
   delay,
-  parseAustralianAddress,
 } from '../utils/helpers';
-import { validateAccommodationData, validateAmenities } from '../utils/validation';
+import { validateAccommodationData } from '../utils/validation';
 
 interface UniLodgeProperty {
   name: string;
@@ -32,7 +22,6 @@ interface UniLodgeProperty {
 }
 
 export class UniLodgeScraper extends BaseScraper {
-  private readonly BASE_URL = 'https://www.unilodge.com.au';
 
   constructor() {
     const config: ScraperConfig = {
@@ -106,7 +95,7 @@ export class UniLodgeScraper extends BaseScraper {
             const validation = validateAccommodationData(data);
 
             if (validation.success && validation.data) {
-              const result = await this.importAccommodation(validation.data);
+              const result = await this.importAccommodation(data);
 
               if (result.success) {
                 stats.imported++;
@@ -119,7 +108,7 @@ export class UniLodgeScraper extends BaseScraper {
               }
             } else {
               stats.failed++;
-              const errors = validation.errors?.errors.map(e => `${e.path.join('.')}: ${e.message}`).join(', ');
+              const errors = validation.errors?.issues.map((e) => `${e.path.join('.')}: ${e.message}`).join(', ');
               await this.logImport('SKIP', 'VALIDATION_ERROR', data, undefined, errors);
               logger.error(`❌ Validation failed: ${property.name} - ${errors}`);
             }
@@ -255,23 +244,23 @@ export class UniLodgeScraper extends BaseScraper {
       university: property.university,
       address: details.address!,
       suburb: details.suburb!,
-      state: details.state as any,
+      state: details.state!,
       postcode: details.postcode!,
       description: details.description!,
-      type: details.type!,
+      type: details.type as AccommodationType,
       images: [],
       priceMin: details.priceMin!,
       priceMax: details.priceMax!,
-      pricePeriod: details.pricePeriod!,
+      pricePeriod: details.pricePeriod as PricePeriod,
       capacity: details.capacity,
       roomTypes: details.roomTypes!,
       contactInfo: details.contactInfo!,
       amenities: details.amenities || [],
       sourceUrl: property.url || 'https://www.unilodge.com.au',
-    };
+    } as ScrapedAccommodation;
   }
 
-  protected async extractAccommodationData(page: Page): Promise<ScrapedAccommodation | null> {
+  protected async extractAccommodationData(_page: unknown): Promise<ScrapedAccommodation | null> {
     // Not used for UniLodge as we're using predefined data
     return null;
   }

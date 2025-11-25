@@ -125,7 +125,7 @@ export default function SupportPage() {
       y: 0,
       transition: {
         duration: 0.5,
-        ease: [0.22, 1, 0.36, 1],
+        ease: [0.22, 1, 0.36, 1] as const,
       },
     },
   };
@@ -353,7 +353,7 @@ export default function SupportPage() {
 
                     <Button
                       type="submit"
-                      disabled={isSubmitting}
+                      loading={isSubmitting}
                       className="w-full h-12 bg-gradient-to-r from-blue-600 to-indigo-600 hover:opacity-90 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all"
                     >
                       {isSubmitting ? (

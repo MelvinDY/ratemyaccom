@@ -43,15 +43,17 @@ function arrayBufferToHex(buffer: ArrayBuffer): string {
  * This creates a cryptographically secure hash that ties the token to the secret
  */
 export async function signCsrfToken(token: string): Promise<string> {
+  const keyData = stringToUint8Array(CSRF_SECRET);
   const key = await crypto.subtle.importKey(
     'raw',
-    stringToUint8Array(CSRF_SECRET),
+    keyData.buffer as ArrayBuffer,
     { name: 'HMAC', hash: 'SHA-256' },
     false,
     ['sign']
   );
 
-  const signature = await crypto.subtle.sign('HMAC', key, stringToUint8Array(token));
+  const tokenData = stringToUint8Array(token);
+  const signature = await crypto.subtle.sign('HMAC', key, tokenData.buffer as ArrayBuffer);
 
   return arrayBufferToHex(signature);
 }
@@ -64,9 +66,10 @@ export async function verifyCsrfToken(token: string, signature: string): Promise
     const expectedSignature = await signCsrfToken(token);
 
     // Timing-safe comparison using Web Crypto API
+    const keyData = stringToUint8Array(CSRF_SECRET);
     const key = await crypto.subtle.importKey(
       'raw',
-      stringToUint8Array(CSRF_SECRET),
+      keyData.buffer as ArrayBuffer,
       { name: 'HMAC', hash: 'SHA-256' },
       false,
       ['verify']
@@ -77,11 +80,12 @@ export async function verifyCsrfToken(token: string, signature: string): Promise
       signature.match(/.{1,2}/g)?.map((byte) => parseInt(byte, 16)) || []
     );
 
+    const tokenData = stringToUint8Array(token);
     const isValid = await crypto.subtle.verify(
       'HMAC',
       key,
-      signatureArray,
-      stringToUint8Array(token)
+      signatureArray.buffer as ArrayBuffer,
+      tokenData.buffer as ArrayBuffer
     );
 
     // Double check with string comparison as fallback
@@ -114,7 +118,7 @@ export async function validateCsrfToken(fullToken: string): Promise<boolean> {
     return false;
   }
 
-  const [token, signature] = parts;
+  const [token, signature] = parts as [string, string];
   return verifyCsrfToken(token, signature);
 }
 

@@ -55,7 +55,7 @@ export class AccommodationImporter {
       const validationResult = AccommodationImportSchema.safeParse(data);
 
       if (!validationResult.success) {
-        const errors = validationResult.error.errors.map(e => `${e.path.join('.')}: ${e.message}`);
+        const errors = validationResult.error.issues.map((e: any) => `${e.path.join('.')}: ${e.message}`);
         await this.logImport('ERROR', 'VALIDATION_ERROR', data, undefined, errors.join(', '));
         return {
           success: false,
@@ -93,8 +93,8 @@ export class AccommodationImporter {
         suburb: validated.suburb,
         state: validated.state,
         postcode: validated.postcode,
-        latitude: validated.latitude,
-        longitude: validated.longitude,
+        ...(validated.latitude !== undefined ? { latitude: validated.latitude } : {}),
+        ...(validated.longitude !== undefined ? { longitude: validated.longitude } : {}),
         description: validated.description,
         type: this.mapAccommodationType(validated.type),
         images: validated.images,
@@ -103,8 +103,8 @@ export class AccommodationImporter {
         pricePeriod: validated.pricePeriod.toUpperCase() as PricePeriod,
         capacity: validated.capacity || 100,
         roomTypes: validated.roomTypes,
-        contactInfo: validated.contactInfo as Prisma.JsonValue,
-        sourceUrl: validated.sourceUrl,
+        contactInfo: validated.contactInfo as any,
+        ...(validated.sourceUrl ? { sourceUrl: validated.sourceUrl } : {}),
         scrapedAt: new Date(),
       };
 
@@ -188,7 +188,7 @@ export class AccommodationImporter {
   /**
    * Import from JSON file
    */
-  async importFromJSON(filePath: string): Promise<ImportStats | ImportResult> {
+  async importFromJSON(filePath: string): Promise<ReturnType<typeof this.importMany> | ImportResult> {
     const fs = await import('fs/promises');
     const fileContent = await fs.readFile(filePath, 'utf-8');
     const data = JSON.parse(fileContent);
@@ -203,7 +203,7 @@ export class AccommodationImporter {
   /**
    * Import from CSV file
    */
-  async importFromCSV(_filePath: string): Promise<ImportStats> {
+  async importFromCSV(_filePath: string): Promise<ReturnType<typeof this.importMany>> {
     // TODO: Implement CSV parsing
     // You can use libraries like 'csv-parse' or 'papaparse'
     throw new Error('CSV import not yet implemented');
@@ -284,11 +284,11 @@ export class AccommodationImporter {
         source: 'manual-import',
         action,
         entityType: 'accommodation',
-        entityId,
-        rawData,
-        processedData,
+        ...(entityId ? { entityId } : {}),
+        rawData: rawData as any,
+        processedData: processedData as any,
         status,
-        errorMessage,
+        ...(errorMessage ? { errorMessage } : {}),
       },
     });
   }

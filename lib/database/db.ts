@@ -7,24 +7,16 @@ import { Pool, PoolClient, QueryResult } from 'pg';
 
 let pool: Pool | null = null;
 
-interface DBConfig {
-  connectionString: string;
-  ssl?: boolean;
-  max?: number;
-  min?: number;
-  idleTimeoutMillis?: number;
-  connectionTimeoutMillis?: number;
-}
-
 /**
  * Get or create database connection pool
  * Optimized for Vercel serverless functions
  */
 export function getPool(): Pool {
   if (!pool) {
-    const config: DBConfig = {
+    const sslConfig = process.env.DATABASE_SSL === 'true' ? { rejectUnauthorized: false } : undefined;
+    const config: any = {
       connectionString: process.env.DATABASE_URL!,
-      ssl: process.env.DATABASE_SSL === 'true' ? { rejectUnauthorized: false } : false,
+      ...(sslConfig ? { ssl: sslConfig } : {}),
       max: parseInt(process.env.DATABASE_POOL_MAX || '10'),
       min: parseInt(process.env.DATABASE_POOL_MIN || '2'),
       idleTimeoutMillis: 30000,
@@ -46,13 +38,13 @@ export function getPool(): Pool {
 /**
  * Execute a database query with connection from pool
  */
-export async function query<T = unknown>(
+export async function query(
   text: string,
   params?: unknown[]
-): Promise<QueryResult<T>> {
+): Promise<QueryResult> {
   const client = getPool();
   try {
-    return await client.query<T>(text, params);
+    return await client.query(text, params);
   } catch (error) {
     console.error('Database query error:', error);
     throw error;

@@ -29,7 +29,7 @@ async function generateReport() {
     if (!acc[accom.university]) {
       acc[accom.university] = [];
     }
-    acc[accom.university].push(accom);
+    acc[accom.university]!.push(accom);
     return acc;
   }, {} as AccommodationGroup);
 
