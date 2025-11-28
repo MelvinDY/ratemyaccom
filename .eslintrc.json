@@ -11,7 +11,8 @@
       "error",
       {
         "argsIgnorePattern": "^_",
-        "varsIgnorePattern": "^_"
+        "varsIgnorePattern": "^_",
+        "caughtErrorsIgnorePattern": "^_"
       }
     ],
     "@typescript-eslint/no-explicit-any": "error",
@@ -38,6 +39,18 @@
       "rules": {
         "@typescript-eslint/no-require-imports": "off",
         "no-console": "off"
+      }
+    },
+    {
+      "files": ["lib/**/*.ts"],
+      "rules": {
+        "@typescript-eslint/no-explicit-any": "warn"
+      }
+    },
+    {
+      "files": ["app/api/**/*.ts"],
+      "rules": {
+        "@typescript-eslint/no-explicit-any": "warn"
       }
     }
   ]

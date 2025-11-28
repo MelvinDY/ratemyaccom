@@ -16,10 +16,7 @@ export const dynamic = 'force-dynamic';
  * Fetch user profile information (public data only)
  * KAN-18
  */
-export async function GET(
-  _request: NextRequest,
-  { params }: { params: { id: string } }
-) {
+export async function GET(_request: NextRequest, { params }: { params: { id: string } }) {
   try {
     const userId = params.id;
 
@@ -107,10 +104,7 @@ export async function GET(
  * Update user profile
  * KAN-19
  */
-export async function PUT(
-  request: NextRequest,
-  { params }: { params: { id: string } }
-) {
+export async function PUT(request: NextRequest, { params }: { params: { id: string } }) {
   try {
     const userId = params.id;
 
@@ -148,8 +142,12 @@ export async function PUT(
       updatedAt: new Date(),
     };
 
-    if (name) updateData.name = name;
-    if (university) updateData.university = university;
+    if (name) {
+      updateData.name = name;
+    }
+    if (university) {
+      updateData.university = university;
+    }
 
     // Update user
     const updatedUser = await prisma.user.update({

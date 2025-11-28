@@ -17,10 +17,7 @@ interface ReportRequest {
 
 const REPORT_THRESHOLD = 5; // Auto-hide review after 5 reports
 
-export async function POST(
-  request: NextRequest,
-  { params }: { params: { id: string } }
-) {
+export async function POST(request: NextRequest, { params }: { params: { id: string } }) {
   try {
     const reviewId = params.id;
 
@@ -28,7 +25,7 @@ export async function POST(
     let user;
     try {
       user = await requireAuth(request);
-    } catch (error) {
+    } catch {
       return NextResponse.json(
         {
           success: false,

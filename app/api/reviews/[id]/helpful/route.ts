@@ -14,17 +14,14 @@ export const dynamic = 'force-dynamic';
 // In a production app, you'd want a proper junction table
 // For now, we'll use a simple approach with JSON tracking
 
-export async function POST(
-  request: NextRequest,
-  { params }: { params: { id: string } }
-) {
+export async function POST(request: NextRequest, { params }: { params: { id: string } }) {
   try {
     const reviewId = params.id;
 
     // Authenticate user
     try {
       await requireAuth(request);
-    } catch (error) {
+    } catch {
       return NextResponse.json(
         {
           success: false,

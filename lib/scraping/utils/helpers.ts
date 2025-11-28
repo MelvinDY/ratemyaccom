@@ -19,7 +19,9 @@ export function generateSlug(text: string): string {
  * Clean and normalize text
  */
 export function cleanText(text: string | null | undefined): string {
-  if (!text) return '';
+  if (!text) {
+    return '';
+  }
   return text
     .replace(/\s+/g, ' ')
     .replace(/[\r\n\t]/g, ' ')
@@ -56,7 +58,9 @@ export function extractPriceRange(text: string): { min: number; max: number } | 
     }
   }
 
-  if (prices.length === 0) return null;
+  if (prices.length === 0) {
+    return null;
+  }
 
   return {
     min: Math.min(...prices),
@@ -114,10 +118,12 @@ export async function extractText(
 ): Promise<string> {
   try {
     const element = await page.$(selector);
-    if (!element) return defaultValue;
+    if (!element) {
+      return defaultValue;
+    }
     const text = await element.textContent();
     return cleanText(text) || defaultValue;
-  } catch (error) {
+  } catch {
     return defaultValue;
   }
 }
@@ -132,7 +138,9 @@ export async function extractTextMultiple(
 ): Promise<string> {
   for (const selector of selectors) {
     const text = await extractText(page, selector);
-    if (text) return text;
+    if (text) {
+      return text;
+    }
   }
   return defaultValue;
 }
@@ -148,10 +156,12 @@ export async function extractAttribute(
 ): Promise<string> {
   try {
     const element = await page.$(selector);
-    if (!element) return defaultValue;
+    if (!element) {
+      return defaultValue;
+    }
     const value = await element.getAttribute(attribute);
     return value || defaultValue;
-  } catch (error) {
+  } catch {
     return defaultValue;
   }
 }
@@ -161,12 +171,10 @@ export async function extractAttribute(
  */
 export async function extractAllText(page: Page, selector: string): Promise<string[]> {
   try {
-    return await page.$$eval(selector, elements =>
-      elements
-        .map(el => el.textContent?.trim())
-        .filter((text): text is string => !!text)
+    return await page.$$eval(selector, (elements) =>
+      elements.map((el) => el.textContent?.trim()).filter((text): text is string => !!text)
     );
-  } catch (error) {
+  } catch {
     return [];
   }
 }
@@ -174,19 +182,16 @@ export async function extractAllText(page: Page, selector: string): Promise<stri
 /**
  * Extract image URLs from page
  */
-export async function extractImages(
-  page: Page,
-  selector: string = 'img'
-): Promise<string[]> {
+export async function extractImages(page: Page, selector: string = 'img'): Promise<string[]> {
   try {
-    const images = await page.$$eval(selector, imgs =>
+    const images = await page.$$eval(selector, (imgs) =>
       imgs
-        .map(img => (img as HTMLImageElement).src)
-        .filter(src => src && !src.includes('data:image'))
+        .map((img) => (img as HTMLImageElement).src)
+        .filter((src) => src && !src.includes('data:image'))
     );
 
-    return images.filter(url => isValidImageUrl(url));
-  } catch (error) {
+    return images.filter((url) => isValidImageUrl(url));
+  } catch {
     return [];
   }
 }
@@ -195,7 +200,9 @@ export async function extractImages(
  * Validate image URL
  */
 export function isValidImageUrl(url: string): boolean {
-  if (!url) return false;
+  if (!url) {
+    return false;
+  }
 
   try {
     new URL(url);
@@ -205,13 +212,11 @@ export function isValidImageUrl(url: string): boolean {
 
   // Check for valid image extensions
   const validExtensions = ['.jpg', '.jpeg', '.png', '.webp', '.gif'];
-  const hasValidExt = validExtensions.some(ext => url.toLowerCase().includes(ext));
+  const hasValidExt = validExtensions.some((ext) => url.toLowerCase().includes(ext));
 
   // Exclude common non-accommodation images
   const excludePatterns = ['logo', 'icon', 'favicon', 'avatar', 'placeholder'];
-  const hasExcludedPattern = excludePatterns.some(pattern =>
-    url.toLowerCase().includes(pattern)
-  );
+  const hasExcludedPattern = excludePatterns.some((pattern) => url.toLowerCase().includes(pattern));
 
   return hasValidExt && !hasExcludedPattern;
 }
@@ -266,7 +271,7 @@ export async function scrollToLoadImages(page: Page): Promise<void> {
 
     while (currentPosition < scrollHeight) {
       window.scrollTo(0, currentPosition);
-      await new Promise(resolve => setTimeout(resolve, 300));
+      await new Promise((resolve) => setTimeout(resolve, 300));
       currentPosition += viewportHeight;
     }
 
@@ -297,7 +302,9 @@ export function extractPhone(text: string): string | null {
 
   for (const pattern of patterns) {
     const match = text.match(pattern);
-    if (match) return match[0].replace(/\s+/g, ' ').trim();
+    if (match) {
+      return match[0].replace(/\s+/g, ' ').trim();
+    }
   }
 
   return null;
@@ -307,7 +314,7 @@ export function extractPhone(text: string): string | null {
  * Delay execution for rate limiting
  */
 export function delay(ms: number): Promise<void> {
-  return new Promise(resolve => setTimeout(resolve, ms));
+  return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
 /**

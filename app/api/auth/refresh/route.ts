@@ -36,7 +36,7 @@ export async function POST(request: NextRequest) {
         issuer: 'ratemyaccom',
         audience: 'ratemyaccom-api',
       });
-    } catch (error) {
+    } catch {
       return NextResponse.json(
         {
           success: false,

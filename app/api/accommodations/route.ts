@@ -25,10 +25,10 @@ function parseAccommodationType(type: string): AccommodationType {
   const typeMap: Record<string, AccommodationType> = {
     'on-campus': 'ON_CAMPUS',
     'off-campus': 'OFF_CAMPUS',
-    'private': 'PRIVATE',
-    'college': 'COLLEGE',
+    private: 'PRIVATE',
+    college: 'COLLEGE',
   };
-  return typeMap[type.toLowerCase()] || type.toUpperCase().replace('-', '_') as AccommodationType;
+  return typeMap[type.toLowerCase()] || (type.toUpperCase().replace('-', '_') as AccommodationType);
 }
 
 export async function GET(request: NextRequest) {
@@ -111,11 +111,7 @@ export async function GET(request: NextRequest) {
           },
         },
       },
-      orderBy: [
-        { featured: 'desc' },
-        { verified: 'desc' },
-        { ratingOverall: 'desc' },
-      ],
+      orderBy: [{ featured: 'desc' }, { verified: 'desc' }, { ratingOverall: 'desc' }],
     });
 
     // Transform to match frontend interface
@@ -129,12 +125,13 @@ export async function GET(request: NextRequest) {
         suburb: accom.suburb,
         state: accom.state,
         postcode: accom.postcode,
-        ...(accom.latitude && accom.longitude && {
-          coordinates: {
-            lat: accom.latitude,
-            lng: accom.longitude,
-          },
-        }),
+        ...(accom.latitude &&
+          accom.longitude && {
+            coordinates: {
+              lat: accom.latitude,
+              lng: accom.longitude,
+            },
+          }),
       },
       description: accom.description,
       type: convertAccommodationType(accom.type),
@@ -227,7 +224,7 @@ export async function POST(request: NextRequest) {
           { status: 403 }
         );
       }
-    } catch (error) {
+    } catch {
       return NextResponse.json(
         {
           success: false,
@@ -262,12 +259,22 @@ export async function POST(request: NextRequest) {
     } = body;
 
     // Validate required fields
-    if (!name || !university || !address || !suburb || !state || !postcode || !description || !type) {
+    if (
+      !name ||
+      !university ||
+      !address ||
+      !suburb ||
+      !state ||
+      !postcode ||
+      !description ||
+      !type
+    ) {
       return NextResponse.json(
         {
           success: false,
           error: 'Missing required fields',
-          message: 'Name, university, address, suburb, state, postcode, description, and type are required',
+          message:
+            'Name, university, address, suburb, state, postcode, description, and type are required',
         },
         { status: 400 }
       );

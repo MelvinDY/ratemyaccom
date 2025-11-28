@@ -17,10 +17,7 @@ export const dynamic = 'force-dynamic';
  * Create a review for an accommodation
  * KAN-8
  */
-export async function POST(
-  request: NextRequest,
-  { params }: { params: { id: string } }
-) {
+export async function POST(request: NextRequest, { params }: { params: { id: string } }) {
   try {
     const accommodationId = params.id;
 
@@ -28,7 +25,7 @@ export async function POST(
     let user;
     try {
       user = await requireAuth(request);
-    } catch (error) {
+    } catch {
       return NextResponse.json(
         {
           success: false,
@@ -56,16 +53,7 @@ export async function POST(
     }
 
     const body = await request.json();
-    const {
-      rating,
-      ratingBreakdown,
-      title,
-      text,
-      pros,
-      cons,
-      roomType,
-      stayDuration,
-    } = body;
+    const { rating, ratingBreakdown, title, text, pros, cons, roomType, stayDuration } = body;
 
     // Validate required fields
     if (!rating || !ratingBreakdown || !title || !text) {
@@ -162,7 +150,8 @@ export async function POST(
 
     const totalReviews = allReviews.length;
     const avgRating = allReviews.reduce((sum, r) => sum + r.rating, 0) / totalReviews;
-    const avgCleanliness = allReviews.reduce((sum, r) => sum + r.ratingCleanliness, 0) / totalReviews;
+    const avgCleanliness =
+      allReviews.reduce((sum, r) => sum + r.ratingCleanliness, 0) / totalReviews;
     const avgLocation = allReviews.reduce((sum, r) => sum + r.ratingLocation, 0) / totalReviews;
     const avgValue = allReviews.reduce((sum, r) => sum + r.ratingValue, 0) / totalReviews;
     const avgAmenities = allReviews.reduce((sum, r) => sum + r.ratingAmenities, 0) / totalReviews;
@@ -235,10 +224,7 @@ export async function POST(
  * Get reviews for an accommodation with filtering and pagination
  * KAN-9
  */
-export async function GET(
-  request: NextRequest,
-  { params }: { params: { id: string } }
-) {
+export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
   try {
     const accommodationId = params.id;
     const { searchParams } = new URL(request.url);

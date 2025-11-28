@@ -16,10 +16,7 @@ export const dynamic = 'force-dynamic';
  * Update a review
  * KAN-10
  */
-export async function PUT(
-  request: NextRequest,
-  { params }: { params: { id: string } }
-) {
+export async function PUT(request: NextRequest, { params }: { params: { id: string } }) {
   try {
     const reviewId = params.id;
 
@@ -27,7 +24,7 @@ export async function PUT(
     let user;
     try {
       user = await requireAuth(request);
-    } catch (error) {
+    } catch {
       return NextResponse.json(
         {
           success: false,
@@ -67,16 +64,7 @@ export async function PUT(
     }
 
     const body = await request.json();
-    const {
-      rating,
-      ratingBreakdown,
-      title,
-      text,
-      pros,
-      cons,
-      roomType,
-      stayDuration,
-    } = body;
+    const { rating, ratingBreakdown, title, text, pros, cons, roomType, stayDuration } = body;
 
     // Build update object
     const updateData: any = {
@@ -98,26 +86,44 @@ export async function PUT(
     }
 
     if (ratingBreakdown) {
-      if (ratingBreakdown.cleanliness !== undefined)
+      if (ratingBreakdown.cleanliness !== undefined) {
         updateData.ratingCleanliness = ratingBreakdown.cleanliness;
-      if (ratingBreakdown.location !== undefined)
+      }
+      if (ratingBreakdown.location !== undefined) {
         updateData.ratingLocation = ratingBreakdown.location;
-      if (ratingBreakdown.value !== undefined)
+      }
+      if (ratingBreakdown.value !== undefined) {
         updateData.ratingValue = ratingBreakdown.value;
-      if (ratingBreakdown.amenities !== undefined)
+      }
+      if (ratingBreakdown.amenities !== undefined) {
         updateData.ratingAmenities = ratingBreakdown.amenities;
-      if (ratingBreakdown.management !== undefined)
+      }
+      if (ratingBreakdown.management !== undefined) {
         updateData.ratingManagement = ratingBreakdown.management;
-      if (ratingBreakdown.safety !== undefined)
+      }
+      if (ratingBreakdown.safety !== undefined) {
         updateData.ratingSafety = ratingBreakdown.safety;
+      }
     }
 
-    if (title !== undefined) updateData.title = title;
-    if (text !== undefined) updateData.text = text;
-    if (pros !== undefined) updateData.pros = pros;
-    if (cons !== undefined) updateData.cons = cons;
-    if (roomType !== undefined) updateData.roomType = roomType;
-    if (stayDuration !== undefined) updateData.stayDuration = stayDuration;
+    if (title !== undefined) {
+      updateData.title = title;
+    }
+    if (text !== undefined) {
+      updateData.text = text;
+    }
+    if (pros !== undefined) {
+      updateData.pros = pros;
+    }
+    if (cons !== undefined) {
+      updateData.cons = cons;
+    }
+    if (roomType !== undefined) {
+      updateData.roomType = roomType;
+    }
+    if (stayDuration !== undefined) {
+      updateData.stayDuration = stayDuration;
+    }
 
     // Update review
     const updatedReview = await prisma.review.update({
@@ -145,11 +151,13 @@ export async function PUT(
 
       const totalReviews = allReviews.length;
       const avgRating = allReviews.reduce((sum, r) => sum + r.rating, 0) / totalReviews;
-      const avgCleanliness = allReviews.reduce((sum, r) => sum + r.ratingCleanliness, 0) / totalReviews;
+      const avgCleanliness =
+        allReviews.reduce((sum, r) => sum + r.ratingCleanliness, 0) / totalReviews;
       const avgLocation = allReviews.reduce((sum, r) => sum + r.ratingLocation, 0) / totalReviews;
       const avgValue = allReviews.reduce((sum, r) => sum + r.ratingValue, 0) / totalReviews;
       const avgAmenities = allReviews.reduce((sum, r) => sum + r.ratingAmenities, 0) / totalReviews;
-      const avgManagement = allReviews.reduce((sum, r) => sum + r.ratingManagement, 0) / totalReviews;
+      const avgManagement =
+        allReviews.reduce((sum, r) => sum + r.ratingManagement, 0) / totalReviews;
       const avgSafety = allReviews.reduce((sum, r) => sum + r.ratingSafety, 0) / totalReviews;
 
       await prisma.accommodation.update({
@@ -217,10 +225,7 @@ export async function PUT(
  * Delete a review
  * KAN-11
  */
-export async function DELETE(
-  request: NextRequest,
-  { params }: { params: { id: string } }
-) {
+export async function DELETE(request: NextRequest, { params }: { params: { id: string } }) {
   try {
     const reviewId = params.id;
 
@@ -228,7 +233,7 @@ export async function DELETE(
     let user;
     try {
       user = await requireAuth(request);
-    } catch (error) {
+    } catch {
       return NextResponse.json(
         {
           success: false,
@@ -285,11 +290,15 @@ export async function DELETE(
     if (remainingReviews.length > 0) {
       const totalReviews = remainingReviews.length;
       const avgRating = remainingReviews.reduce((sum, r) => sum + r.rating, 0) / totalReviews;
-      const avgCleanliness = remainingReviews.reduce((sum, r) => sum + r.ratingCleanliness, 0) / totalReviews;
-      const avgLocation = remainingReviews.reduce((sum, r) => sum + r.ratingLocation, 0) / totalReviews;
+      const avgCleanliness =
+        remainingReviews.reduce((sum, r) => sum + r.ratingCleanliness, 0) / totalReviews;
+      const avgLocation =
+        remainingReviews.reduce((sum, r) => sum + r.ratingLocation, 0) / totalReviews;
       const avgValue = remainingReviews.reduce((sum, r) => sum + r.ratingValue, 0) / totalReviews;
-      const avgAmenities = remainingReviews.reduce((sum, r) => sum + r.ratingAmenities, 0) / totalReviews;
-      const avgManagement = remainingReviews.reduce((sum, r) => sum + r.ratingManagement, 0) / totalReviews;
+      const avgAmenities =
+        remainingReviews.reduce((sum, r) => sum + r.ratingAmenities, 0) / totalReviews;
+      const avgManagement =
+        remainingReviews.reduce((sum, r) => sum + r.ratingManagement, 0) / totalReviews;
       const avgSafety = remainingReviews.reduce((sum, r) => sum + r.ratingSafety, 0) / totalReviews;
 
       await prisma.accommodation.update({

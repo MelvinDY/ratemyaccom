@@ -25,10 +25,7 @@ export async function GET(_request: NextRequest, { params }: { params: { id: str
     // Find by ID or slug
     const accommodation = await prisma.accommodation.findFirst({
       where: {
-        OR: [
-          { id: params.id },
-          { slug: params.id },
-        ],
+        OR: [{ id: params.id }, { slug: params.id }],
       },
       include: {
         amenities: {
@@ -79,12 +76,13 @@ export async function GET(_request: NextRequest, { params }: { params: { id: str
         suburb: accommodation.suburb,
         state: accommodation.state,
         postcode: accommodation.postcode,
-        ...(accommodation.latitude && accommodation.longitude && {
-          coordinates: {
-            lat: accommodation.latitude,
-            lng: accommodation.longitude,
-          },
-        }),
+        ...(accommodation.latitude &&
+          accommodation.longitude && {
+            coordinates: {
+              lat: accommodation.latitude,
+              lng: accommodation.longitude,
+            },
+          }),
       },
       description: accommodation.description,
       type: convertAccommodationType(accommodation.type),
@@ -103,7 +101,11 @@ export async function GET(_request: NextRequest, { params }: { params: { id: str
       },
       capacity: accommodation.capacity,
       roomTypes: accommodation.roomTypes,
-      contactInfo: accommodation.contactInfo as { phone?: string; email?: string; website?: string },
+      contactInfo: accommodation.contactInfo as {
+        phone?: string;
+        email?: string;
+        website?: string;
+      },
       ratings: {
         overall: accommodation.ratingOverall,
         breakdown: {
@@ -175,10 +177,7 @@ export async function GET(_request: NextRequest, { params }: { params: { id: str
  * Update an accommodation
  * KAN-6
  */
-export async function PUT(
-  _request: NextRequest,
-  { params }: { params: { id: string } }
-) {
+export async function PUT(_request: NextRequest, { params }: { params: { id: string } }) {
   try {
     const request = _request;
     const accommodationId = params.id;
@@ -201,7 +200,7 @@ export async function PUT(
           { status: 403 }
         );
       }
-    } catch (error) {
+    } catch {
       return NextResponse.json(
         {
           success: false,
@@ -259,36 +258,78 @@ export async function PUT(
       updatedAt: new Date(),
     };
 
-    if (name !== undefined) updateData.name = name;
-    if (university !== undefined) updateData.university = university;
-    if (address !== undefined) updateData.address = address;
-    if (suburb !== undefined) updateData.suburb = suburb;
-    if (state !== undefined) updateData.state = state;
-    if (postcode !== undefined) updateData.postcode = postcode;
-    if (latitude !== undefined) updateData.latitude = latitude;
-    if (longitude !== undefined) updateData.longitude = longitude;
-    if (description !== undefined) updateData.description = description;
+    if (name !== undefined) {
+      updateData.name = name;
+    }
+    if (university !== undefined) {
+      updateData.university = university;
+    }
+    if (address !== undefined) {
+      updateData.address = address;
+    }
+    if (suburb !== undefined) {
+      updateData.suburb = suburb;
+    }
+    if (state !== undefined) {
+      updateData.state = state;
+    }
+    if (postcode !== undefined) {
+      updateData.postcode = postcode;
+    }
+    if (latitude !== undefined) {
+      updateData.latitude = latitude;
+    }
+    if (longitude !== undefined) {
+      updateData.longitude = longitude;
+    }
+    if (description !== undefined) {
+      updateData.description = description;
+    }
     if (type !== undefined) {
       const typeMap: Record<string, any> = {
         'on-campus': 'ON_CAMPUS',
         'off-campus': 'OFF_CAMPUS',
-        'private': 'PRIVATE',
-        'college': 'COLLEGE',
+        private: 'PRIVATE',
+        college: 'COLLEGE',
       };
       updateData.type = typeMap[type.toLowerCase()] || type.toUpperCase().replace('-', '_');
     }
-    if (images !== undefined) updateData.images = images;
-    if (priceMin !== undefined) updateData.priceMin = priceMin;
-    if (priceMax !== undefined) updateData.priceMax = priceMax;
-    if (pricePeriod !== undefined) updateData.pricePeriod = pricePeriod;
-    if (capacity !== undefined) updateData.capacity = capacity;
-    if (roomTypes !== undefined) updateData.roomTypes = roomTypes;
-    if (contactInfo !== undefined) updateData.contactInfo = contactInfo;
-    if (distanceToCampus !== undefined) updateData.distanceToCampus = distanceToCampus;
-    if (distanceToTransport !== undefined) updateData.distanceToTransport = distanceToTransport;
-    if (verified !== undefined) updateData.verified = verified;
-    if (featured !== undefined) updateData.featured = featured;
-    if (active !== undefined) updateData.active = active;
+    if (images !== undefined) {
+      updateData.images = images;
+    }
+    if (priceMin !== undefined) {
+      updateData.priceMin = priceMin;
+    }
+    if (priceMax !== undefined) {
+      updateData.priceMax = priceMax;
+    }
+    if (pricePeriod !== undefined) {
+      updateData.pricePeriod = pricePeriod;
+    }
+    if (capacity !== undefined) {
+      updateData.capacity = capacity;
+    }
+    if (roomTypes !== undefined) {
+      updateData.roomTypes = roomTypes;
+    }
+    if (contactInfo !== undefined) {
+      updateData.contactInfo = contactInfo;
+    }
+    if (distanceToCampus !== undefined) {
+      updateData.distanceToCampus = distanceToCampus;
+    }
+    if (distanceToTransport !== undefined) {
+      updateData.distanceToTransport = distanceToTransport;
+    }
+    if (verified !== undefined) {
+      updateData.verified = verified;
+    }
+    if (featured !== undefined) {
+      updateData.featured = featured;
+    }
+    if (active !== undefined) {
+      updateData.active = active;
+    }
 
     // Update accommodation
     const updatedAccommodation = await prisma.accommodation.update({
@@ -340,10 +381,7 @@ export async function PUT(
  * Delete an accommodation
  * KAN-7
  */
-export async function DELETE(
-  _request: NextRequest,
-  { params }: { params: { id: string } }
-) {
+export async function DELETE(_request: NextRequest, { params }: { params: { id: string } }) {
   try {
     const request = _request;
     const accommodationId = params.id;
@@ -366,7 +404,7 @@ export async function DELETE(
           { status: 403 }
         );
       }
-    } catch (error) {
+    } catch {
       return NextResponse.json(
         {
           success: false,
