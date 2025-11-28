@@ -43,11 +43,21 @@ export default function BrowsePage() {
       });
 
       // Add filters to params
-      if (filters.university) params.append('university', filters.university);
-      if (filters.location) params.append('location', filters.location);
-      if (filters.priceMin) params.append('priceMin', filters.priceMin.toString());
-      if (filters.priceMax) params.append('priceMax', filters.priceMax.toString());
-      if (filters.rating) params.append('rating', filters.rating.toString());
+      if (filters.university) {
+        params.append('university', filters.university);
+      }
+      if (filters.location) {
+        params.append('location', filters.location);
+      }
+      if (filters.priceMin) {
+        params.append('priceMin', filters.priceMin.toString());
+      }
+      if (filters.priceMax) {
+        params.append('priceMax', filters.priceMax.toString());
+      }
+      if (filters.rating) {
+        params.append('rating', filters.rating.toString());
+      }
 
       const response = await fetch(`/api/accommodations?${params.toString()}`);
       const data = await response.json();
@@ -58,10 +68,11 @@ export default function BrowsePage() {
         // Client-side search filtering (since API doesn't support general search)
         if (debouncedQuery) {
           const query = debouncedQuery.toLowerCase();
-          results = results.filter((accom: Accommodation) =>
-            accom.name.toLowerCase().includes(query) ||
-            accom.location.suburb.toLowerCase().includes(query) ||
-            accom.university.toLowerCase().includes(query)
+          results = results.filter(
+            (accom: Accommodation) =>
+              accom.name.toLowerCase().includes(query) ||
+              accom.location.suburb.toLowerCase().includes(query) ||
+              accom.university.toLowerCase().includes(query)
           );
         }
 
@@ -118,10 +129,7 @@ export default function BrowsePage() {
 
           {/* Search Bar */}
           <div className="max-w-3xl mx-auto">
-            <BrowseSearch
-              value={searchQuery}
-              onChange={setSearchQuery}
-            />
+            <BrowseSearch value={searchQuery} onChange={setSearchQuery} />
           </div>
         </div>
       </div>
@@ -158,7 +166,12 @@ export default function BrowsePage() {
 
             {/* Results Grid */}
             {loading ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6" role="status" aria-live="polite" aria-label="Loading accommodations">
+              <div
+                className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6"
+                role="status"
+                aria-live="polite"
+                aria-label="Loading accommodations"
+              >
                 {[...Array(6)].map((_, i) => (
                   <AccommodationCardSkeleton key={i} />
                 ))}
@@ -167,7 +180,11 @@ export default function BrowsePage() {
               <EmptyState onClearFilters={handleClearFilters} />
             ) : (
               <>
-                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6" role="list" aria-label="Accommodation results">
+                <div
+                  className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6"
+                  role="list"
+                  aria-label="Accommodation results"
+                >
                   {accommodations.map((accommodation) => (
                     <div key={accommodation.id} role="listitem">
                       <AccommodationCard accommodation={accommodation} />
@@ -177,7 +194,11 @@ export default function BrowsePage() {
 
                 {/* Pagination */}
                 {totalPages > 1 && (
-                  <div className="mt-12 flex items-center justify-center gap-4" role="navigation" aria-label="Pagination">
+                  <div
+                    className="mt-12 flex items-center justify-center gap-4"
+                    role="navigation"
+                    aria-label="Pagination"
+                  >
                     <Button
                       variant="outline"
                       size="lg"
@@ -216,11 +237,12 @@ export default function BrowsePage() {
                               {page}
                             </Button>
                           );
-                        } else if (
-                          page === currentPage - 2 ||
-                          page === currentPage + 2
-                        ) {
-                          return <span key={page} className="text-white/30">...</span>;
+                        } else if (page === currentPage - 2 || page === currentPage + 2) {
+                          return (
+                            <span key={page} className="text-white/30">
+                              ...
+                            </span>
+                          );
                         }
                         return null;
                       })}

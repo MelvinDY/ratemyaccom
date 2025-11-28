@@ -195,9 +195,7 @@ export function getUserId(request: NextRequest): string | null {
     if (parts.length < 2 || !parts[1]) {
       return null;
     }
-    const payload = JSON.parse(
-      Buffer.from(parts[1], 'base64').toString()
-    );
+    const payload = JSON.parse(Buffer.from(parts[1], 'base64').toString());
     return payload.userId || null;
   } catch {
     return null;
@@ -218,9 +216,7 @@ export function isAdmin(request: NextRequest): boolean {
     if (parts.length < 2 || !parts[1]) {
       return false;
     }
-    const payload = JSON.parse(
-      Buffer.from(parts[1], 'base64').toString()
-    );
+    const payload = JSON.parse(Buffer.from(parts[1], 'base64').toString());
     return payload.role === 'ADMIN' || payload.role === 'MODERATOR';
   } catch {
     return false;
@@ -235,31 +231,57 @@ export function getRateLimitKey(request: NextRequest): string {
   const method = request.method;
 
   // Auth endpoints
-  if (path.includes('/api/auth/login')) return 'auth:login';
-  if (path.includes('/api/auth/register')) return 'auth:register';
-  if (path.includes('/api/auth/verify')) return 'auth:verify';
-  if (path.includes('/api/auth/forgot-password')) return 'auth:forgot-password';
-  if (path.includes('/api/auth/reset-password')) return 'auth:reset-password';
-  if (path.includes('/api/auth/refresh')) return 'auth:refresh';
+  if (path.includes('/api/auth/login')) {
+    return 'auth:login';
+  }
+  if (path.includes('/api/auth/register')) {
+    return 'auth:register';
+  }
+  if (path.includes('/api/auth/verify')) {
+    return 'auth:verify';
+  }
+  if (path.includes('/api/auth/forgot-password')) {
+    return 'auth:forgot-password';
+  }
+  if (path.includes('/api/auth/reset-password')) {
+    return 'auth:reset-password';
+  }
+  if (path.includes('/api/auth/refresh')) {
+    return 'auth:refresh';
+  }
 
   // Review endpoints
   if (path.includes('/api/reviews')) {
-    if (method === 'POST') return 'review:create';
-    if (method === 'PUT' || method === 'PATCH') return 'review:update';
-    if (method === 'DELETE') return 'review:delete';
+    if (method === 'POST') {
+      return 'review:create';
+    }
+    if (method === 'PUT' || method === 'PATCH') {
+      return 'review:update';
+    }
+    if (method === 'DELETE') {
+      return 'review:delete';
+    }
     return 'review:list';
   }
 
   // Accommodation endpoints
   if (path.includes('/api/accommodations')) {
-    if (path.includes('/search')) return 'accommodation:search';
-    if (path.match(/\/api\/accommodations\/[^/]+$/)) return 'accommodation:detail';
+    if (path.includes('/search')) {
+      return 'accommodation:search';
+    }
+    if (path.match(/\/api\/accommodations\/[^/]+$/)) {
+      return 'accommodation:detail';
+    }
     return 'accommodation:list';
   }
 
   // Admin endpoints
-  if (path.includes('/api/admin/unlock')) return 'admin:unlock';
-  if (path.includes('/api/admin')) return 'admin:moderate';
+  if (path.includes('/api/admin/unlock')) {
+    return 'admin:unlock';
+  }
+  if (path.includes('/api/admin')) {
+    return 'admin:moderate';
+  }
 
   // Default fallback
   return 'api:default';
@@ -377,10 +399,7 @@ export function getRateLimitHeaders(result: RateLimitResult): Record<string, str
 /**
  * Reset rate limit for a specific key (admin function)
  */
-export async function resetRateLimit(
-  rateLimitKey: string,
-  identifier: string
-): Promise<void> {
+export async function resetRateLimit(rateLimitKey: string, identifier: string): Promise<void> {
   const limiter = rateLimiters[rateLimitKey];
   if (limiter) {
     const key = `${rateLimitKey}:${identifier}`;

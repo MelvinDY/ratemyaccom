@@ -38,7 +38,8 @@ export class UNSWScraper extends BaseScraper {
       rateLimit: 2000, // 2 seconds between requests
       maxRetries: 3,
       timeout: 30000,
-      userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+      userAgent:
+        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
     };
     super(config);
   }
@@ -106,11 +107,20 @@ export class UNSWScraper extends BaseScraper {
 
             if (validation.success && validation.data) {
               // Import to database
-              const result = await this.importAccommodation(validation.data as ScrapedAccommodation);
+              const result = await this.importAccommodation(
+                validation.data as ScrapedAccommodation
+              );
 
               if (result.success) {
                 stats.imported++;
-                await this.logImport('CREATE', 'SUCCESS', data, validation.data, undefined, result.id);
+                await this.logImport(
+                  'CREATE',
+                  'SUCCESS',
+                  data,
+                  validation.data,
+                  undefined,
+                  result.id
+                );
                 logger.info(`✅ Imported: ${accom.name}`);
               } else {
                 stats.failed++;
@@ -119,7 +129,9 @@ export class UNSWScraper extends BaseScraper {
               }
             } else {
               stats.failed++;
-              const errors = validation.errors?.issues.map((e) => `${e.path.join('.')}: ${e.message}`).join(', ');
+              const errors = validation.errors?.issues
+                .map((e) => `${e.path.join('.')}: ${e.message}`)
+                .join(', ');
               await this.logImport('SKIP', 'VALIDATION_ERROR', data, undefined, errors);
               logger.error(`❌ Validation failed: ${accom.name} - ${errors}`);
             }
@@ -185,12 +197,7 @@ export class UNSWScraper extends BaseScraper {
       const url = page.url();
 
       // Extract basic information
-      const name = await extractTextMultiple(page, [
-        'h1',
-        '.page-title',
-        'header h1',
-        '.title',
-      ]);
+      const name = await extractTextMultiple(page, ['h1', '.page-title', 'header h1', '.title']);
 
       const description = await this.extractDescription(page);
       const images = await this.extractPageImages(page);
@@ -243,14 +250,7 @@ export class UNSWScraper extends BaseScraper {
    */
   private async extractDescription(page: Page): Promise<string> {
     // Try multiple selectors for description
-    const selectors = [
-      '.description',
-      '.overview',
-      '.about',
-      'article p',
-      '.content p',
-      'main p',
-    ];
+    const selectors = ['.description', '.overview', '.about', 'article p', '.content p', 'main p'];
 
     const paragraphs: string[] = [];
 
@@ -258,7 +258,9 @@ export class UNSWScraper extends BaseScraper {
       const texts = await extractAllText(page, selector);
       paragraphs.push(...texts);
 
-      if (paragraphs.join(' ').length > 100) break;
+      if (paragraphs.join(' ').length > 100) {
+        break;
+      }
     }
 
     let description = paragraphs.join(' ');
@@ -279,7 +281,7 @@ export class UNSWScraper extends BaseScraper {
 
     // Filter and convert to absolute URLs
     return images
-      .map(img => {
+      .map((img) => {
         try {
           return new URL(img, this.BASE_URL).toString();
         } catch {
@@ -314,11 +316,20 @@ export class UNSWScraper extends BaseScraper {
     }
 
     // Common UNSW amenities to look for in text
-    const contentText = await page.textContent('body') || '';
+    const contentText = (await page.textContent('body')) || '';
     const commonAmenities = [
-      'WiFi', 'Gym', 'Study Rooms', 'Laundry', 'Common Kitchen',
-      'Parking', 'Security', 'Social Events', 'Meal Plans',
-      '24/7 Reception', 'Cleaning Service', 'Air Conditioning',
+      'WiFi',
+      'Gym',
+      'Study Rooms',
+      'Laundry',
+      'Common Kitchen',
+      'Parking',
+      'Security',
+      'Social Events',
+      'Meal Plans',
+      '24/7 Reception',
+      'Cleaning Service',
+      'Air Conditioning',
     ];
 
     for (const amenity of commonAmenities) {
@@ -337,12 +348,7 @@ export class UNSWScraper extends BaseScraper {
     const roomTypes: string[] = [];
 
     // Try to find room type information
-    const selectors = [
-      '.room-type',
-      '.accommodation-type',
-      '.room-option',
-      '[class*="room"] li',
-    ];
+    const selectors = ['.room-type', '.accommodation-type', '.room-option', '[class*="room"] li'];
 
     for (const selector of selectors) {
       const types = await extractAllText(page, selector);
@@ -350,7 +356,7 @@ export class UNSWScraper extends BaseScraper {
     }
 
     // Look for common room type keywords in content
-    const contentText = await page.textContent('body') || '';
+    const contentText = (await page.textContent('body')) || '';
     const commonTypes = ['Single', 'Twin Share', 'Studio', 'Shared', 'Ensuite', 'Apartment'];
 
     for (const type of commonTypes) {
@@ -382,7 +388,7 @@ export class UNSWScraper extends BaseScraper {
     }
 
     // Also check general content
-    const bodyText = await page.textContent('body') || '';
+    const bodyText = (await page.textContent('body')) || '';
     priceText += ' ' + bodyText;
 
     // Extract price range
@@ -414,7 +420,7 @@ export class UNSWScraper extends BaseScraper {
     email?: string;
     website?: string;
   }> {
-    const bodyText = await page.textContent('body') || '';
+    const bodyText = (await page.textContent('body')) || '';
 
     const email = extractEmail(bodyText);
     const phone = extractPhone(bodyText);
@@ -447,7 +453,7 @@ export class UNSWScraper extends BaseScraper {
    * Extract capacity
    */
   private async extractCapacity(page: Page): Promise<number> {
-    const text = await page.textContent('body') || '';
+    const text = (await page.textContent('body')) || '';
 
     // Look for capacity information
     const match = text.match(/(\d+)\s*(beds?|rooms?|residents?|students?)/i);

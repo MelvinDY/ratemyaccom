@@ -76,7 +76,9 @@ export function getUniversityFromEmail(email: string): string | null {
   const emailLower = email.toLowerCase();
   const domain = emailLower.split('@')[1];
 
-  if (!domain) return null;
+  if (!domain) {
+    return null;
+  }
 
   // Map domains to university names
   const universityMap: Record<string, string> = {

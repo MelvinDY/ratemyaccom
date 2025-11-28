@@ -92,14 +92,27 @@ export class UniversityScraper extends BaseScraper {
 
                 if (result.success) {
                   stats.imported++;
-                  await this.logImport('CREATE', 'SUCCESS', accom, normalized, undefined, result.id);
+                  await this.logImport(
+                    'CREATE',
+                    'SUCCESS',
+                    accom,
+                    normalized,
+                    undefined,
+                    result.id
+                  );
                 } else {
                   stats.failed++;
                   await this.logImport('ERROR', 'FAILED', accom, undefined, result.error);
                 }
               } else {
                 stats.failed++;
-                await this.logImport('SKIP', 'VALIDATION_ERROR', accom, undefined, 'Validation failed');
+                await this.logImport(
+                  'SKIP',
+                  'VALIDATION_ERROR',
+                  accom,
+                  undefined,
+                  'Validation failed'
+                );
               }
             } catch (error) {
               stats.failed++;
@@ -216,7 +229,9 @@ export class UniversityScraper extends BaseScraper {
   private async extractText(page: Page, selector: string): Promise<string> {
     try {
       const element = await page.$(selector);
-      if (!element) return '';
+      if (!element) {
+        return '';
+      }
       return (await element.textContent()) || '';
     } catch {
       return '';
@@ -228,11 +243,10 @@ export class UniversityScraper extends BaseScraper {
    */
   private async extractImages(page: Page): Promise<string[]> {
     try {
-      const images = await page.$$eval(
-        '.gallery img, .slider img, .accommodation-image',
-        (imgs) => imgs.map((img) => (img as HTMLImageElement).src)
+      const images = await page.$$eval('.gallery img, .slider img, .accommodation-image', (imgs) =>
+        imgs.map((img) => (img as HTMLImageElement).src)
       );
-      return images.filter(src => this.isValidUrl(src));
+      return images.filter((src) => this.isValidUrl(src));
     } catch {
       return [];
     }
@@ -243,9 +257,8 @@ export class UniversityScraper extends BaseScraper {
    */
   private async extractAmenities(page: Page): Promise<string[]> {
     try {
-      return await page.$$eval(
-        '.amenity, .facility, .feature',
-        (items) => items.map((item) => item.textContent?.trim() || '')
+      return await page.$$eval('.amenity, .facility, .feature', (items) =>
+        items.map((item) => item.textContent?.trim() || '')
       );
     } catch {
       return [];
@@ -257,9 +270,8 @@ export class UniversityScraper extends BaseScraper {
    */
   private async extractRoomTypes(page: Page): Promise<string[]> {
     try {
-      return await page.$$eval(
-        '.room-type, .accommodation-type',
-        (items) => items.map((item) => item.textContent?.trim() || '')
+      return await page.$$eval('.room-type, .accommodation-type', (items) =>
+        items.map((item) => item.textContent?.trim() || '')
       );
     } catch {
       return ['Single'];
@@ -275,7 +287,7 @@ export class UniversityScraper extends BaseScraper {
       return { min: 0, max: 0 };
     }
 
-    const prices = numbers.map(n => parseInt(n, 10));
+    const prices = numbers.map((n) => parseInt(n, 10));
     return {
       min: Math.min(...prices),
       max: Math.max(...prices),
@@ -365,8 +377,8 @@ export class UniversityScraper extends BaseScraper {
     const mapping: Record<string, AccommodationType> = {
       'on-campus': 'ON_CAMPUS',
       'off-campus': 'OFF_CAMPUS',
-      'private': 'PRIVATE',
-      'college': 'COLLEGE',
+      private: 'PRIVATE',
+      college: 'COLLEGE',
     };
     return mapping[type] || 'OFF_CAMPUS';
   }
