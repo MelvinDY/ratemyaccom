@@ -142,15 +142,17 @@ export default function AboutUs() {
 
               <p>
                 Our mission is simple: to provide{' '}
-                <span className="text-purple-300 font-semibold">honest, verified reviews</span>{' '}
-                from real students who have lived in these accommodations. No marketing fluff, no
-                fake reviews — just genuine experiences to help you make informed decisions.
+                <span className="text-purple-300 font-semibold">honest, verified reviews</span> from
+                real students who have lived in these accommodations. No marketing fluff, no fake
+                reviews — just genuine experiences to help you make informed decisions.
               </p>
 
               <p>
                 We believe in{' '}
-                <span className="text-pink-300 font-semibold">transparency, trust, and community</span>.
-                Every review comes from a verified university student, ensuring that the feedback
+                <span className="text-pink-300 font-semibold">
+                  transparency, trust, and community
+                </span>
+                . Every review comes from a verified university student, ensuring that the feedback
                 you read is authentic and reliable. Together, we&apos;re building a community that
                 helps future students avoid the pitfalls and find their perfect home away from home.
               </p>
@@ -208,7 +210,11 @@ export default function AboutUs() {
                     <div
                       className={`inline-flex p-3 rounded-xl bg-gradient-to-br ${stat.gradient}`}
                     >
-                      <stat.icon className="w-6 h-6 text-white" strokeWidth={2} aria-hidden="true" />
+                      <stat.icon
+                        className="w-6 h-6 text-white"
+                        strokeWidth={2}
+                        aria-hidden="true"
+                      />
                     </div>
                   </div>
 

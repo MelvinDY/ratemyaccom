@@ -43,10 +43,30 @@ const UNIVERSITIES: { value: string; label: string; icon: LucideIcon }[] = [
 ];
 
 const ACCOMMODATION_TYPES = [
-  { value: 'on-campus', label: 'On Campus', description: 'Live right on university grounds', icon: Building2 },
-  { value: 'college', label: 'Residential College', description: 'Traditional college experience with meals', icon: Users },
-  { value: 'off-campus', label: 'Off Campus', description: 'Independent living near university', icon: Home },
-  { value: 'private', label: 'Private Housing', description: 'Private rentals and share houses', icon: Shield },
+  {
+    value: 'on-campus',
+    label: 'On Campus',
+    description: 'Live right on university grounds',
+    icon: Building2,
+  },
+  {
+    value: 'college',
+    label: 'Residential College',
+    description: 'Traditional college experience with meals',
+    icon: Users,
+  },
+  {
+    value: 'off-campus',
+    label: 'Off Campus',
+    description: 'Independent living near university',
+    icon: Home,
+  },
+  {
+    value: 'private',
+    label: 'Private Housing',
+    description: 'Private rentals and share houses',
+    icon: Shield,
+  },
 ];
 
 const ROOM_TYPES = [
@@ -105,10 +125,7 @@ export default function QuizPage() {
     moveInDate: '',
   });
 
-  const updatePreference = <K extends keyof QuizPreferences>(
-    key: K,
-    value: QuizPreferences[K]
-  ) => {
+  const updatePreference = <K extends keyof QuizPreferences>(key: K, value: QuizPreferences[K]) => {
     setPreferences((prev) => ({ ...prev, [key]: value }));
   };
 
@@ -203,7 +220,9 @@ export default function QuizPage() {
       {/* Progress Bar */}
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         <div className="flex items-center justify-between mb-2">
-          <span className="text-white/60 text-sm">Step {currentStep} of {TOTAL_STEPS}</span>
+          <span className="text-white/60 text-sm">
+            Step {currentStep} of {TOTAL_STEPS}
+          </span>
           <span className="text-white/60 text-sm">{Math.round(progressPercentage)}% complete</span>
         </div>
         <div className="h-2 bg-white/10 rounded-full overflow-hidden">
@@ -234,8 +253,12 @@ export default function QuizPage() {
                   <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-br from-lyra-purple-start/20 to-lyra-purple-end/20 mb-4">
                     <GraduationCap className="w-8 h-8 text-lyra-purple-start" />
                   </div>
-                  <h2 className="text-2xl font-bold text-white mb-2">Which university are you attending?</h2>
-                  <p className="text-white/60">We&apos;ll find accommodations close to your campus</p>
+                  <h2 className="text-2xl font-bold text-white mb-2">
+                    Which university are you attending?
+                  </h2>
+                  <p className="text-white/60">
+                    We&apos;ll find accommodations close to your campus
+                  </p>
                 </div>
 
                 <div className="grid gap-3">
@@ -251,7 +274,9 @@ export default function QuizPage() {
                             : 'border-white/10 hover:border-white/30 bg-white/5'
                         }`}
                       >
-                        <Icon className={`w-6 h-6 ${preferences.university === uni.value ? 'text-lyra-purple-start' : 'text-white/60'}`} />
+                        <Icon
+                          className={`w-6 h-6 ${preferences.university === uni.value ? 'text-lyra-purple-start' : 'text-white/60'}`}
+                        />
                         <span className="text-white font-medium">{uni.label}</span>
                         {preferences.university === uni.value && (
                           <CheckCircle2 className="w-5 h-5 text-lyra-purple-start ml-auto" />
@@ -270,7 +295,9 @@ export default function QuizPage() {
                   <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-br from-green-500/20 to-emerald-500/20 mb-4">
                     <DollarSign className="w-8 h-8 text-green-400" />
                   </div>
-                  <h2 className="text-2xl font-bold text-white mb-2">What&apos;s your weekly budget?</h2>
+                  <h2 className="text-2xl font-bold text-white mb-2">
+                    What&apos;s your weekly budget?
+                  </h2>
                   <p className="text-white/60">Set your comfortable price range per week</p>
                 </div>
 
@@ -284,7 +311,12 @@ export default function QuizPage() {
 
                   <div className="space-y-6">
                     <div>
-                      <label htmlFor="budget-min" className="text-white/80 text-sm font-medium mb-2 block">Minimum Budget</label>
+                      <label
+                        htmlFor="budget-min"
+                        className="text-white/80 text-sm font-medium mb-2 block"
+                      >
+                        Minimum Budget
+                      </label>
                       <input
                         id="budget-min"
                         type="range"
@@ -307,7 +339,12 @@ export default function QuizPage() {
                     </div>
 
                     <div>
-                      <label htmlFor="budget-max" className="text-white/80 text-sm font-medium mb-2 block">Maximum Budget</label>
+                      <label
+                        htmlFor="budget-max"
+                        className="text-white/80 text-sm font-medium mb-2 block"
+                      >
+                        Maximum Budget
+                      </label>
                       <input
                         id="budget-max"
                         type="range"
@@ -340,7 +377,9 @@ export default function QuizPage() {
                   <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-br from-blue-500/20 to-cyan-500/20 mb-4">
                     <Home className="w-8 h-8 text-blue-400" />
                   </div>
-                  <h2 className="text-2xl font-bold text-white mb-2">What type of accommodation interests you?</h2>
+                  <h2 className="text-2xl font-bold text-white mb-2">
+                    What type of accommodation interests you?
+                  </h2>
                   <p className="text-white/60">Select all that apply</p>
                 </div>
 
@@ -358,7 +397,9 @@ export default function QuizPage() {
                             : 'border-white/10 hover:border-white/30 bg-white/5'
                         }`}
                       >
-                        <Icon className={`w-8 h-8 mb-3 ${isSelected ? 'text-lyra-purple-start' : 'text-white/60'}`} />
+                        <Icon
+                          className={`w-8 h-8 mb-3 ${isSelected ? 'text-lyra-purple-start' : 'text-white/60'}`}
+                        />
                         <h3 className="text-white font-semibold mb-1">{type.label}</h3>
                         <p className="text-white/50 text-sm">{type.description}</p>
                         {isSelected && (
@@ -378,7 +419,9 @@ export default function QuizPage() {
                   <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-br from-purple-500/20 to-pink-500/20 mb-4">
                     <Home className="w-8 h-8 text-purple-400" />
                   </div>
-                  <h2 className="text-2xl font-bold text-white mb-2">What room type do you prefer?</h2>
+                  <h2 className="text-2xl font-bold text-white mb-2">
+                    What room type do you prefer?
+                  </h2>
                   <p className="text-white/60">Choose your ideal living arrangement</p>
                 </div>
 
@@ -414,7 +457,9 @@ export default function QuizPage() {
                     <Star className="w-8 h-8 text-yellow-400" />
                   </div>
                   <h2 className="text-2xl font-bold text-white mb-2">What matters most to you?</h2>
-                  <p className="text-white/60">Rate each factor from 1 (not important) to 5 (very important)</p>
+                  <p className="text-white/60">
+                    Rate each factor from 1 (not important) to 5 (very important)
+                  </p>
                 </div>
 
                 <div className="space-y-6">
@@ -426,7 +471,11 @@ export default function QuizPage() {
                           <p className="text-white/50 text-xs">{factor.description}</p>
                         </div>
                         <span className="text-lyra-purple-start font-bold">
-                          {preferences.priorityFactors[factor.key as keyof typeof preferences.priorityFactors]}
+                          {
+                            preferences.priorityFactors[
+                              factor.key as keyof typeof preferences.priorityFactors
+                            ]
+                          }
                         </span>
                       </div>
                       <div className="flex gap-2">
@@ -435,7 +484,9 @@ export default function QuizPage() {
                             key={value}
                             onClick={() => updatePriorityFactor(factor.key, value)}
                             className={`flex-1 py-2 rounded-lg transition-all duration-200 ${
-                              preferences.priorityFactors[factor.key as keyof typeof preferences.priorityFactors] >= value
+                              preferences.priorityFactors[
+                                factor.key as keyof typeof preferences.priorityFactors
+                              ] >= value
                                 ? 'bg-gradient-to-r from-lyra-purple-start to-lyra-purple-end text-white'
                                 : 'bg-white/10 text-white/50 hover:bg-white/20'
                             }`}
@@ -458,7 +509,9 @@ export default function QuizPage() {
                     <Sparkles className="w-8 h-8 text-teal-400" />
                   </div>
                   <h2 className="text-2xl font-bold text-white mb-2">Any must-have amenities?</h2>
-                  <p className="text-white/60">Select amenities that are essential for you (optional)</p>
+                  <p className="text-white/60">
+                    Select amenities that are essential for you (optional)
+                  </p>
                 </div>
 
                 <div className="grid sm:grid-cols-2 gap-3">
@@ -475,7 +528,9 @@ export default function QuizPage() {
                             : 'border-white/10 hover:border-white/30 bg-white/5'
                         }`}
                       >
-                        <Icon className={`w-5 h-5 ${isSelected ? 'text-lyra-purple-start' : 'text-white/60'}`} />
+                        <Icon
+                          className={`w-5 h-5 ${isSelected ? 'text-lyra-purple-start' : 'text-white/60'}`}
+                        />
                         <span className="text-white font-medium">{amenity.label}</span>
                         {isSelected && (
                           <CheckCircle2 className="w-5 h-5 text-lyra-purple-start ml-auto" />
@@ -496,7 +551,9 @@ export default function QuizPage() {
                     max="15"
                     step="1"
                     value={preferences.maxDistanceToCampus}
-                    onChange={(e) => updatePreference('maxDistanceToCampus', parseInt(e.target.value))}
+                    onChange={(e) =>
+                      updatePreference('maxDistanceToCampus', parseInt(e.target.value))
+                    }
                     className="w-full h-2 bg-white/10 rounded-lg appearance-none cursor-pointer accent-lyra-purple-start"
                   />
                   <div className="flex justify-between text-white/40 text-xs mt-1">
@@ -514,33 +571,61 @@ export default function QuizPage() {
                   <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-br from-pink-500/20 to-rose-500/20 mb-4">
                     <Users className="w-8 h-8 text-pink-400" />
                   </div>
-                  <h2 className="text-2xl font-bold text-white mb-2">What&apos;s your social preference?</h2>
-                  <p className="text-white/60">This helps us match you with the right environment</p>
+                  <h2 className="text-2xl font-bold text-white mb-2">
+                    What&apos;s your social preference?
+                  </h2>
+                  <p className="text-white/60">
+                    This helps us match you with the right environment
+                  </p>
                 </div>
 
                 <div className="grid gap-4">
                   {[
-                    { value: 'quiet', label: 'Quiet & Peaceful', description: 'I prefer a calm environment focused on studies', icon: BookMarked },
-                    { value: 'balanced', label: 'Balanced', description: 'A mix of social activities and quiet time', icon: Scale },
-                    { value: 'social', label: 'Social & Active', description: 'I love meeting people and community events', icon: PartyPopper },
+                    {
+                      value: 'quiet',
+                      label: 'Quiet & Peaceful',
+                      description: 'I prefer a calm environment focused on studies',
+                      icon: BookMarked,
+                    },
+                    {
+                      value: 'balanced',
+                      label: 'Balanced',
+                      description: 'A mix of social activities and quiet time',
+                      icon: Scale,
+                    },
+                    {
+                      value: 'social',
+                      label: 'Social & Active',
+                      description: 'I love meeting people and community events',
+                      icon: PartyPopper,
+                    },
                   ].map((option) => {
                     const Icon = option.icon;
                     return (
                       <button
                         key={option.value}
-                        onClick={() => updatePreference('socialPreference', option.value as 'quiet' | 'social' | 'balanced')}
+                        onClick={() =>
+                          updatePreference(
+                            'socialPreference',
+                            option.value as 'quiet' | 'social' | 'balanced'
+                          )
+                        }
                         className={`w-full p-6 rounded-xl border-2 transition-all duration-200 text-left flex items-center gap-4 ${
                           preferences.socialPreference === option.value
                             ? 'border-lyra-purple-start bg-lyra-purple-start/10'
                             : 'border-white/10 hover:border-white/30 bg-white/5'
                         }`}
                       >
-                        <div className={`w-12 h-12 rounded-full flex items-center justify-center ${
-                          preferences.socialPreference === option.value
-                            ? 'bg-lyra-purple-start/20'
-                            : 'bg-white/10'
-                        }`}>
-                          <Icon className={`w-6 h-6 ${preferences.socialPreference === option.value ? 'text-lyra-purple-start' : 'text-white/60'}`} />
+                        <div
+                          className={`w-12 h-12 rounded-full flex items-center justify-center ${
+                            preferences.socialPreference === option.value
+                              ? 'bg-lyra-purple-start/20'
+                              : 'bg-white/10'
+                          }`}
+                        >
+                          <Icon
+                            className={`w-6 h-6 ${preferences.socialPreference === option.value ? 'text-lyra-purple-start' : 'text-white/60'}`}
+                          />
                         </div>
                         <div className="flex-1">
                           <h3 className="text-white font-semibold mb-1">{option.label}</h3>

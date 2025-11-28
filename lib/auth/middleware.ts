@@ -6,11 +6,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { verifyToken, JWTPayload } from './jwt';
 import { prisma } from '@/lib/database/prisma';
-import {
-  validateCsrfFromRequest,
-  requiresCsrfProtection,
-  createCsrfErrorResponse,
-} from './csrf';
+import { validateCsrfFromRequest, requiresCsrfProtection, createCsrfErrorResponse } from './csrf';
 
 export interface AuthenticatedRequest extends NextRequest {
   user?: JWTPayload;
@@ -40,9 +36,7 @@ export function getTokenFromRequest(request: NextRequest): string | null {
  * Authenticate request and return user payload
  * Returns null if authentication fails
  */
-export async function authenticateRequest(
-  request: NextRequest
-): Promise<JWTPayload | null> {
+export async function authenticateRequest(request: NextRequest): Promise<JWTPayload | null> {
   const token = getTokenFromRequest(request);
 
   if (!token) {

@@ -83,7 +83,9 @@ async function fixBadPrices() {
     },
   });
 
-  console.log(`  Average Price Range: $${Math.round(stats._avg.priceMin || 0)}-$${Math.round(stats._avg.priceMax || 0)}/week`);
+  console.log(
+    `  Average Price Range: $${Math.round(stats._avg.priceMin || 0)}-$${Math.round(stats._avg.priceMax || 0)}/week`
+  );
   console.log(`  Min Price: $${stats._min.priceMin || 0}/week`);
   console.log(`  Max Price: $${stats._max.priceMax || 0}/week\n`);
 

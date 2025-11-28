@@ -155,6 +155,8 @@ async function main() {
   // ==========================================
 
   // UNSW Village
+  // Verified pricing from official UNSW source (2026 rates):
+  // Multi-bedroom: $408.50-$456/week, Studios: $565-$646/week
   const unswVillage = await prisma.accommodation.create({
     data: {
       name: 'UNSW Village',
@@ -174,8 +176,8 @@ async function main() {
         '/images/unsw-village-2.jpg',
         '/images/unsw-village-3.jpg',
       ],
-      priceMin: 350,
-      priceMax: 550,
+      priceMin: 409,
+      priceMax: 646,
       currency: 'AUD',
       pricePeriod: 'WEEK',
       capacity: 750,
@@ -197,6 +199,8 @@ async function main() {
       distanceToTransport: 0.5,
       verified: true,
       featured: true,
+      sourceUrl: 'https://www.unsw.edu.au/accommodation/apartments/unsw-village',
+      lastVerified: new Date('2025-11-26'),
     },
   });
   await addAmenitiesToAccommodation(
@@ -254,6 +258,8 @@ async function main() {
       distanceToTransport: 0.6,
       verified: true,
       featured: false,
+      sourceUrl: 'https://www.unsw.edu.au/accommodation/colleges',
+      lastVerified: null, // Pricing not publicly available - needs manual verification
     },
   });
   await addAmenitiesToAccommodation(
@@ -272,32 +278,40 @@ async function main() {
     amenities
   );
 
-  // Iglu Kensington
-  const igluKensington = await prisma.accommodation.create({
+  // UniLodge Kensington (Note: Iglu Kensington does NOT exist - corrected to UniLodge Kensington)
+  // Verified pricing from official UniLodge source (2026 rates):
+  // Twin Studio: from $566/week, Studio: from $785/week
+  const unilodgeKensington = await prisma.accommodation.create({
     data: {
-      name: 'Iglu Kensington',
-      slug: 'iglu-kensington',
+      name: 'UniLodge Kensington',
+      slug: 'unilodge-kensington',
       university: 'University of New South Wales (UNSW)',
-      address: '290 Anzac Parade',
+      address: '187 Anzac Parade',
       suburb: 'Kensington',
       state: 'NSW',
       postcode: '2033',
       latitude: -33.9159,
       longitude: 151.2282,
       description:
-        'Modern purpose-built student accommodation near UNSW with premium facilities. Features fully furnished apartments with modern kitchens, ensuite bathrooms, and a vibrant student community.',
+        'Modern purpose-built student accommodation near UNSW with premium facilities. Features fully furnished apartments with modern kitchens, ensuite bathrooms, and a vibrant student community. Includes gym, yoga studio, cinema, music room, and games area.',
       type: 'OFF_CAMPUS',
-      images: ['/images/iglu-kensington-1.jpg', '/images/iglu-kensington-2.jpg'],
-      priceMin: 420,
-      priceMax: 680,
+      images: ['/images/unilodge-kensington-1.jpg', '/images/unilodge-kensington-2.jpg'],
+      priceMin: 566,
+      priceMax: 806,
       currency: 'AUD',
       pricePeriod: 'WEEK',
       capacity: 400,
-      roomTypes: ['Studio', 'Ensuite', '2-Bedroom Apartment'],
+      roomTypes: [
+        'Twin Studio',
+        'Twin Studio Premium',
+        'Studio',
+        'Studio Premium',
+        'Shared Apartment',
+      ],
       contactInfo: {
-        phone: '1300 IGLU AU',
-        email: 'kensington@iglu.com.au',
-        website: 'https://iglu.com.au/locations/kensington',
+        phone: '+61 2 9199 9888',
+        email: 'kensington@unilodge.com.au',
+        website: 'https://www.unilodge.com.au/student-accommodation-sydney/kensington',
       },
       ratingOverall: 4.2,
       ratingCleanliness: 4.6,
@@ -311,10 +325,12 @@ async function main() {
       distanceToTransport: 0.3,
       verified: true,
       featured: false,
+      sourceUrl: 'https://www.unilodge.com.au/student-accommodation-sydney/kensington',
+      lastVerified: new Date('2025-11-26'),
     },
   });
   await addAmenitiesToAccommodation(
-    igluKensington.id,
+    unilodgeKensington.id,
     [
       'WiFi',
       'Gym',
@@ -323,8 +339,9 @@ async function main() {
       'Common Kitchen',
       'Security',
       'Social Events',
-      'Rooftop Terrace',
-      'Bike Storage',
+      'Cinema Room',
+      'Music Rooms',
+      'Games Room',
       'Air Conditioning',
     ],
     amenities
@@ -335,6 +352,7 @@ async function main() {
   // ==========================================
 
   // UniLodge on Broadway
+  // Verified pricing from web sources: Studio $395-450/week, 2BR $650-695/week
   const unilodgeBroadway = await prisma.accommodation.create({
     data: {
       name: 'UniLodge on Broadway',
@@ -350,8 +368,8 @@ async function main() {
         'Purpose-built student accommodation in the heart of Sydney, close to University of Sydney. Features modern amenities, a vibrant student community, and easy access to public transport.',
       type: 'OFF_CAMPUS',
       images: ['/images/unilodge-broadway-1.jpg', '/images/unilodge-broadway-2.jpg'],
-      priceMin: 400,
-      priceMax: 650,
+      priceMin: 395,
+      priceMax: 695,
       currency: 'AUD',
       pricePeriod: 'WEEK',
       capacity: 550,
@@ -373,6 +391,8 @@ async function main() {
       distanceToTransport: 0.3,
       verified: true,
       featured: true,
+      sourceUrl: 'https://www.unilodge.com.au/student-accommodation-sydney/broadway',
+      lastVerified: new Date('2025-11-26'),
     },
   });
   await addAmenitiesToAccommodation(
@@ -432,6 +452,8 @@ async function main() {
       distanceToTransport: 0.5,
       verified: true,
       featured: true,
+      sourceUrl: 'https://www.stjohnscollege.edu.au',
+      lastVerified: null, // PDF fee schedule not publicly accessible - needs manual verification
     },
   });
   await addAmenitiesToAccommodation(
@@ -452,6 +474,7 @@ async function main() {
   );
 
   // Queen Mary Building
+  // Verified pricing from USyd 2025 rates: Single $380/week, Single Premium $410/week, Accessible $441/week
   const queenMaryBuilding = await prisma.accommodation.create({
     data: {
       name: 'Queen Mary Building',
@@ -467,8 +490,8 @@ async function main() {
         'Heritage-listed building converted to student accommodation, offering affordable self-catered living close to the University of Sydney main campus. Features a mix of single rooms and shared apartments.',
       type: 'ON_CAMPUS',
       images: ['/images/queen-mary-1.jpg', '/images/queen-mary-2.jpg'],
-      priceMin: 280,
-      priceMax: 400,
+      priceMin: 380,
+      priceMax: 441,
       currency: 'AUD',
       pricePeriod: 'WEEK',
       capacity: 180,
@@ -490,6 +513,9 @@ async function main() {
       distanceToTransport: 0.7,
       verified: true,
       featured: false,
+      sourceUrl:
+        'https://www.sydney.edu.au/study/accommodation/camperdown-darlington/university-residences/queen-mary-building.html',
+      lastVerified: new Date('2025-11-26'),
     },
   });
   await addAmenitiesToAccommodation(
@@ -503,6 +529,7 @@ async function main() {
   // ==========================================
 
   // Yura Mudang (UTS Housing)
+  // Verified pricing from UTS 2024 rates: 6BR $342/week, 2BR $374/week, Studio Small $428/week, Studio Large $458/week
   const yuraMudang = await prisma.accommodation.create({
     data: {
       name: 'Yura Mudang (UTS Housing)',
@@ -515,15 +542,15 @@ async function main() {
       latitude: -33.8833,
       longitude: 151.1986,
       description:
-        "UTS's flagship on-campus student accommodation offering modern, purpose-built apartments with stunning city views. Features fully furnished studios and multi-share apartments with private bedrooms and shared living spaces.",
+        "UTS's flagship on-campus student accommodation offering modern, purpose-built apartments with stunning city views. Features fully furnished studios and multi-share apartments with private bedrooms and shared living spaces. 'Yura Mudang' is Gadigal (local Aboriginal language) for 'Students live'.",
       type: 'ON_CAMPUS',
       images: [
         '/images/yura-mudang-1.jpg',
         '/images/yura-mudang-2.jpg',
         '/images/yura-mudang-3.jpg',
       ],
-      priceMin: 380,
-      priceMax: 580,
+      priceMin: 342,
+      priceMax: 458,
       currency: 'AUD',
       pricePeriod: 'WEEK',
       capacity: 720,
@@ -545,6 +572,9 @@ async function main() {
       distanceToTransport: 0.2,
       verified: true,
       featured: true,
+      sourceUrl:
+        'https://www.uts.edu.au/for-students/current-students/support/uts-housing-service/our-residence-yura-mudang/fees',
+      lastVerified: new Date('2025-11-26'),
     },
   });
   await addAmenitiesToAccommodation(
@@ -565,24 +595,25 @@ async function main() {
     amenities
   );
 
-  // Urbanest Darling House
+  // Urbanest Darling House (may now operate as Scape Darling House)
+  // Verified pricing: Twin ensuite from $560/week, Single ensuite from $646/week (includes all meals)
   const urbanestDarling = await prisma.accommodation.create({
     data: {
       name: 'Urbanest Darling House',
       slug: 'urbanest-darling-house',
       university: 'University of Technology Sydney (UTS)',
-      address: '88 Hay Street',
+      address: '39 Darling Drive',
       suburb: 'Haymarket',
       state: 'NSW',
       postcode: '2000',
       latitude: -33.8794,
       longitude: 151.2041,
       description:
-        'Premium student accommodation in the heart of Sydney CBD, minutes from UTS and Central Station. Features modern studios and apartments with stunning views, premium facilities, and an active community program.',
+        'Premium student accommodation in the heart of Sydney CBD, minutes from UTS and Central Station. Features modern studios and apartments with stunning views, premium facilities, and an active community program. All meals included at The Eatery.',
       type: 'OFF_CAMPUS',
       images: ['/images/urbanest-darling-1.jpg', '/images/urbanest-darling-2.jpg'],
-      priceMin: 450,
-      priceMax: 720,
+      priceMin: 560,
+      priceMax: 679,
       currency: 'AUD',
       pricePeriod: 'WEEK',
       capacity: 600,
@@ -604,6 +635,8 @@ async function main() {
       distanceToTransport: 0.1,
       verified: true,
       featured: false,
+      sourceUrl: 'https://www.urbanest.com.au/darling-house',
+      lastVerified: new Date('2025-11-26'),
     },
   });
   await addAmenitiesToAccommodation(
@@ -625,31 +658,32 @@ async function main() {
   );
 
   // Iglu Central
+  // Verified pricing: Share Apt (5-6BR) from $709-779/week, Studio from $859-939/week
   const igluCentral = await prisma.accommodation.create({
     data: {
       name: 'Iglu Central',
       slug: 'iglu-central-uts',
       university: 'University of Technology Sydney (UTS)',
-      address: '187 Thomas Street',
-      suburb: 'Haymarket',
+      address: '1 Regent Street',
+      suburb: 'Chippendale',
       state: 'NSW',
-      postcode: '2000',
+      postcode: '2008',
       latitude: -33.8816,
       longitude: 151.2023,
       description:
-        'Vibrant student living in Sydney CBD, perfectly positioned between UTS and the University of Sydney. Modern apartments with community spaces designed for student life.',
+        'Vibrant student living in Sydney CBD, perfectly positioned between UTS and the University of Sydney. Modern apartments with community spaces designed for student life. Includes free unlimited WiFi, coffee bar and weekday breakfast.',
       type: 'OFF_CAMPUS',
       images: ['/images/iglu-central-1.jpg', '/images/iglu-central-2.jpg'],
-      priceMin: 430,
-      priceMax: 690,
+      priceMin: 709,
+      priceMax: 939,
       currency: 'AUD',
       pricePeriod: 'WEEK',
       capacity: 350,
-      roomTypes: ['Studio', 'Ensuite', '2-Bedroom Twin Share'],
+      roomTypes: ['5-Bedroom Apartment', '6-Bedroom Apartment', 'Studio'],
       contactInfo: {
         phone: '1300 IGLU AU',
         email: 'central@iglu.com.au',
-        website: 'https://iglu.com.au/locations/central',
+        website: 'https://iglu.com.au/properties/sydney/central/',
       },
       ratingOverall: 4.2,
       ratingCleanliness: 4.4,
@@ -663,6 +697,8 @@ async function main() {
       distanceToTransport: 0.2,
       verified: true,
       featured: false,
+      sourceUrl: 'https://iglu.com.au/properties/sydney/central/',
+      lastVerified: new Date('2025-11-26'),
     },
   });
   await addAmenitiesToAccommodation(
@@ -685,7 +721,8 @@ async function main() {
   // MACQUARIE UNIVERSITY ACCOMMODATIONS
   // ==========================================
 
-  // Macquarie University Village
+  // Macquarie University Village (Student Village North Ryde)
+  // Verified pricing: Single ensuite from $361-436/week
   const mqVillage = await prisma.accommodation.create({
     data: {
       name: 'Macquarie University Village',
@@ -701,8 +738,8 @@ async function main() {
         'On-campus accommodation offering a true university experience with modern facilities, diverse community, and easy access to all campus amenities. Located within walking distance to the Metro station.',
       type: 'ON_CAMPUS',
       images: ['/images/mq-village-1.jpg', '/images/mq-village-2.jpg', '/images/mq-village-3.jpg'],
-      priceMin: 320,
-      priceMax: 480,
+      priceMin: 361,
+      priceMax: 436,
       currency: 'AUD',
       pricePeriod: 'WEEK',
       capacity: 900,
@@ -724,6 +761,8 @@ async function main() {
       distanceToTransport: 0.4,
       verified: true,
       featured: true,
+      sourceUrl: 'https://students.mq.edu.au/uni-life/accommodation',
+      lastVerified: new Date('2025-11-26'),
     },
   });
   await addAmenitiesToAccommodation(
@@ -783,6 +822,8 @@ async function main() {
       distanceToTransport: 0.5,
       verified: true,
       featured: false,
+      sourceUrl: 'https://www.dunmorelangcollege.nsw.edu.au/fees',
+      lastVerified: null, // Specific fee amounts not publicly listed - needs manual verification
     },
   });
   await addAmenitiesToAccommodation(
@@ -803,23 +844,24 @@ async function main() {
   );
 
   // Robert Menzies College
+  // Verified pricing from 2026 rates: 5 dinners/week from $491-643/week, 21 meals/week from $614-743/week (38-week contract)
   const robertMenzies = await prisma.accommodation.create({
     data: {
       name: 'Robert Menzies College',
       slug: 'robert-menzies-college',
       university: 'Macquarie University',
-      address: '55 Waterloo Road',
-      suburb: 'North Ryde',
+      address: '136 Herring Road',
+      suburb: 'Macquarie Park',
       state: 'NSW',
       postcode: '2109',
       latitude: -33.7758,
       longitude: 151.1138,
       description:
-        'A vibrant residential college committed to academic excellence and community engagement. Offers a collegiate experience with tutorials, mentoring, and a rich calendar of cultural and social activities.',
+        'A vibrant Anglican residential college committed to academic excellence and community engagement. Offers a collegiate experience with tutorials, mentoring, and a rich calendar of cultural and social activities. All-inclusive with meals, WiFi, utilities, and weekly linen changes.',
       type: 'COLLEGE',
       images: ['/images/robert-menzies-1.jpg', '/images/robert-menzies-2.jpg'],
-      priceMin: 420,
-      priceMax: 580,
+      priceMin: 491,
+      priceMax: 743,
       currency: 'AUD',
       pricePeriod: 'WEEK',
       capacity: 320,
@@ -841,6 +883,8 @@ async function main() {
       distanceToTransport: 0.6,
       verified: true,
       featured: false,
+      sourceUrl: 'https://rmc.org.au/accommodation/',
+      lastVerified: new Date('2025-11-26'),
     },
   });
   await addAmenitiesToAccommodation(
@@ -865,6 +909,7 @@ async function main() {
   // ==========================================
 
   // WSU Village Penrith
+  // Verified pricing: Scholarship rate $170/week, standard from ~$168-350/week depending on room type
   const wsuVillagePenrith = await prisma.accommodation.create({
     data: {
       name: 'WSU Village Penrith',
@@ -877,10 +922,10 @@ async function main() {
       latitude: -33.756,
       longitude: 150.74,
       description:
-        'Modern on-campus accommodation at WSU Penrith campus, offering affordable living with excellent facilities. Features self-catered apartments and a supportive student community.',
+        'Modern on-campus accommodation at WSU Penrith campus, offering affordable living with excellent facilities. Features self-catered apartments and a supportive student community. Just a 5-minute walk to campus.',
       type: 'ON_CAMPUS',
       images: ['/images/wsu-penrith-1.jpg', '/images/wsu-penrith-2.jpg'],
-      priceMin: 220,
+      priceMin: 170,
       priceMax: 350,
       currency: 'AUD',
       pricePeriod: 'WEEK',
@@ -903,6 +948,8 @@ async function main() {
       distanceToTransport: 0.8,
       verified: true,
       featured: true,
+      sourceUrl: 'https://www.westernsydney.edu.au/accommodation/live-on-campus/penrith',
+      lastVerified: new Date('2025-11-26'),
     },
   });
   await addAmenitiesToAccommodation(
@@ -922,23 +969,24 @@ async function main() {
   );
 
   // WSU Village Parramatta
+  // Verified pricing: Shared units from $295/week, studios up to $436/week
   const wsuVillageParramatta = await prisma.accommodation.create({
     data: {
       name: 'WSU Village Parramatta',
       slug: 'wsu-village-parramatta',
       university: 'Western Sydney University',
-      address: 'James Ruse Drive',
+      address: 'Corner of Pemberton Street and Victoria Road',
       suburb: 'Parramatta',
       state: 'NSW',
       postcode: '2150',
       latitude: -33.8136,
       longitude: 151.0034,
       description:
-        'Student accommodation at the Parramatta City campus, close to the vibrant Parramatta CBD. Offers modern facilities and easy access to shopping, dining, and public transport.',
+        'Student accommodation at the Parramatta City campus, close to the vibrant Parramatta CBD. Offers modern facilities and easy access to shopping, dining, and public transport. Includes swimming pool, games room, and BBQ deck.',
       type: 'ON_CAMPUS',
       images: ['/images/wsu-parramatta-1.jpg', '/images/wsu-parramatta-2.jpg'],
-      priceMin: 250,
-      priceMax: 380,
+      priceMin: 295,
+      priceMax: 436,
       currency: 'AUD',
       pricePeriod: 'WEEK',
       capacity: 350,
@@ -960,6 +1008,9 @@ async function main() {
       distanceToTransport: 0.4,
       verified: true,
       featured: false,
+      sourceUrl:
+        'https://campuslivingvillages.com/australia/sydney/western-sydney-university-village-parramatta/',
+      lastVerified: new Date('2025-11-26'),
     },
   });
   await addAmenitiesToAccommodation(
@@ -978,23 +1029,24 @@ async function main() {
     amenities
   );
 
-  // UniLodge @ WSU Bankstown
+  // WSU Village Bankstown (formerly UniLodge @ WSU Bankstown)
+  // Verified pricing: from $183-203/week for basic rooms
   const unilodgeBankstown = await prisma.accommodation.create({
     data: {
-      name: 'UniLodge @ WSU Bankstown',
-      slug: 'unilodge-wsu-bankstown',
+      name: 'WSU Village Bankstown',
+      slug: 'wsu-village-bankstown',
       university: 'Western Sydney University',
-      address: '26 College Parade',
+      address: '2 Bullecourt Avenue',
       suburb: 'Milperra',
       state: 'NSW',
       postcode: '2214',
       latitude: -33.9343,
       longitude: 151.0432,
       description:
-        'Purpose-built student accommodation near WSU Bankstown campus. Features modern apartments with all utilities included and regular community events.',
+        'Purpose-built student accommodation near WSU Bankstown campus. Features modern apartments with all utilities included and regular community events. Amenities include BBQ area, volleyball court, TV lounge, computer room, and pool/table tennis.',
       type: 'OFF_CAMPUS',
-      images: ['/images/unilodge-bankstown-1.jpg', '/images/unilodge-bankstown-2.jpg'],
-      priceMin: 230,
+      images: ['/images/wsu-bankstown-1.jpg', '/images/wsu-bankstown-2.jpg'],
+      priceMin: 183,
       priceMax: 320,
       currency: 'AUD',
       pricePeriod: 'WEEK',
@@ -1017,6 +1069,8 @@ async function main() {
       distanceToTransport: 0.6,
       verified: true,
       featured: false,
+      sourceUrl: 'https://campuslivingvillages.com/australia/sydney/wsu-village-bankstown/',
+      lastVerified: new Date('2025-11-26'),
     },
   });
   await addAmenitiesToAccommodation(

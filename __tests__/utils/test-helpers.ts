@@ -98,10 +98,7 @@ export async function parseJsonResponse(response: Response) {
 /**
  * Assert response status
  */
-export function assertResponseStatus(
-  response: Response,
-  expectedStatus: number
-) {
+export function assertResponseStatus(response: Response, expectedStatus: number) {
   expect(response.status).toBe(expectedStatus);
 }
 

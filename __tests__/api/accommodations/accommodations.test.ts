@@ -6,8 +6,14 @@
  * DELETE /api/accommodations/[id] - Delete Accommodation
  */
 
-import { GET as ListAccommodations, POST as CreateAccommodation } from '@/app/api/accommodations/route';
-import { PUT as UpdateAccommodation, DELETE as DeleteAccommodation } from '@/app/api/accommodations/[id]/route';
+import {
+  GET as ListAccommodations,
+  POST as CreateAccommodation,
+} from '@/app/api/accommodations/route';
+import {
+  PUT as UpdateAccommodation,
+  DELETE as DeleteAccommodation,
+} from '@/app/api/accommodations/[id]/route';
 import {
   createMockRequest,
   createAuthenticatedRequest,

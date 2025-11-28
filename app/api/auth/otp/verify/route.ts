@@ -107,15 +107,12 @@ export async function POST(request: NextRequest) {
     await resetFailedAttempts(user.id);
 
     // Log successful login
-    await logLoginSuccess(
-      request,
-      {
-        id: user.id,
-        email: user.email,
-        name: user.name || user.email.split('@')[0] || 'User',
-        role: user.role,
-      }
-    );
+    await logLoginSuccess(request, {
+      id: user.id,
+      email: user.email,
+      name: user.name || user.email.split('@')[0] || 'User',
+      role: user.role,
+    });
 
     // Generate JWT tokens
     const payload: JWTPayload = {

@@ -152,14 +152,7 @@ export default function ParticlesBg({
       contextRef.current.arc(x, y, size, 0, 2 * Math.PI);
       contextRef.current.fillStyle = `rgba(${rgbColor}, ${alpha})`;
       contextRef.current.fill();
-      contextRef.current.setTransform(
-        pixelRatioRef.current,
-        0,
-        0,
-        pixelRatioRef.current,
-        0,
-        0
-      );
+      contextRef.current.setTransform(pixelRatioRef.current, 0, 0, pixelRatioRef.current, 0, 0);
 
       if (!update) {
         circles.current.push(circle);
@@ -169,12 +162,7 @@ export default function ParticlesBg({
 
   const clearContext = () => {
     if (contextRef.current) {
-      contextRef.current.clearRect(
-        0,
-        0,
-        canvasSizeRef.current.w,
-        canvasSizeRef.current.h
-      );
+      contextRef.current.clearRect(0, 0, canvasSizeRef.current.w, canvasSizeRef.current.h);
     }
   };
 

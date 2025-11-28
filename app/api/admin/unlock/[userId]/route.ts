@@ -11,10 +11,7 @@ import { prisma } from '@/lib/database/prisma';
 
 export const dynamic = 'force-dynamic';
 
-export async function POST(
-  request: NextRequest,
-  { params }: { params: { userId: string } }
-) {
+export async function POST(request: NextRequest, { params }: { params: { userId: string } }) {
   try {
     // Require admin authentication
     await requireAdmin(request);

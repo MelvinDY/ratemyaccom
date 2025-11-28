@@ -72,10 +72,7 @@ export async function GET(request: NextRequest) {
           },
         },
       },
-      orderBy: [
-        { helpful: 'desc' },
-        { createdAt: 'desc' },
-      ],
+      orderBy: [{ helpful: 'desc' }, { createdAt: 'desc' }],
     });
 
     // Transform to match frontend interface

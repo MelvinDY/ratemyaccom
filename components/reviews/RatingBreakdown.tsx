@@ -1,4 +1,5 @@
 import { RatingBreakdown as RatingBreakdownType } from '@/types';
+import { Sparkles, MapPin, Wallet, Dumbbell, Users, ShieldCheck } from 'lucide-react';
 
 interface RatingBreakdownProps {
   breakdown: RatingBreakdownType;
@@ -7,12 +8,12 @@ interface RatingBreakdownProps {
 
 export default function RatingBreakdown({ breakdown, totalReviews }: RatingBreakdownProps) {
   const categories = [
-    { key: 'cleanliness', label: 'Cleanliness', icon: '✨' },
-    { key: 'location', label: 'Location', icon: '📍' },
-    { key: 'value', label: 'Value for Money', icon: '💰' },
-    { key: 'amenities', label: 'Amenities', icon: '🏋️' },
-    { key: 'management', label: 'Management', icon: '👥' },
-    { key: 'safety', label: 'Safety', icon: '🔒' },
+    { key: 'cleanliness', label: 'Cleanliness', Icon: Sparkles },
+    { key: 'location', label: 'Location', Icon: MapPin },
+    { key: 'value', label: 'Value for Money', Icon: Wallet },
+    { key: 'amenities', label: 'Amenities', Icon: Dumbbell },
+    { key: 'management', label: 'Management', Icon: Users },
+    { key: 'safety', label: 'Safety', Icon: ShieldCheck },
   ];
 
   return (
@@ -23,12 +24,13 @@ export default function RatingBreakdown({ breakdown, totalReviews }: RatingBreak
         {categories.map((category) => {
           const rating = breakdown[category.key as keyof RatingBreakdownType];
           const percentage = (rating / 5) * 100;
+          const Icon = category.Icon;
 
           return (
             <div key={category.key}>
               <div className="flex items-center justify-between mb-2">
                 <div className="flex items-center space-x-2">
-                  <span className="text-lg">{category.icon}</span>
+                  <Icon className="w-4 h-4 text-lyra-purple-start" />
                   <span className="text-sm font-medium text-purple-200">{category.label}</span>
                 </div>
                 <span className="text-sm font-semibold text-white">{rating.toFixed(1)}</span>

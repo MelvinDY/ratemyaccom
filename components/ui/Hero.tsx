@@ -32,7 +32,6 @@ export default function Hero() {
     },
   };
 
-
   return (
     <div className="relative min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900 overflow-hidden">
       {/* Animated Background Gradients */}

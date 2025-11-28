@@ -49,7 +49,9 @@ async function testDatabase() {
       console.log(`     Location: ${acc.suburb}`);
       console.log(`     Price: $${acc.priceMin}-$${acc.priceMax}/week`);
       console.log(`     Rating: ${acc.ratingOverall}/5.0`);
-      console.log(`     Verified: ${acc.verified ? '✓' : '✗'} | Featured: ${acc.featured ? '✓' : '✗'}`);
+      console.log(
+        `     Verified: ${acc.verified ? '✓' : '✗'} | Featured: ${acc.featured ? '✓' : '✗'}`
+      );
     });
 
     // Test 4: Fetch Sample Amenities
@@ -63,7 +65,7 @@ async function testDatabase() {
       },
     });
 
-    const amenityList = amenities.map(a => `${a.icon} ${a.name}`).join(', ');
+    const amenityList = amenities.map((a) => `${a.icon} ${a.name}`).join(', ');
     console.log(`  ${amenityList}\n`);
 
     // Test 5: Complex Query with Relations

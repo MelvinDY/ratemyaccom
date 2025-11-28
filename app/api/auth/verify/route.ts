@@ -41,7 +41,8 @@ export async function POST(request: NextRequest) {
         {
           success: false,
           error: 'Invalid or expired token',
-          message: 'The verification token is invalid or has expired. Please request a new verification email.',
+          message:
+            'The verification token is invalid or has expired. Please request a new verification email.',
         },
         { status: 400 }
       );

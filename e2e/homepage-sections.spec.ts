@@ -14,13 +14,17 @@ test.describe('Homepage Sections - Quick Validation', () => {
     const featuresSection = page.locator('section[aria-labelledby="features-heading"]');
     await featuresSection.scrollIntoViewIfNeeded();
     await expect(featuresSection).toBeVisible();
-    await expect(page.getByRole('heading', { name: /Everything You Need to Find Your Home/i })).toBeVisible();
+    await expect(
+      page.getByRole('heading', { name: /Everything You Need to Find Your Home/i })
+    ).toBeVisible();
 
     // Check About Us section
     const aboutSection = page.locator('section[aria-labelledby="about-heading"]');
     await aboutSection.scrollIntoViewIfNeeded();
     await expect(aboutSection).toBeVisible();
-    await expect(page.getByRole('heading', { name: /Empowering Students to Make Better Choices/i })).toBeVisible();
+    await expect(
+      page.getByRole('heading', { name: /Empowering Students to Make Better Choices/i })
+    ).toBeVisible();
 
     // Check FAQ section
     const faqSection = page.locator('section[aria-labelledby="faq-heading"]');
@@ -59,9 +63,7 @@ test.describe('Homepage Sections - Quick Validation', () => {
     await page.waitForTimeout(500);
 
     // Answer should be visible
-    await expect(
-      page.getByText(/To leave a review, first create an account/i)
-    ).toBeVisible();
+    await expect(page.getByText(/To leave a review, first create an account/i)).toBeVisible();
   });
 
   test('should have no accessibility violations on all sections', async ({ page }) => {

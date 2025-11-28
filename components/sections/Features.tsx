@@ -2,14 +2,7 @@
 
 import { motion, useInView } from 'framer-motion';
 import { useRef } from 'react';
-import {
-  MessageSquare,
-  ShieldCheck,
-  Filter,
-  Image,
-  Info,
-  Scale,
-} from 'lucide-react';
+import { MessageSquare, ShieldCheck, Filter, Image, Info, Scale } from 'lucide-react';
 
 const features = [
   {
@@ -151,8 +144,8 @@ export default function Features() {
             </span>
           </h2>
           <p className="text-lg sm:text-xl text-purple-100/80 max-w-3xl mx-auto">
-            Discover why thousands of students trust Rate My Accom to make informed decisions
-            about their accommodation.
+            Discover why thousands of students trust Rate My Accom to make informed decisions about
+            their accommodation.
           </p>
         </motion.div>
 
@@ -183,7 +176,11 @@ export default function Features() {
                   <div
                     className={`inline-flex p-4 rounded-2xl bg-gradient-to-br ${feature.gradient} shadow-lg`}
                   >
-                    <feature.icon className="w-8 h-8 text-white" strokeWidth={2} aria-hidden="true" />
+                    <feature.icon
+                      className="w-8 h-8 text-white"
+                      strokeWidth={2}
+                      aria-hidden="true"
+                    />
                   </div>
                 </div>
 

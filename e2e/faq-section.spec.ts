@@ -18,9 +18,7 @@ test.describe('FAQ Section', () => {
       await expect(heading).toBeVisible();
 
       // Check subheading
-      await expect(
-        page.getByText(/Got questions\? We've got answers/i)
-      ).toBeVisible();
+      await expect(page.getByText(/Got questions\? We've got answers/i)).toBeVisible();
     });
 
     test('should display accordion container', async ({ page }) => {
@@ -31,8 +29,8 @@ test.describe('FAQ Section', () => {
       await page.waitForTimeout(500);
 
       // Accordion should exist
-      const accordionExists = await accordion.count() > 0 ||
-                             await section.locator('.w-full').count() > 0;
+      const accordionExists =
+        (await accordion.count()) > 0 || (await section.locator('.w-full').count()) > 0;
       expect(accordionExists).toBeTruthy();
     });
 
@@ -67,7 +65,9 @@ test.describe('FAQ Section', () => {
       await expect(page.getByText('Is the service free to use?')).toBeVisible();
       await expect(page.getByText('How are ratings calculated?')).toBeVisible();
       await expect(page.getByText('Can I edit or delete my review?')).toBeVisible();
-      await expect(page.getByText('What if I find incorrect information about an accommodation?')).toBeVisible();
+      await expect(
+        page.getByText('What if I find incorrect information about an accommodation?')
+      ).toBeVisible();
       await expect(page.getByText('Can accommodation providers respond to reviews?')).toBeVisible();
     });
 
@@ -82,9 +82,7 @@ test.describe('FAQ Section', () => {
       await page.waitForTimeout(500);
 
       // Answer should be visible
-      await expect(
-        page.getByText(/To leave a review, first create an account/i)
-      ).toBeVisible();
+      await expect(page.getByText(/To leave a review, first create an account/i)).toBeVisible();
     });
 
     test('should collapse accordion item when clicked again', async ({ page }) => {
@@ -97,9 +95,7 @@ test.describe('FAQ Section', () => {
       await page.waitForTimeout(500);
 
       // Verify it's expanded
-      await expect(
-        page.getByText(/To leave a review, first create an account/i)
-      ).toBeVisible();
+      await expect(page.getByText(/To leave a review, first create an account/i)).toBeVisible();
 
       // Click to collapse
       await firstQuestion.click();
@@ -120,9 +116,7 @@ test.describe('FAQ Section', () => {
       await page.waitForTimeout(500);
 
       // First answer should be visible
-      await expect(
-        page.getByText(/To leave a review, first create an account/i)
-      ).toBeVisible();
+      await expect(page.getByText(/To leave a review, first create an account/i)).toBeVisible();
 
       // Click second question
       const secondQuestion = page.getByText('Are all reviews verified?');
@@ -130,9 +124,7 @@ test.describe('FAQ Section', () => {
       await page.waitForTimeout(500);
 
       // Second answer should be visible
-      await expect(
-        page.getByText(/Yes! All reviewers must verify their identity/i)
-      ).toBeVisible();
+      await expect(page.getByText(/Yes! All reviewers must verify their identity/i)).toBeVisible();
 
       // First answer should now be hidden
       const firstAnswer = page.getByText(/To leave a review, first create an account/i);
@@ -192,7 +184,9 @@ test.describe('FAQ Section', () => {
 
       // Check full answer is visible
       await expect(
-        page.getByText(/To leave a review, first create an account using your university email address/i)
+        page.getByText(
+          /To leave a review, first create an account using your university email address/i
+        )
       ).toBeVisible();
     });
 
@@ -224,7 +218,9 @@ test.describe('FAQ Section', () => {
       await page.waitForTimeout(500);
 
       // All content should be visible
-      await expect(page.getByRole('heading', { name: /Frequently Asked Questions/i })).toBeVisible();
+      await expect(
+        page.getByRole('heading', { name: /Frequently Asked Questions/i })
+      ).toBeVisible();
       await expect(page.getByText('How do I leave a review?')).toBeVisible();
       await expect(page.getByRole('link', { name: /Contact Support/i })).toBeVisible();
     });
@@ -235,7 +231,9 @@ test.describe('FAQ Section', () => {
       await page.waitForTimeout(500);
 
       // All content should be visible
-      await expect(page.getByRole('heading', { name: /Frequently Asked Questions/i })).toBeVisible();
+      await expect(
+        page.getByRole('heading', { name: /Frequently Asked Questions/i })
+      ).toBeVisible();
       await expect(page.getByText('Are all reviews verified?')).toBeVisible();
     });
 
@@ -245,7 +243,9 @@ test.describe('FAQ Section', () => {
       await page.waitForTimeout(500);
 
       // All content should be visible
-      await expect(page.getByRole('heading', { name: /Frequently Asked Questions/i })).toBeVisible();
+      await expect(
+        page.getByRole('heading', { name: /Frequently Asked Questions/i })
+      ).toBeVisible();
       await expect(page.getByText('How are ratings calculated?')).toBeVisible();
     });
   });
@@ -293,9 +293,7 @@ test.describe('FAQ Section', () => {
       await page.waitForTimeout(500);
 
       // Answer should be visible
-      await expect(
-        page.getByText(/To leave a review, first create an account/i)
-      ).toBeVisible();
+      await expect(page.getByText(/To leave a review, first create an account/i)).toBeVisible();
     });
 
     test('contact support button should be keyboard accessible', async ({ page }) => {
@@ -330,9 +328,7 @@ test.describe('FAQ Section', () => {
       await page.waitForTimeout(500);
 
       // Content should be visible after animation
-      await expect(
-        page.getByText(/To leave a review, first create an account/i)
-      ).toBeVisible();
+      await expect(page.getByText(/To leave a review, first create an account/i)).toBeVisible();
     });
 
     test('section should fade in when scrolled into view', async ({ page }) => {
@@ -445,9 +441,7 @@ test.describe('FAQ Section', () => {
       await page.waitForTimeout(500);
 
       // Verify expanded state
-      await expect(
-        page.getByText(/To leave a review, first create an account/i)
-      ).toBeVisible();
+      await expect(page.getByText(/To leave a review, first create an account/i)).toBeVisible();
     });
   });
 
@@ -475,9 +469,7 @@ test.describe('FAQ Section', () => {
       await firstQuestion.click();
 
       // Wait for content to be visible
-      await expect(
-        page.getByText(/To leave a review, first create an account/i)
-      ).toBeVisible();
+      await expect(page.getByText(/To leave a review, first create an account/i)).toBeVisible();
 
       const animationTime = Date.now() - startTime;
 

@@ -58,4 +58,5 @@ global.console = {
 process.env.NODE_ENV = 'test';
 process.env.NEXTAUTH_SECRET = 'test-secret-key-for-jwt';
 process.env.NEXTAUTH_URL = 'http://localhost:3000';
-process.env.DATABASE_URL = 'postgresql://postgres:password@localhost:5432/ratemyaccom_test?schema=public';
+process.env.DATABASE_URL =
+  'postgresql://postgres:password@localhost:5432/ratemyaccom_test?schema=public';

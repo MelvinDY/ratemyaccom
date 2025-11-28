@@ -90,6 +90,8 @@ export interface Accommodation {
   featured: boolean;
   createdAt: Date;
   updatedAt: Date;
+  lastVerified?: Date | null;
+  sourceUrl?: string | null;
 }
 
 export interface SearchFilters {

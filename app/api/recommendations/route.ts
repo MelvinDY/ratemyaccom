@@ -4,13 +4,13 @@ import { QuizPreferences, RecommendationScore } from '@/types';
 
 // Weights for different factors in the scoring algorithm
 const SCORING_WEIGHTS = {
-  budgetMatch: 25,        // 25% - Within budget
-  universityMatch: 15,    // 15% - Near their university
-  typeMatch: 10,          // 10% - Matches preferred type
-  roomTypeMatch: 10,      // 10% - Matches room type
-  ratingFactors: 25,      // 25% - Rating breakdown alignment
-  amenitiesMatch: 10,     // 10% - Has must-have amenities
-  distanceScore: 5,       // 5%  - Distance to campus
+  budgetMatch: 25, // 25% - Within budget
+  universityMatch: 15, // 15% - Near their university
+  typeMatch: 10, // 10% - Matches preferred type
+  roomTypeMatch: 10, // 10% - Matches room type
+  ratingFactors: 25, // 25% - Rating breakdown alignment
+  amenitiesMatch: 10, // 10% - Has must-have amenities
+  distanceScore: 5, // 5%  - Distance to campus
 };
 
 // Calculate how well an accommodation matches user preferences
@@ -52,7 +52,8 @@ function calculateMatchScore(
     matchReasons.push('Within your budget range');
   } else if (accPriceMin <= preferences.budgetMax && accPriceMax >= preferences.budgetMin) {
     // Partial overlap
-    const overlap = Math.min(accPriceMax, preferences.budgetMax) - Math.max(accPriceMin, preferences.budgetMin);
+    const overlap =
+      Math.min(accPriceMax, preferences.budgetMax) - Math.max(accPriceMin, preferences.budgetMin);
     const range = preferences.budgetMax - preferences.budgetMin;
     const overlapRatio = Math.max(0, overlap / range);
     totalScore += SCORING_WEIGHTS.budgetMatch * overlapRatio;
@@ -72,15 +73,15 @@ function calculateMatchScore(
 
   // 2. University Match (15%)
   const universityMapping: Record<string, string[]> = {
-    'UNSW': ['UNSW', 'University of New South Wales'],
-    'USYD': ['USYD', 'University of Sydney', 'Sydney University'],
-    'UTS': ['UTS', 'University of Technology Sydney'],
-    'MQ': ['MQ', 'Macquarie University', 'Macquarie'],
-    'WSU': ['WSU', 'Western Sydney University', 'Western Sydney'],
+    UNSW: ['UNSW', 'University of New South Wales'],
+    USYD: ['USYD', 'University of Sydney', 'Sydney University'],
+    UTS: ['UTS', 'University of Technology Sydney'],
+    MQ: ['MQ', 'Macquarie University', 'Macquarie'],
+    WSU: ['WSU', 'Western Sydney University', 'Western Sydney'],
   };
 
   const preferredUniNames = universityMapping[preferences.university] || [preferences.university];
-  const isNearUniversity = preferredUniNames.some(name =>
+  const isNearUniversity = preferredUniNames.some((name) =>
     accommodation.university.toLowerCase().includes(name.toLowerCase())
   );
 
@@ -103,9 +104,10 @@ function calculateMatchScore(
   // 4. Room Type Match (10%)
   if (preferences.roomType && accommodation.roomTypes.length > 0) {
     const roomTypeNormalized = preferences.roomType.toLowerCase();
-    const hasMatchingRoom = accommodation.roomTypes.some(rt =>
-      rt.toLowerCase().includes(roomTypeNormalized) ||
-      roomTypeNormalized.includes(rt.toLowerCase())
+    const hasMatchingRoom = accommodation.roomTypes.some(
+      (rt) =>
+        rt.toLowerCase().includes(roomTypeNormalized) ||
+        roomTypeNormalized.includes(rt.toLowerCase())
     );
 
     if (hasMatchingRoom) {
@@ -153,10 +155,10 @@ function calculateMatchScore(
 
   // 6. Amenities Match (10%)
   if (preferences.mustHaveAmenities.length > 0) {
-    const accommodationAmenities = accommodation.amenities.map(a => a.amenity.name.toLowerCase());
-    const matchedAmenities = preferences.mustHaveAmenities.filter(amenity =>
-      accommodationAmenities.some(aa =>
-        aa.includes(amenity.toLowerCase()) || amenity.toLowerCase().includes(aa)
+    const accommodationAmenities = accommodation.amenities.map((a) => a.amenity.name.toLowerCase());
+    const matchedAmenities = preferences.mustHaveAmenities.filter((amenity) =>
+      accommodationAmenities.some(
+        (aa) => aa.includes(amenity.toLowerCase()) || amenity.toLowerCase().includes(aa)
       )
     );
 
@@ -164,10 +166,14 @@ function calculateMatchScore(
     totalScore += SCORING_WEIGHTS.amenitiesMatch * amenityMatchRatio;
 
     if (matchedAmenities.length > 0) {
-      matchReasons.push(`Has ${matchedAmenities.length}/${preferences.mustHaveAmenities.length} must-have amenities`);
+      matchReasons.push(
+        `Has ${matchedAmenities.length}/${preferences.mustHaveAmenities.length} must-have amenities`
+      );
     }
 
-    const missingAmenities = preferences.mustHaveAmenities.filter(a => !matchedAmenities.includes(a));
+    const missingAmenities = preferences.mustHaveAmenities.filter(
+      (a) => !matchedAmenities.includes(a)
+    );
     if (missingAmenities.length > 0) {
       warnings.push(`May be missing: ${missingAmenities.join(', ')}`);
     }
@@ -178,7 +184,7 @@ function calculateMatchScore(
   // 7. Distance Score (5%)
   if (accommodation.distanceToCampus !== null) {
     if (accommodation.distanceToCampus <= preferences.maxDistanceToCampus) {
-      const distanceRatio = 1 - (accommodation.distanceToCampus / preferences.maxDistanceToCampus);
+      const distanceRatio = 1 - accommodation.distanceToCampus / preferences.maxDistanceToCampus;
       totalScore += SCORING_WEIGHTS.distanceScore * distanceRatio;
 
       if (accommodation.distanceToCampus <= 1) {
@@ -187,7 +193,9 @@ function calculateMatchScore(
         matchReasons.push(`${accommodation.distanceToCampus.toFixed(1)}km from campus`);
       }
     } else {
-      warnings.push(`${accommodation.distanceToCampus.toFixed(1)}km from campus (beyond your ${preferences.maxDistanceToCampus}km preference)`);
+      warnings.push(
+        `${accommodation.distanceToCampus.toFixed(1)}km from campus (beyond your ${preferences.maxDistanceToCampus}km preference)`
+      );
     }
   }
 
@@ -233,10 +241,7 @@ export async function POST(request: Request) {
           },
         },
       },
-      orderBy: [
-        { featured: 'desc' },
-        { ratingOverall: 'desc' },
-      ],
+      orderBy: [{ featured: 'desc' }, { ratingOverall: 'desc' }],
     });
 
     // Calculate match scores for each accommodation
@@ -298,7 +303,8 @@ export async function POST(request: Request) {
           },
           capacity: acc.capacity || 0,
           roomTypes: acc.roomTypes || [],
-          contactInfo: acc.contactInfo as { phone?: string; email?: string; website?: string } || {},
+          contactInfo:
+            (acc.contactInfo as { phone?: string; email?: string; website?: string }) || {},
           ratings: {
             overall: acc.ratingOverall || 0,
             breakdown: {

@@ -104,13 +104,15 @@ async function runScraper() {
     let totalImported = 0;
     let totalFailed = 0;
 
-    stats.forEach(stat => {
+    stats.forEach((stat) => {
       console.log(`${stat.name}:`);
       console.log(`  Found: ${stat.found}`);
       console.log(`  Imported: ${stat.imported}`);
       console.log(`  Failed: ${stat.failed}`);
       console.log(`  Duration: ${stat.duration}s`);
-      console.log(`  Success Rate: ${stat.found > 0 ? ((stat.imported / stat.found) * 100).toFixed(1) : 0}%`);
+      console.log(
+        `  Success Rate: ${stat.found > 0 ? ((stat.imported / stat.found) * 100).toFixed(1) : 0}%`
+      );
       console.log('');
 
       totalFound += stat.found;
@@ -123,7 +125,9 @@ async function runScraper() {
     console.log(`  Found: ${totalFound}`);
     console.log(`  Imported: ${totalImported}`);
     console.log(`  Failed: ${totalFailed}`);
-    console.log(`  Overall Success Rate: ${totalFound > 0 ? ((totalImported / totalFound) * 100).toFixed(1) : 0}%`);
+    console.log(
+      `  Overall Success Rate: ${totalFound > 0 ? ((totalImported / totalFound) * 100).toFixed(1) : 0}%`
+    );
     console.log('═══════════════════════════════════════════════════\n');
 
     // Print database stats

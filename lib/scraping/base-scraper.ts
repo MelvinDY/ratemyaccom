@@ -148,8 +148,8 @@ export abstract class BaseScraper {
       state: data.state.toUpperCase(),
       postcode: data.postcode.trim(),
       description: this.cleanString(data.description),
-      images: data.images.filter(img => this.isValidUrl(img)),
-      roomTypes: data.roomTypes.map(rt => this.cleanString(rt)),
+      images: data.images.filter((img) => this.isValidUrl(img)),
+      roomTypes: data.roomTypes.map((rt) => this.cleanString(rt)),
     };
   }
 
@@ -180,7 +180,7 @@ export abstract class BaseScraper {
    */
   protected async delay(ms?: number): Promise<void> {
     const delayMs = ms || this.config.rateLimit;
-    return new Promise(resolve => setTimeout(resolve, delayMs));
+    return new Promise((resolve) => setTimeout(resolve, delayMs));
   }
 
   /**

@@ -48,14 +48,23 @@ async function testSupportPage() {
     await page.fill('#name', 'John Doe');
     await page.fill('#email', 'john.doe@student.edu.au');
     await page.fill('#subject', 'Test inquiry about accommodation reviews');
-    await page.fill('#message', 'This is a test message to verify the contact form functionality works correctly.');
-    await page.screenshot({ path: `${screenshotDir}/support-contact-form-filled.png`, fullPage: false });
+    await page.fill(
+      '#message',
+      'This is a test message to verify the contact form functionality works correctly.'
+    );
+    await page.screenshot({
+      path: `${screenshotDir}/support-contact-form-filled.png`,
+      fullPage: false,
+    });
 
     // Test 6: Submit form
     console.log('✓ Test 6: Submitting contact form...');
     await page.getByRole('button', { name: /send message/i }).click();
     await page.waitForTimeout(2000);
-    await page.screenshot({ path: `${screenshotDir}/support-contact-form-success.png`, fullPage: false });
+    await page.screenshot({
+      path: `${screenshotDir}/support-contact-form-success.png`,
+      fullPage: false,
+    });
 
     // Test 7: Navigate to Privacy Policy tab
     console.log('✓ Test 7: Navigating to Privacy Policy tab...');
@@ -67,7 +76,10 @@ async function testSupportPage() {
     console.log('✓ Test 8: Capturing Privacy Policy sections...');
     await page.evaluate(() => window.scrollTo(0, 800));
     await page.waitForTimeout(500);
-    await page.screenshot({ path: `${screenshotDir}/support-privacy-content.png`, fullPage: false });
+    await page.screenshot({
+      path: `${screenshotDir}/support-privacy-content.png`,
+      fullPage: false,
+    });
 
     // Test 9: Navigate to Terms of Service tab
     console.log('✓ Test 9: Navigating to Terms of Service tab...');
@@ -95,12 +107,18 @@ async function testSupportPage() {
     // Contact Us full page
     await page.getByRole('tab', { name: /contact/i }).click();
     await page.waitForTimeout(1000);
-    await page.screenshot({ path: `${screenshotDir}/support-contact-fullpage.png`, fullPage: true });
+    await page.screenshot({
+      path: `${screenshotDir}/support-contact-fullpage.png`,
+      fullPage: true,
+    });
 
     // Privacy full page
     await page.getByRole('tab', { name: /privacy/i }).click();
     await page.waitForTimeout(1000);
-    await page.screenshot({ path: `${screenshotDir}/support-privacy-fullpage.png`, fullPage: true });
+    await page.screenshot({
+      path: `${screenshotDir}/support-privacy-fullpage.png`,
+      fullPage: true,
+    });
 
     // Terms full page
     await page.getByRole('tab', { name: /terms/i }).click();
@@ -154,11 +172,11 @@ async function testSupportPage() {
 
     await page.locator('#name');
     const nameLabel = await page.locator('label[for="name"]');
-    console.log(`  Name input has label: ${await nameLabel.count() === 1}`);
+    console.log(`  Name input has label: ${(await nameLabel.count()) === 1}`);
 
     await page.locator('#email');
     const emailLabel = await page.locator('label[for="email"]');
-    console.log(`  Email input has label: ${await emailLabel.count() === 1}`);
+    console.log(`  Email input has label: ${(await emailLabel.count()) === 1}`);
 
     // Test 15: Link navigation
     console.log('✓ Test 15: Verifying external links...');
@@ -180,7 +198,6 @@ async function testSupportPage() {
     console.log('- Mobile responsive: ✅');
     console.log('- Keyboard navigation: ✅');
     console.log('- Accessibility: ✅');
-
   } catch (error) {
     console.error('❌ Test failed:', error);
     await page.screenshot({ path: `${screenshotDir}/support-error.png` });

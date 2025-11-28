@@ -65,7 +65,8 @@ export default function FeaturedGrid({ accommodations }: FeaturedGridProps) {
               Featured Accommodations
             </h2>
             <p className="text-lg text-purple-200 max-w-2xl mx-auto">
-              Popular student housing options across NSW universities, reviewed by students like you.
+              Popular student housing options across NSW universities, reviewed by students like
+              you.
             </p>
           </div>
 

@@ -44,15 +44,11 @@ test.describe('Features Section', () => {
       await expect(
         page.getByText(/Find exactly what you need with advanced filters/i)
       ).toBeVisible();
-      await expect(
-        page.getByText(/Browse through extensive photo galleries/i)
-      ).toBeVisible();
+      await expect(page.getByText(/Browse through extensive photo galleries/i)).toBeVisible();
       await expect(
         page.getByText(/Access comprehensive details about each accommodation/i)
       ).toBeVisible();
-      await expect(
-        page.getByText(/Side-by-side comparison tool to help you make/i)
-      ).toBeVisible();
+      await expect(page.getByText(/Side-by-side comparison tool to help you make/i)).toBeVisible();
     });
 
     test('should display feature icons', async ({ page }) => {
@@ -82,21 +78,27 @@ test.describe('Features Section', () => {
     test('should have 3-column grid on desktop', async ({ page }) => {
       await page.setViewportSize({ width: 1920, height: 1080 });
 
-      const featuresGrid = page.locator('section[aria-labelledby="features-heading"]').locator('.grid');
+      const featuresGrid = page
+        .locator('section[aria-labelledby="features-heading"]')
+        .locator('.grid');
       await expect(featuresGrid).toHaveClass(/lg:grid-cols-3/);
     });
 
     test('should have 2-column grid on tablet', async ({ page }) => {
       await page.setViewportSize({ width: 768, height: 1024 });
 
-      const featuresGrid = page.locator('section[aria-labelledby="features-heading"]').locator('.grid');
+      const featuresGrid = page
+        .locator('section[aria-labelledby="features-heading"]')
+        .locator('.grid');
       await expect(featuresGrid).toHaveClass(/md:grid-cols-2/);
     });
 
     test('should have 1-column grid on mobile', async ({ page }) => {
       await page.setViewportSize({ width: 375, height: 667 });
 
-      const featuresGrid = page.locator('section[aria-labelledby="features-heading"]').locator('.grid');
+      const featuresGrid = page
+        .locator('section[aria-labelledby="features-heading"]')
+        .locator('.grid');
       await expect(featuresGrid).toHaveClass(/grid-cols-1/);
     });
   });
@@ -135,8 +137,10 @@ test.describe('Features Section', () => {
       await page.setViewportSize({ width: 1920, height: 1080 });
       await page.locator('section[aria-labelledby="features-heading"]').scrollIntoViewIfNeeded();
 
-      const firstCard = page.locator('section[aria-labelledby="features-heading"]')
-        .locator('.group.relative').first();
+      const firstCard = page
+        .locator('section[aria-labelledby="features-heading"]')
+        .locator('.group.relative')
+        .first();
 
       // Hover over the card
       await firstCard.hover();
@@ -148,7 +152,8 @@ test.describe('Features Section', () => {
     test('all feature cards should be interactive', async ({ page }) => {
       await page.locator('section[aria-labelledby="features-heading"]').scrollIntoViewIfNeeded();
 
-      const cards = page.locator('section[aria-labelledby="features-heading"]')
+      const cards = page
+        .locator('section[aria-labelledby="features-heading"]')
         .locator('.group.relative');
 
       // All 6 cards should exist

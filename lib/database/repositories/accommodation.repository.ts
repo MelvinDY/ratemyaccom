@@ -28,10 +28,7 @@ export class AccommodationRepository {
   async findByIdOrSlug(identifier: string): Promise<AccommodationWithRelations | null> {
     return await prisma.accommodation.findFirst({
       where: {
-        OR: [
-          { id: identifier },
-          { slug: identifier },
-        ],
+        OR: [{ id: identifier }, { slug: identifier }],
         active: true,
       },
       include: {
@@ -92,7 +89,7 @@ export class AccommodationRepository {
 
     if (searchFilters.type && searchFilters.type.length > 0) {
       where.type = {
-        in: searchFilters.type.map(t => this.mapAccommodationType(t)),
+        in: searchFilters.type.map((t) => this.mapAccommodationType(t)),
       };
     }
 
@@ -129,11 +126,7 @@ export class AccommodationRepository {
             },
           },
         },
-        orderBy: [
-          { featured: 'desc' },
-          { ratingOverall: 'desc' },
-          { totalReviews: 'desc' },
-        ],
+        orderBy: [{ featured: 'desc' }, { ratingOverall: 'desc' }, { totalReviews: 'desc' }],
         skip,
         take: limit,
       }),
@@ -306,8 +299,8 @@ export class AccommodationRepository {
     const mapping: Record<string, AccommodationType> = {
       'on-campus': 'ON_CAMPUS',
       'off-campus': 'OFF_CAMPUS',
-      'private': 'PRIVATE',
-      'college': 'COLLEGE',
+      private: 'PRIVATE',
+      college: 'COLLEGE',
     };
     return mapping[type] || 'OFF_CAMPUS';
   }

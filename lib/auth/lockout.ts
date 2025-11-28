@@ -79,9 +79,7 @@ export async function isAccountLockedByEmail(email: string): Promise<{
  * Record a failed login attempt
  * Returns true if account should be locked
  */
-export async function recordFailedLogin(
-  userId: string
-): Promise<{
+export async function recordFailedLogin(userId: string): Promise<{
   shouldLock: boolean;
   attemptsRemaining: number;
   lockedUntil?: Date;
@@ -104,8 +102,7 @@ export async function recordFailedLogin(
 
   // Reset counter if last attempt was outside the window
   if (user.lastFailedLogin) {
-    const minutesSinceLastAttempt =
-      (now.getTime() - user.lastFailedLogin.getTime()) / (1000 * 60);
+    const minutesSinceLastAttempt = (now.getTime() - user.lastFailedLogin.getTime()) / (1000 * 60);
 
     if (minutesSinceLastAttempt > ATTEMPT_WINDOW_MINUTES) {
       failedAttempts = 1; // Reset to 1 (current attempt)

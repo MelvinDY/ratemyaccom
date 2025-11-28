@@ -58,7 +58,7 @@ export async function GET(request: NextRequest) {
     });
 
     // Transform data for frontend
-    const transformedData = result.data.map(review => ({
+    const transformedData = result.data.map((review) => ({
       id: review.id,
       accommodationId: review.accommodationId,
       userId: review.userId,
@@ -136,10 +136,7 @@ export async function POST(request: NextRequest) {
     const data = validationResult.data;
 
     // Check if user has already reviewed this accommodation
-    const hasReviewed = await reviewRepository.hasUserReviewed(
-      data.userId,
-      data.accommodationId
-    );
+    const hasReviewed = await reviewRepository.hasUserReviewed(data.userId, data.accommodationId);
 
     if (hasReviewed) {
       return NextResponse.json(

@@ -40,10 +40,7 @@ export class ReviewRepository {
             },
           },
         },
-        orderBy: [
-          { helpful: 'desc' },
-          { createdAt: 'desc' },
-        ],
+        orderBy: [{ helpful: 'desc' }, { createdAt: 'desc' }],
         skip,
         take: limit,
       }),

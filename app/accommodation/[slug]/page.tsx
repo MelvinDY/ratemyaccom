@@ -111,6 +111,8 @@ async function getAccommodation(
       featured: dbAccommodation.featured,
       createdAt: dbAccommodation.createdAt,
       updatedAt: dbAccommodation.updatedAt,
+      lastVerified: dbAccommodation.lastVerified,
+      sourceUrl: dbAccommodation.sourceUrl,
     };
 
     // Transform reviews
@@ -367,6 +369,31 @@ export default async function AccommodationPage({ params }: AccommodationPagePro
                   <span className="text-xl text-white/70">- ${accommodation.pricing.max}</span>
                 </div>
                 <p className="text-white/50 text-sm mt-1">per {accommodation.pricing.period}</p>
+                {accommodation.lastVerified && (
+                  <div className="flex items-center gap-1.5 mt-3 text-xs text-white/40">
+                    <svg
+                      className="w-3.5 h-3.5"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                      />
+                    </svg>
+                    <span>
+                      Prices verified{' '}
+                      {new Date(accommodation.lastVerified).toLocaleDateString('en-AU', {
+                        day: 'numeric',
+                        month: 'short',
+                        year: 'numeric',
+                      })}
+                    </span>
+                  </div>
+                )}
               </div>
 
               {accommodation.contactInfo.website && (

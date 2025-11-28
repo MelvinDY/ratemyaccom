@@ -24,11 +24,13 @@ const AccommodationImportSchema = z.object({
   pricePeriod: z.enum(['week', 'month', 'semester', 'year']).default('week'),
   capacity: z.number().positive().optional(),
   roomTypes: z.array(z.string()).default([]),
-  contactInfo: z.object({
-    phone: z.string().optional(),
-    email: z.string().email().optional(),
-    website: z.string().url().optional(),
-  }).default({}),
+  contactInfo: z
+    .object({
+      phone: z.string().optional(),
+      email: z.string().email().optional(),
+      website: z.string().url().optional(),
+    })
+    .default({}),
   amenities: z.array(z.string()).default([]),
   latitude: z.number().optional(),
   longitude: z.number().optional(),
@@ -55,7 +57,9 @@ export class AccommodationImporter {
       const validationResult = AccommodationImportSchema.safeParse(data);
 
       if (!validationResult.success) {
-        const errors = validationResult.error.issues.map((e: any) => `${e.path.join('.')}: ${e.message}`);
+        const errors = validationResult.error.issues.map(
+          (e: any) => `${e.path.join('.')}: ${e.message}`
+        );
         await this.logImport('ERROR', 'VALIDATION_ERROR', data, undefined, errors.join(', '));
         return {
           success: false,
@@ -116,7 +120,14 @@ export class AccommodationImporter {
         await this.createAmenities(accommodation.id, validated.amenities);
       }
 
-      await this.logImport('CREATE', 'SUCCESS', data, accommodationData, undefined, accommodation.id);
+      await this.logImport(
+        'CREATE',
+        'SUCCESS',
+        data,
+        accommodationData,
+        undefined,
+        accommodation.id
+      );
 
       return {
         success: true,
@@ -139,9 +150,7 @@ export class AccommodationImporter {
   /**
    * Import multiple accommodations
    */
-  async importMany(
-    dataArray: AccommodationImportData[]
-  ): Promise<{
+  async importMany(dataArray: AccommodationImportData[]): Promise<{
     total: number;
     created: number;
     updated: number;
@@ -188,7 +197,9 @@ export class AccommodationImporter {
   /**
    * Import from JSON file
    */
-  async importFromJSON(filePath: string): Promise<ReturnType<typeof this.importMany> | ImportResult> {
+  async importFromJSON(
+    filePath: string
+  ): Promise<ReturnType<typeof this.importMany> | ImportResult> {
     const fs = await import('fs/promises');
     const fileContent = await fs.readFile(filePath, 'utf-8');
     const data = JSON.parse(fileContent);
@@ -233,15 +244,17 @@ export class AccommodationImporter {
       }
 
       // Create junction record
-      await prisma.accommodationAmenity.create({
-        data: {
-          accommodationId,
-          amenityId: amenity.id,
-          available: true,
-        },
-      }).catch(() => {
-        // Ignore if already exists
-      });
+      await prisma.accommodationAmenity
+        .create({
+          data: {
+            accommodationId,
+            amenityId: amenity.id,
+            available: true,
+          },
+        })
+        .catch(() => {
+          // Ignore if already exists
+        });
     }
   }
 
@@ -262,8 +275,8 @@ export class AccommodationImporter {
     const mapping: Record<string, AccommodationType> = {
       'on-campus': 'ON_CAMPUS',
       'off-campus': 'OFF_CAMPUS',
-      'private': 'PRIVATE',
-      'college': 'COLLEGE',
+      private: 'PRIVATE',
+      college: 'COLLEGE',
     };
     return mapping[type] || 'OFF_CAMPUS';
   }
@@ -297,7 +310,7 @@ export class AccommodationImporter {
    * Delay helper
    */
   private delay(ms: number): Promise<void> {
-    return new Promise(resolve => setTimeout(resolve, ms));
+    return new Promise((resolve) => setTimeout(resolve, ms));
   }
 }
 

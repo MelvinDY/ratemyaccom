@@ -5,13 +5,16 @@
  */
 
 import { chromium } from 'playwright';
-import { BaseScraper, ScrapedAccommodation, ScraperConfig, AccommodationType, PricePeriod } from '../base-scraper';
+import {
+  BaseScraper,
+  ScrapedAccommodation,
+  ScraperConfig,
+  AccommodationType,
+  PricePeriod,
+} from '../base-scraper';
 import { prisma } from '@/lib/database/prisma';
 import { logger } from '../logger';
-import {
-  generateSlug,
-  delay,
-} from '../utils/helpers';
+import { generateSlug, delay } from '../utils/helpers';
 import { validateAccommodationData } from '../utils/validation';
 
 interface UniLodgeProperty {
@@ -22,7 +25,6 @@ interface UniLodgeProperty {
 }
 
 export class UniLodgeScraper extends BaseScraper {
-
   constructor() {
     const config: ScraperConfig = {
       name: 'unilodge',
@@ -30,7 +32,8 @@ export class UniLodgeScraper extends BaseScraper {
       rateLimit: 3000, // 3 seconds - be respectful
       maxRetries: 3,
       timeout: 30000,
-      userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+      userAgent:
+        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
     };
     super(config);
   }
@@ -99,7 +102,14 @@ export class UniLodgeScraper extends BaseScraper {
 
               if (result.success) {
                 stats.imported++;
-                await this.logImport('CREATE', 'SUCCESS', data, validation.data, undefined, result.id);
+                await this.logImport(
+                  'CREATE',
+                  'SUCCESS',
+                  data,
+                  validation.data,
+                  undefined,
+                  result.id
+                );
                 logger.info(`✅ Imported: ${property.name}`);
               } else {
                 stats.failed++;
@@ -108,7 +118,9 @@ export class UniLodgeScraper extends BaseScraper {
               }
             } else {
               stats.failed++;
-              const errors = validation.errors?.issues.map((e) => `${e.path.join('.')}: ${e.message}`).join(', ');
+              const errors = validation.errors?.issues
+                .map((e) => `${e.path.join('.')}: ${e.message}`)
+                .join(', ');
               await this.logImport('SKIP', 'VALIDATION_ERROR', data, undefined, errors);
               logger.error(`❌ Validation failed: ${property.name} - ${errors}`);
             }
@@ -136,7 +148,8 @@ export class UniLodgeScraper extends BaseScraper {
     // UniLodge property details (based on publicly available information)
     const propertyDetails: Record<string, Partial<ScrapedAccommodation>> = {
       'UniLodge @ UNSW': {
-        description: 'UniLodge @ UNSW offers modern student accommodation just minutes from UNSW Kensington campus. Features fully furnished studios and shared apartments with private bathrooms, study desks, and kitchenettes. The building includes study rooms, gym, common areas, and 24/7 security. Perfect for students seeking independent living close to campus.',
+        description:
+          'UniLodge @ UNSW offers modern student accommodation just minutes from UNSW Kensington campus. Features fully furnished studios and shared apartments with private bathrooms, study desks, and kitchenettes. The building includes study rooms, gym, common areas, and 24/7 security. Perfect for students seeking independent living close to campus.',
         address: 'Barker Street, Kensington',
         suburb: 'Kensington',
         state: 'NSW',
@@ -147,7 +160,18 @@ export class UniLodgeScraper extends BaseScraper {
         pricePeriod: 'WEEK',
         capacity: 250,
         roomTypes: ['Studio', 'Shared Apartment', 'Single Ensuite'],
-        amenities: ['WiFi', 'Gym', 'Study Rooms', 'Laundry', 'Common Kitchen', 'Parking', 'Security', 'Social Events', '24/7 Reception', 'Air Conditioning'],
+        amenities: [
+          'WiFi',
+          'Gym',
+          'Study Rooms',
+          'Laundry',
+          'Common Kitchen',
+          'Parking',
+          'Security',
+          'Social Events',
+          '24/7 Reception',
+          'Air Conditioning',
+        ],
         contactInfo: {
           phone: '1300 334 868',
           email: 'sydney@unilodge.com.au',
@@ -155,7 +179,8 @@ export class UniLodgeScraper extends BaseScraper {
         },
       },
       'UniLodge on Broadway': {
-        description: 'UniLodge on Broadway is a premium student accommodation facility in the heart of Sydney, close to the University of Sydney and UTS. Offering modern studios and apartments with ensuite bathrooms, fully equipped kitchens, and contemporary furnishings. Amenities include gym, study spaces, rooftop terrace, and social areas. Conveniently located near Central Station and Broadway Shopping Centre.',
+        description:
+          'UniLodge on Broadway is a premium student accommodation facility in the heart of Sydney, close to the University of Sydney and UTS. Offering modern studios and apartments with ensuite bathrooms, fully equipped kitchens, and contemporary furnishings. Amenities include gym, study spaces, rooftop terrace, and social areas. Conveniently located near Central Station and Broadway Shopping Centre.',
         address: 'Broadway, Ultimo',
         suburb: 'Ultimo',
         state: 'NSW',
@@ -166,7 +191,20 @@ export class UniLodgeScraper extends BaseScraper {
         pricePeriod: 'WEEK',
         capacity: 400,
         roomTypes: ['Studio', 'Apartment', 'Shared Apartment', 'Single Ensuite'],
-        amenities: ['WiFi', 'Gym', 'Study Rooms', 'Laundry', 'Common Kitchen', 'Parking', 'Security', 'Social Events', 'Rooftop Terrace', 'Cinema Room', '24/7 Reception', 'Air Conditioning'],
+        amenities: [
+          'WiFi',
+          'Gym',
+          'Study Rooms',
+          'Laundry',
+          'Common Kitchen',
+          'Parking',
+          'Security',
+          'Social Events',
+          'Rooftop Terrace',
+          'Cinema Room',
+          '24/7 Reception',
+          'Air Conditioning',
+        ],
         contactInfo: {
           phone: '1300 334 868',
           email: 'broadway@unilodge.com.au',
@@ -174,7 +212,8 @@ export class UniLodgeScraper extends BaseScraper {
         },
       },
       'UniLodge Park Central': {
-        description: 'UniLodge Park Central provides quality student accommodation in Sydney CBD, ideal for students at University of Sydney, UTS, and TAFE. Features include modern studios with private bathrooms, study areas, and kitchenettes. Building facilities include gym, study rooms, communal kitchen, and social spaces. Excellent public transport connections and walking distance to universities.',
+        description:
+          'UniLodge Park Central provides quality student accommodation in Sydney CBD, ideal for students at University of Sydney, UTS, and TAFE. Features include modern studios with private bathrooms, study areas, and kitchenettes. Building facilities include gym, study rooms, communal kitchen, and social spaces. Excellent public transport connections and walking distance to universities.',
         address: 'Park Street, Sydney',
         suburb: 'Sydney',
         state: 'NSW',
@@ -185,7 +224,18 @@ export class UniLodgeScraper extends BaseScraper {
         pricePeriod: 'WEEK',
         capacity: 300,
         roomTypes: ['Studio', 'Single Ensuite'],
-        amenities: ['WiFi', 'Gym', 'Study Rooms', 'Laundry', 'Common Kitchen', 'Security', 'Social Events', '24/7 Reception', 'Air Conditioning', 'Heating'],
+        amenities: [
+          'WiFi',
+          'Gym',
+          'Study Rooms',
+          'Laundry',
+          'Common Kitchen',
+          'Security',
+          'Social Events',
+          '24/7 Reception',
+          'Air Conditioning',
+          'Heating',
+        ],
         contactInfo: {
           phone: '1300 334 868',
           email: 'parkcentral@unilodge.com.au',
@@ -193,7 +243,8 @@ export class UniLodgeScraper extends BaseScraper {
         },
       },
       'UniLodge Sydney University Village': {
-        description: 'UniLodge Sydney University Village offers comfortable student living near the University of Sydney campus. Featuring a mix of studios and shared apartments, all with modern furnishings and private or ensuite bathrooms. The property includes excellent amenities such as study spaces, gym, games room, and outdoor BBQ area. A welcoming community environment for both local and international students.',
+        description:
+          'UniLodge Sydney University Village offers comfortable student living near the University of Sydney campus. Featuring a mix of studios and shared apartments, all with modern furnishings and private or ensuite bathrooms. The property includes excellent amenities such as study spaces, gym, games room, and outdoor BBQ area. A welcoming community environment for both local and international students.',
         address: 'Arundel Street, Glebe',
         suburb: 'Glebe',
         state: 'NSW',
@@ -204,7 +255,20 @@ export class UniLodgeScraper extends BaseScraper {
         pricePeriod: 'WEEK',
         capacity: 350,
         roomTypes: ['Studio', 'Shared Apartment', 'Twin Share', 'Single Ensuite'],
-        amenities: ['WiFi', 'Gym', 'Study Rooms', 'Laundry', 'Common Kitchen', 'Parking', 'Security', 'Social Events', 'BBQ Area', 'Games Room', '24/7 Reception', 'Air Conditioning'],
+        amenities: [
+          'WiFi',
+          'Gym',
+          'Study Rooms',
+          'Laundry',
+          'Common Kitchen',
+          'Parking',
+          'Security',
+          'Social Events',
+          'BBQ Area',
+          'Games Room',
+          '24/7 Reception',
+          'Air Conditioning',
+        ],
         contactInfo: {
           phone: '1300 334 868',
           email: 'sydneyvillage@unilodge.com.au',
@@ -212,7 +276,8 @@ export class UniLodgeScraper extends BaseScraper {
         },
       },
       'UniLodge on Lygon': {
-        description: 'UniLodge on Lygon is located in the heart of Melbourne on the famous Lygon Street, Carlton. Perfect for students at the University of Melbourne and RMIT. Offering modern studios and apartments with contemporary design, private bathrooms, and study spaces. Building features include rooftop terrace with city views, gym, cinema room, and study facilities. Walking distance to universities and surrounded by cafes, restaurants, and cultural attractions.',
+        description:
+          'UniLodge on Lygon is located in the heart of Melbourne on the famous Lygon Street, Carlton. Perfect for students at the University of Melbourne and RMIT. Offering modern studios and apartments with contemporary design, private bathrooms, and study spaces. Building features include rooftop terrace with city views, gym, cinema room, and study facilities. Walking distance to universities and surrounded by cafes, restaurants, and cultural attractions.',
         address: 'Lygon Street, Carlton',
         suburb: 'Carlton',
         state: 'VIC',
@@ -223,7 +288,21 @@ export class UniLodgeScraper extends BaseScraper {
         pricePeriod: 'WEEK',
         capacity: 450,
         roomTypes: ['Studio', 'Apartment', 'Single Ensuite'],
-        amenities: ['WiFi', 'Gym', 'Study Rooms', 'Laundry', 'Common Kitchen', 'Security', 'Social Events', 'Rooftop Terrace', 'Cinema Room', 'Games Room', '24/7 Reception', 'Air Conditioning', 'Bike Storage'],
+        amenities: [
+          'WiFi',
+          'Gym',
+          'Study Rooms',
+          'Laundry',
+          'Common Kitchen',
+          'Security',
+          'Social Events',
+          'Rooftop Terrace',
+          'Cinema Room',
+          'Games Room',
+          '24/7 Reception',
+          'Air Conditioning',
+          'Bike Storage',
+        ],
         contactInfo: {
           phone: '1300 334 868',
           email: 'lygon@unilodge.com.au',

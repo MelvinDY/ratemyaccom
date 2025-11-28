@@ -42,14 +42,15 @@ export async function GET(_request: NextRequest, { params }: RouteParams) {
         suburb: accommodation.suburb,
         state: accommodation.state,
         postcode: accommodation.postcode,
-        coordinates: accommodation.latitude && accommodation.longitude
-          ? { lat: accommodation.latitude, lng: accommodation.longitude }
-          : undefined,
+        coordinates:
+          accommodation.latitude && accommodation.longitude
+            ? { lat: accommodation.latitude, lng: accommodation.longitude }
+            : undefined,
       },
       description: accommodation.description,
       type: mapAccommodationTypeToFrontend(accommodation.type),
       images: accommodation.images,
-      amenities: accommodation.amenities.map(a => ({
+      amenities: accommodation.amenities.map((a) => ({
         id: a.amenity.id,
         name: a.amenity.name,
         icon: a.amenity.icon,
@@ -191,22 +192,24 @@ export async function DELETE(_request: NextRequest, { params }: RouteParams) {
 }
 
 // Helper functions
-function mapAccommodationTypeToFrontend(type: string): 'on-campus' | 'off-campus' | 'private' | 'college' {
+function mapAccommodationTypeToFrontend(
+  type: string
+): 'on-campus' | 'off-campus' | 'private' | 'college' {
   const mapping: Record<string, any> = {
-    'ON_CAMPUS': 'on-campus',
-    'OFF_CAMPUS': 'off-campus',
-    'PRIVATE': 'private',
-    'COLLEGE': 'college',
+    ON_CAMPUS: 'on-campus',
+    OFF_CAMPUS: 'off-campus',
+    PRIVATE: 'private',
+    COLLEGE: 'college',
   };
   return mapping[type] || 'off-campus';
 }
 
 function mapPricePeriodToFrontend(period: string): 'week' | 'month' | 'semester' | 'year' {
   const mapping: Record<string, any> = {
-    'WEEK': 'week',
-    'MONTH': 'month',
-    'SEMESTER': 'semester',
-    'YEAR': 'year',
+    WEEK: 'week',
+    MONTH: 'month',
+    SEMESTER: 'semester',
+    YEAR: 'year',
   };
   return mapping[period] || 'week';
 }

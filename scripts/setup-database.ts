@@ -50,7 +50,7 @@ async function setupDatabase() {
     console.log('3. Importing accommodations from placeholder data...');
 
     // Transform placeholder data to import format
-    const accommodationsToImport = placeholderAccommodations.map(accom => ({
+    const accommodationsToImport = placeholderAccommodations.map((accom) => ({
       name: accom.name,
       university: accom.university,
       address: accom.location.address,
@@ -68,7 +68,7 @@ async function setupDatabase() {
       capacity: accom.capacity,
       roomTypes: accom.roomTypes,
       contactInfo: accom.contactInfo,
-      amenities: accom.amenities.filter(a => a.available).map(a => a.name),
+      amenities: accom.amenities.filter((a) => a.available).map((a) => a.name),
     }));
 
     const importResults = await accommodationImporter.importMany(accommodationsToImport);
@@ -100,7 +100,6 @@ async function setupDatabase() {
     console.log('1. Run: npm run dev');
     console.log('2. Visit: http://localhost:3000');
     console.log('3. Check: http://localhost:3000/api/accommodations\n');
-
   } catch (error) {
     console.error('Error during database setup:', error);
     process.exit(1);

@@ -9,17 +9,9 @@ import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/database/prisma';
 import { comparePassword } from '@/lib/auth/password';
 import { generateTokenPair, JWTPayload } from '@/lib/auth/jwt';
-import {
-  isAccountLockedByEmail,
-  recordFailedLogin,
-  resetFailedAttempts,
-} from '@/lib/auth/lockout';
+import { isAccountLockedByEmail, recordFailedLogin, resetFailedAttempts } from '@/lib/auth/lockout';
 import { sendAccountLockedEmail } from '@/lib/email/service';
-import {
-  logLoginSuccess,
-  logLoginFailure,
-  logAccountLocked,
-} from '@/lib/security/audit-logger';
+import { logLoginSuccess, logLoginFailure, logAccountLocked } from '@/lib/security/audit-logger';
 
 export const dynamic = 'force-dynamic';
 
@@ -111,11 +103,7 @@ export async function POST(request: NextRequest) {
 
         // Account has been locked - send notification email
         try {
-          await sendAccountLockedEmail(
-            user.email,
-            user.name,
-            lockoutResult.lockedUntil!
-          );
+          await sendAccountLockedEmail(user.email, user.name, lockoutResult.lockedUntil!);
         } catch (emailError) {
           console.error('Failed to send account locked email:', emailError);
           // Continue - don't fail the login because email failed

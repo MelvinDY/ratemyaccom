@@ -42,7 +42,9 @@ async function generateReport() {
       console.log(`     Type: ${accom.type}`);
       console.log(`     Address: ${accom.address}`);
       console.log(`     Suburb: ${accom.suburb}, ${accom.state} ${accom.postcode}`);
-      console.log(`     Price: $${accom.priceMin}-$${accom.priceMax}/${accom.pricePeriod.toLowerCase()}`);
+      console.log(
+        `     Price: $${accom.priceMin}-$${accom.priceMax}/${accom.pricePeriod.toLowerCase()}`
+      );
       console.log(`     Capacity: ${accom.capacity} students`);
       console.log(`     Room Types: ${accom.roomTypes.join(', ')}`);
       console.log(`     Amenities: ${accom.amenities.length} amenities`);
@@ -59,10 +61,13 @@ async function generateReport() {
   console.log(`Total Accommodations: ${accommodations.length}`);
   console.log(`Universities: ${Object.keys(byUniversity).length}`);
 
-  const byType: Record<string, number> = accommodations.reduce((acc, accom) => {
-    acc[accom.type] = (acc[accom.type] || 0) + 1;
-    return acc;
-  }, {} as Record<string, number>);
+  const byType: Record<string, number> = accommodations.reduce(
+    (acc, accom) => {
+      acc[accom.type] = (acc[accom.type] || 0) + 1;
+      return acc;
+    },
+    {} as Record<string, number>
+  );
 
   console.log('\nBy Type:');
   Object.entries(byType).forEach(([type, count]) => {

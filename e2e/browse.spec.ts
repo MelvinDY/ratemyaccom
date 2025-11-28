@@ -10,7 +10,9 @@ test.describe('Browse Page', () => {
   test('should display the browse page with hero and search', async ({ page }) => {
     // Check hero section
     await expect(page.getByRole('heading', { name: 'Browse Accommodations' })).toBeVisible();
-    await expect(page.getByText('Discover student accommodations with verified reviews')).toBeVisible();
+    await expect(
+      page.getByText('Discover student accommodations with verified reviews')
+    ).toBeVisible();
 
     // Check search bar is visible
     await expect(page.getByRole('textbox', { name: 'Search accommodations' })).toBeVisible();
@@ -44,8 +46,8 @@ test.describe('Browse Page', () => {
 
   test('should display loading skeletons while fetching data', async ({ page }) => {
     // Reload page to see loading state
-    const responsePromise = page.waitForResponse(response =>
-      response.url().includes('/api/accommodations') && response.status() === 200
+    const responsePromise = page.waitForResponse(
+      (response) => response.url().includes('/api/accommodations') && response.status() === 200
     );
 
     await page.reload();
@@ -76,7 +78,9 @@ test.describe('Browse Page', () => {
     await page.waitForTimeout(500);
 
     // Check that active filter badge appears in the filters section
-    const activeFilters = page.locator('.inline-flex.items-center.px-3.py-1.rounded-full').filter({ hasText: 'University of New South Wales (UNSW)' });
+    const activeFilters = page
+      .locator('.inline-flex.items-center.px-3.py-1.rounded-full')
+      .filter({ hasText: 'University of New South Wales (UNSW)' });
     await expect(activeFilters.first()).toBeVisible();
 
     // Verify results are shown
@@ -97,7 +101,9 @@ test.describe('Browse Page', () => {
     await page.waitForTimeout(500);
 
     // Check that active filter badge appears in the filters section
-    const activeFilters = page.locator('.inline-flex.items-center.px-3.py-1.rounded-full').filter({ hasText: 'Kensington' });
+    const activeFilters = page
+      .locator('.inline-flex.items-center.px-3.py-1.rounded-full')
+      .filter({ hasText: 'Kensington' });
     await expect(activeFilters.first()).toBeVisible();
   });
 
@@ -135,7 +141,9 @@ test.describe('Browse Page', () => {
     await page.waitForTimeout(500);
 
     // Check that active filter badge appears in the filters section
-    const activeFilters = page.locator('.inline-flex.items-center.px-3.py-1.rounded-full').filter({ hasText: '4+ Stars' });
+    const activeFilters = page
+      .locator('.inline-flex.items-center.px-3.py-1.rounded-full')
+      .filter({ hasText: '4+ Stars' });
     await expect(activeFilters.first()).toBeVisible();
   });
 
@@ -198,7 +206,9 @@ test.describe('Browse Page', () => {
     const emptyStateHeading = page.getByRole('heading', { name: 'No Accommodations Found' });
     if (await emptyStateHeading.isVisible({ timeout: 2000 }).catch(() => false)) {
       await expect(emptyStateHeading).toBeVisible();
-      await expect(page.getByText('We couldn\'t find any accommodations matching your search criteria')).toBeVisible();
+      await expect(
+        page.getByText("We couldn't find any accommodations matching your search criteria")
+      ).toBeVisible();
       await expect(page.getByRole('button', { name: 'Clear All Filters' })).toBeVisible();
     }
   });
@@ -210,7 +220,7 @@ test.describe('Browse Page', () => {
     // Check if pagination exists
     const nextButton = page.getByRole('button', { name: 'Next page' });
 
-    if (await nextButton.isVisible() && await nextButton.isEnabled()) {
+    if ((await nextButton.isVisible()) && (await nextButton.isEnabled())) {
       // Click next page
       await nextButton.click();
 
@@ -228,7 +238,7 @@ test.describe('Browse Page', () => {
 
     const nextButton = page.getByRole('button', { name: 'Next page' });
 
-    if (await nextButton.isVisible() && await nextButton.isEnabled()) {
+    if ((await nextButton.isVisible()) && (await nextButton.isEnabled())) {
       // Go to page 2
       await nextButton.click();
       await page.waitForTimeout(500);

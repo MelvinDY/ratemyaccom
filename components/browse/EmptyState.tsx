@@ -20,7 +20,8 @@ export default function EmptyState({ onClearFilters }: EmptyStateProps) {
       </h3>
 
       <p className="text-white/60 text-center mb-6 max-w-md">
-        We couldn&apos;t find any accommodations matching your search criteria. Try adjusting your filters or search terms.
+        We couldn&apos;t find any accommodations matching your search criteria. Try adjusting your
+        filters or search terms.
       </p>
 
       {onClearFilters && (

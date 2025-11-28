@@ -82,7 +82,7 @@ export async function GET(request: NextRequest) {
     const result = await accommodationRepository.search(filters);
 
     // Transform data to match frontend expectations
-    const transformedData = result.data.map(accom => ({
+    const transformedData = result.data.map((accom) => ({
       id: accom.id,
       name: accom.name,
       slug: accom.slug,
@@ -92,14 +92,15 @@ export async function GET(request: NextRequest) {
         suburb: accom.suburb,
         state: accom.state,
         postcode: accom.postcode,
-        coordinates: accom.latitude && accom.longitude
-          ? { lat: accom.latitude, lng: accom.longitude }
-          : undefined,
+        coordinates:
+          accom.latitude && accom.longitude
+            ? { lat: accom.latitude, lng: accom.longitude }
+            : undefined,
       },
       description: accom.description,
       type: mapAccommodationTypeToFrontend(accom.type),
       images: accom.images,
-      amenities: accom.amenities.map(a => ({
+      amenities: accom.amenities.map((a) => ({
         id: a.amenity.id,
         name: a.amenity.name,
         icon: a.amenity.icon,
@@ -194,12 +195,14 @@ export async function POST(request: NextRequest) {
 }
 
 // Helper function to map database enum to frontend type
-function mapAccommodationTypeToFrontend(type: string): 'on-campus' | 'off-campus' | 'private' | 'college' {
+function mapAccommodationTypeToFrontend(
+  type: string
+): 'on-campus' | 'off-campus' | 'private' | 'college' {
   const mapping: Record<string, 'on-campus' | 'off-campus' | 'private' | 'college'> = {
-    'ON_CAMPUS': 'on-campus',
-    'OFF_CAMPUS': 'off-campus',
-    'PRIVATE': 'private',
-    'COLLEGE': 'college',
+    ON_CAMPUS: 'on-campus',
+    OFF_CAMPUS: 'off-campus',
+    PRIVATE: 'private',
+    COLLEGE: 'college',
   };
   return mapping[type] || 'off-campus';
 }
@@ -207,10 +210,10 @@ function mapAccommodationTypeToFrontend(type: string): 'on-campus' | 'off-campus
 // Helper function to map database enum to frontend type
 function mapPricePeriodToFrontend(period: string): 'week' | 'month' | 'semester' | 'year' {
   const mapping: Record<string, 'week' | 'month' | 'semester' | 'year'> = {
-    'WEEK': 'week',
-    'MONTH': 'month',
-    'SEMESTER': 'semester',
-    'YEAR': 'year',
+    WEEK: 'week',
+    MONTH: 'month',
+    SEMESTER: 'semester',
+    YEAR: 'year',
   };
   return mapping[period] || 'week';
 }

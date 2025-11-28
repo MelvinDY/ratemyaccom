@@ -7,10 +7,7 @@ import { chromium } from 'playwright';
 import { BaseScraper, ScrapedAccommodation, ScraperConfig } from '../base-scraper';
 import { prisma } from '@/lib/database/prisma';
 import { logger } from '../logger';
-import {
-  generateSlug,
-  delay,
-} from '../utils/helpers';
+import { generateSlug, delay } from '../utils/helpers';
 import { validateAccommodationData } from '../utils/validation';
 
 interface USYDAccommodationPage {
@@ -28,7 +25,8 @@ export class USYDScraper extends BaseScraper {
       rateLimit: 2000,
       maxRetries: 3,
       timeout: 30000,
-      userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+      userAgent:
+        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
     };
     super(config);
   }
@@ -88,11 +86,20 @@ export class USYDScraper extends BaseScraper {
             const validation = validateAccommodationData(data);
 
             if (validation.success && validation.data) {
-              const result = await this.importAccommodation(validation.data as ScrapedAccommodation);
+              const result = await this.importAccommodation(
+                validation.data as ScrapedAccommodation
+              );
 
               if (result.success) {
                 stats.imported++;
-                await this.logImport('CREATE', 'SUCCESS', data, validation.data, undefined, result.id);
+                await this.logImport(
+                  'CREATE',
+                  'SUCCESS',
+                  data,
+                  validation.data,
+                  undefined,
+                  result.id
+                );
                 logger.info(`✅ Imported: ${accom.name}`);
               } else {
                 stats.failed++;
@@ -101,7 +108,9 @@ export class USYDScraper extends BaseScraper {
               }
             } else {
               stats.failed++;
-              const errors = validation.errors?.issues.map((e) => `${e.path.join('.')}: ${e.message}`).join(', ');
+              const errors = validation.errors?.issues
+                .map((e) => `${e.path.join('.')}: ${e.message}`)
+                .join(', ');
               await this.logImport('SKIP', 'VALIDATION_ERROR', data, undefined, errors);
               logger.error(`❌ Validation failed: ${accom.name} - ${errors}`);
             }
@@ -129,7 +138,8 @@ export class USYDScraper extends BaseScraper {
     // USYD accommodation details (based on known information)
     const accommodationDetails: Record<string, Partial<ScrapedAccommodation>> = {
       'Queen Mary Building': {
-        description: 'Queen Mary Building offers modern student accommodation in the heart of the University of Sydney campus. Featuring fully furnished rooms with shared facilities, this historic building has been renovated to provide comfortable living spaces for undergraduate students. Located close to lecture theatres and libraries.',
+        description:
+          'Queen Mary Building offers modern student accommodation in the heart of the University of Sydney campus. Featuring fully furnished rooms with shared facilities, this historic building has been renovated to provide comfortable living spaces for undergraduate students. Located close to lecture theatres and libraries.',
         address: 'Queen Mary Building, Camperdown Campus, University of Sydney',
         suburb: 'Camperdown',
         state: 'NSW',
@@ -140,14 +150,23 @@ export class USYDScraper extends BaseScraper {
         pricePeriod: 'WEEK',
         capacity: 150,
         roomTypes: ['Single', 'Twin Share'],
-        amenities: ['WiFi', 'Study Rooms', 'Laundry', 'Common Kitchen', 'Security', '24/7 Reception', 'Cleaning Service'],
+        amenities: [
+          'WiFi',
+          'Study Rooms',
+          'Laundry',
+          'Common Kitchen',
+          'Security',
+          '24/7 Reception',
+          'Cleaning Service',
+        ],
         contactInfo: {
           email: 'accommodation@sydney.edu.au',
           website: 'https://www.sydney.edu.au/campus-life/accommodation.html',
         },
       },
       "St Andrew's College": {
-        description: "St Andrew's College is a prestigious residential college at the University of Sydney, offering a supportive community environment for students. The college provides catered accommodation with excellent facilities including dining hall, library, music rooms, and sports facilities. Known for its academic excellence and vibrant college life.",
+        description:
+          "St Andrew's College is a prestigious residential college at the University of Sydney, offering a supportive community environment for students. The college provides catered accommodation with excellent facilities including dining hall, library, music rooms, and sports facilities. Known for its academic excellence and vibrant college life.",
         address: "St Andrew's College, Carillon Avenue, Camperdown",
         suburb: 'Camperdown',
         state: 'NSW',
@@ -158,14 +177,27 @@ export class USYDScraper extends BaseScraper {
         pricePeriod: 'WEEK',
         capacity: 250,
         roomTypes: ['Single', 'Ensuite'],
-        amenities: ['WiFi', 'Gym', 'Study Rooms', 'Laundry', 'Meal Plans', 'Music Rooms', 'Common Kitchen', 'Security', 'Social Events', '24/7 Reception', 'Cleaning Service'],
+        amenities: [
+          'WiFi',
+          'Gym',
+          'Study Rooms',
+          'Laundry',
+          'Meal Plans',
+          'Music Rooms',
+          'Common Kitchen',
+          'Security',
+          'Social Events',
+          '24/7 Reception',
+          'Cleaning Service',
+        ],
         contactInfo: {
           email: 'reception@standrewscollege.edu.au',
           website: 'https://standrewscollege.edu.au',
         },
       },
       "St Paul's College": {
-        description: "St Paul's College is one of Australia's leading residential colleges, located at the University of Sydney. Offering full board accommodation with exceptional facilities including formal dining hall, extensive library, sports facilities, and music practice rooms. The college provides a traditional collegiate experience with strong academic and sporting traditions.",
+        description:
+          "St Paul's College is one of Australia's leading residential colleges, located at the University of Sydney. Offering full board accommodation with exceptional facilities including formal dining hall, extensive library, sports facilities, and music practice rooms. The college provides a traditional collegiate experience with strong academic and sporting traditions.",
         address: "St Paul's College, 9 City Road, Camperdown",
         suburb: 'Camperdown',
         state: 'NSW',
@@ -176,14 +208,27 @@ export class USYDScraper extends BaseScraper {
         pricePeriod: 'WEEK',
         capacity: 200,
         roomTypes: ['Single', 'Ensuite'],
-        amenities: ['WiFi', 'Gym', 'Study Rooms', 'Laundry', 'Meal Plans', 'Music Rooms', 'Games Room', 'Security', 'Social Events', '24/7 Reception', 'Cleaning Service'],
+        amenities: [
+          'WiFi',
+          'Gym',
+          'Study Rooms',
+          'Laundry',
+          'Meal Plans',
+          'Music Rooms',
+          'Games Room',
+          'Security',
+          'Social Events',
+          '24/7 Reception',
+          'Cleaning Service',
+        ],
         contactInfo: {
           email: 'info@stpauls.edu.au',
           website: 'https://stpauls.edu.au',
         },
       },
       'The Regiment': {
-        description: 'The Regiment is modern student accommodation located close to the University of Sydney, offering contemporary studio and shared apartments. Features include fully equipped kitchens, modern bathrooms, study areas, and communal spaces. The building includes amenities such as a gym, study rooms, and social spaces for residents.',
+        description:
+          'The Regiment is modern student accommodation located close to the University of Sydney, offering contemporary studio and shared apartments. Features include fully equipped kitchens, modern bathrooms, study areas, and communal spaces. The building includes amenities such as a gym, study rooms, and social spaces for residents.',
         address: 'The Regiment, City Road, Chippendale',
         suburb: 'Chippendale',
         state: 'NSW',
@@ -194,14 +239,25 @@ export class USYDScraper extends BaseScraper {
         pricePeriod: 'WEEK',
         capacity: 300,
         roomTypes: ['Studio', 'Shared Apartment', 'Single'],
-        amenities: ['WiFi', 'Gym', 'Study Rooms', 'Laundry', 'Common Kitchen', 'Security', 'Social Events', 'Rooftop Terrace', '24/7 Reception'],
+        amenities: [
+          'WiFi',
+          'Gym',
+          'Study Rooms',
+          'Laundry',
+          'Common Kitchen',
+          'Security',
+          'Social Events',
+          'Rooftop Terrace',
+          '24/7 Reception',
+        ],
         contactInfo: {
           email: 'info@theregiment.com.au',
           website: 'https://www.sydney.edu.au/campus-life/accommodation.html',
         },
       },
       'Abercrombie Student Accommodation': {
-        description: 'Abercrombie Student Accommodation offers premium purpose-built student housing near the University of Sydney. Featuring modern studios and apartments with private bathrooms and kitchenettes, this facility provides a comfortable and independent living experience. Includes study spaces, communal lounges, and recreational facilities.',
+        description:
+          'Abercrombie Student Accommodation offers premium purpose-built student housing near the University of Sydney. Featuring modern studios and apartments with private bathrooms and kitchenettes, this facility provides a comfortable and independent living experience. Includes study spaces, communal lounges, and recreational facilities.',
         address: 'Abercrombie Street, Darlington',
         suburb: 'Darlington',
         state: 'NSW',
@@ -212,7 +268,19 @@ export class USYDScraper extends BaseScraper {
         pricePeriod: 'WEEK',
         capacity: 400,
         roomTypes: ['Studio', 'Apartment', 'Single Ensuite'],
-        amenities: ['WiFi', 'Gym', 'Study Rooms', 'Laundry', 'Common Kitchen', 'Parking', 'Security', 'Social Events', 'Cinema Room', '24/7 Reception', 'Air Conditioning'],
+        amenities: [
+          'WiFi',
+          'Gym',
+          'Study Rooms',
+          'Laundry',
+          'Common Kitchen',
+          'Parking',
+          'Security',
+          'Social Events',
+          'Cinema Room',
+          '24/7 Reception',
+          'Air Conditioning',
+        ],
         contactInfo: {
           email: 'info@abercrombie.com.au',
           website: 'https://www.sydney.edu.au/campus-life/accommodation.html',

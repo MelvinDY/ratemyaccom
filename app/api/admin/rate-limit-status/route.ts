@@ -6,10 +6,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { requireAdmin } from '@/lib/auth/middleware';
-import {
-  RATE_LIMIT_CONFIGS,
-  getRateLimitStatus,
-} from '@/lib/security/enhanced-rate-limiter';
+import { RATE_LIMIT_CONFIGS, getRateLimitStatus } from '@/lib/security/enhanced-rate-limiter';
 
 export const dynamic = 'force-dynamic';
 

@@ -23,11 +23,13 @@ export const PricePeriodEnum = z.enum(['WEEK', 'MONTH', 'SEMESTER', 'YEAR']);
 /**
  * Contact information schema
  */
-export const ContactInfoSchema = z.object({
-  phone: z.string().optional(),
-  email: z.string().email().optional(),
-  website: z.string().url().optional(),
-}).optional();
+export const ContactInfoSchema = z
+  .object({
+    phone: z.string().optional(),
+    email: z.string().email().optional(),
+    website: z.string().url().optional(),
+  })
+  .optional();
 
 /**
  * Main accommodation validation schema
@@ -143,13 +145,13 @@ export function normalizeAmenityName(amenity: string): string | null {
   const mappings: Record<string, string> = {
     // WiFi variations
     'wi-fi': 'WiFi',
-    'wifi': 'WiFi',
+    wifi: 'WiFi',
     'wireless internet': 'WiFi',
-    'internet': 'WiFi',
+    internet: 'WiFi',
 
     // Gym variations
-    'gym': 'Gym',
-    'gymnasium': 'Gym',
+    gym: 'Gym',
+    gymnasium: 'Gym',
     'fitness center': 'Gym',
     'fitness centre': 'Gym',
     'fitness room': 'Gym',
@@ -159,57 +161,57 @@ export function normalizeAmenityName(amenity: string): string | null {
     'study rooms': 'Study Rooms',
     'study area': 'Study Rooms',
     'study space': 'Study Rooms',
-    'library': 'Study Rooms',
+    library: 'Study Rooms',
 
     // Laundry variations
-    'laundry': 'Laundry',
+    laundry: 'Laundry',
     'laundry facilities': 'Laundry',
     'washing machine': 'Laundry',
-    'washer': 'Laundry',
+    washer: 'Laundry',
 
     // Kitchen variations
-    'kitchen': 'Common Kitchen',
+    kitchen: 'Common Kitchen',
     'common kitchen': 'Common Kitchen',
     'shared kitchen': 'Common Kitchen',
     'communal kitchen': 'Common Kitchen',
 
     // Parking variations
-    'parking': 'Parking',
+    parking: 'Parking',
     'car park': 'Parking',
-    'garage': 'Parking',
+    garage: 'Parking',
     'car parking': 'Parking',
 
     // Security variations
-    'security': 'Security',
+    security: 'Security',
     'secure access': 'Security',
     'swipe card': 'Security',
     'key card': 'Security',
-    'cctv': 'Security',
+    cctv: 'Security',
 
     // Social variations
     'social events': 'Social Events',
-    'events': 'Social Events',
+    events: 'Social Events',
     'social activities': 'Social Events',
 
     // Cinema variations
-    'cinema': 'Cinema Room',
+    cinema: 'Cinema Room',
     'cinema room': 'Cinema Room',
     'movie room': 'Cinema Room',
-    'theater': 'Cinema Room',
-    'theatre': 'Cinema Room',
+    theater: 'Cinema Room',
+    theatre: 'Cinema Room',
 
     // Rooftop variations
-    'rooftop': 'Rooftop Terrace',
+    rooftop: 'Rooftop Terrace',
     'rooftop terrace': 'Rooftop Terrace',
     'roof terrace': 'Rooftop Terrace',
-    'terrace': 'Rooftop Terrace',
+    terrace: 'Rooftop Terrace',
 
     // Meal plans
-    'meals': 'Meal Plans',
+    meals: 'Meal Plans',
     'meal plan': 'Meal Plans',
     'meal plans': 'Meal Plans',
-    'dining': 'Meal Plans',
-    'catering': 'Meal Plans',
+    dining: 'Meal Plans',
+    catering: 'Meal Plans',
 
     // Music variations
     'music room': 'Music Rooms',
@@ -230,42 +232,42 @@ export function normalizeAmenityName(amenity: string): string | null {
     'bike rack': 'Bike Storage',
 
     // Pool variations
-    'pool': 'Swimming Pool',
+    pool: 'Swimming Pool',
     'swimming pool': 'Swimming Pool',
     'indoor pool': 'Swimming Pool',
     'outdoor pool': 'Swimming Pool',
 
     // BBQ variations
-    'bbq': 'BBQ Area',
+    bbq: 'BBQ Area',
     'bbq area': 'BBQ Area',
-    'barbecue': 'BBQ Area',
-    'barbeque': 'BBQ Area',
+    barbecue: 'BBQ Area',
+    barbeque: 'BBQ Area',
     'outdoor bbq': 'BBQ Area',
 
     // Reception variations
-    'reception': '24/7 Reception',
+    reception: '24/7 Reception',
     '24/7 reception': '24/7 Reception',
     '24 hour reception': '24/7 Reception',
     'front desk': '24/7 Reception',
 
     // Cleaning variations
-    'cleaning': 'Cleaning Service',
+    cleaning: 'Cleaning Service',
     'cleaning service': 'Cleaning Service',
-    'housekeeping': 'Cleaning Service',
+    housekeeping: 'Cleaning Service',
     'maid service': 'Cleaning Service',
 
     // AC variations
     'air conditioning': 'Air Conditioning',
     'air con': 'Air Conditioning',
-    'aircon': 'Air Conditioning',
+    aircon: 'Air Conditioning',
     'a/c': 'Air Conditioning',
-    'ac': 'Air Conditioning',
-    'cooling': 'Air Conditioning',
+    ac: 'Air Conditioning',
+    cooling: 'Air Conditioning',
 
     // Heating variations
-    'heating': 'Heating',
+    heating: 'Heating',
     'central heating': 'Heating',
-    'heater': 'Heating',
+    heater: 'Heating',
   };
 
   return mappings[normalized] || null;
@@ -276,7 +278,7 @@ export function normalizeAmenityName(amenity: string): string | null {
  */
 export function validateAmenities(amenities: string[]): string[] {
   const normalized = amenities
-    .map(a => normalizeAmenityName(a))
+    .map((a) => normalizeAmenityName(a))
     .filter((a): a is string => a !== null);
 
   // Remove duplicates

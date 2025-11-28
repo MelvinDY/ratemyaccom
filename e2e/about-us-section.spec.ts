@@ -14,7 +14,9 @@ test.describe('About Us Section', () => {
       await expect(page.getByText('About Us', { exact: true })).toBeVisible();
 
       // Check main heading
-      const heading = page.getByRole('heading', { name: /Empowering Students to Make Better Choices/i });
+      const heading = page.getByRole('heading', {
+        name: /Empowering Students to Make Better Choices/i,
+      });
       await expect(heading).toBeVisible();
     });
 
@@ -24,9 +26,7 @@ test.describe('About Us Section', () => {
         page.getByText(/We understand that finding the right accommodation/i)
       ).toBeVisible();
 
-      await expect(
-        page.getByText(/Our mission is simple: to provide/i)
-      ).toBeVisible();
+      await expect(page.getByText(/Our mission is simple: to provide/i)).toBeVisible();
 
       await expect(
         page.getByText(/We believe in transparency, trust, and community/i)
@@ -88,7 +88,10 @@ test.describe('About Us Section', () => {
       await page.setViewportSize({ width: 1920, height: 1080 });
       await page.locator('section[aria-labelledby="about-heading"]').scrollIntoViewIfNeeded();
 
-      const grid = page.locator('section[aria-labelledby="about-heading"]').locator('.grid').first();
+      const grid = page
+        .locator('section[aria-labelledby="about-heading"]')
+        .locator('.grid')
+        .first();
       await expect(grid).toHaveClass(/lg:grid-cols-2/);
     });
 

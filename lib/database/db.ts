@@ -13,7 +13,8 @@ let pool: Pool | null = null;
  */
 export function getPool(): Pool {
   if (!pool) {
-    const sslConfig = process.env.DATABASE_SSL === 'true' ? { rejectUnauthorized: false } : undefined;
+    const sslConfig =
+      process.env.DATABASE_SSL === 'true' ? { rejectUnauthorized: false } : undefined;
     const config: any = {
       connectionString: process.env.DATABASE_URL!,
       ...(sslConfig ? { ssl: sslConfig } : {}),
@@ -38,10 +39,7 @@ export function getPool(): Pool {
 /**
  * Execute a database query with connection from pool
  */
-export async function query(
-  text: string,
-  params?: unknown[]
-): Promise<QueryResult> {
+export async function query(text: string, params?: unknown[]): Promise<QueryResult> {
   const client = getPool();
   try {
     return await client.query(text, params);
