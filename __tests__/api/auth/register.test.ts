@@ -1,4 +1,7 @@
 /**
+ * @jest-environment node
+ */
+/**
  * Tests for POST /api/auth/register
  * User Registration Endpoint
  */
@@ -77,7 +80,7 @@ describe('POST /api/auth/register', () => {
     expect(data.error).toBe('Weak password');
   });
 
-  it('should reject registration with existing email', async () => {
+  it('should handle registration with existing email (returns success to prevent enumeration)', async () => {
     const requestBody = testData.user;
 
     // Mock existing user
@@ -91,9 +94,10 @@ describe('POST /api/auth/register', () => {
     const response = await POST(request);
     const data = await parseJsonResponse(response);
 
-    expect(response.status).toBe(409);
-    expect(data.success).toBe(false);
-    expect(data.error).toBe('Email already registered');
+    // Returns 200 success to prevent user enumeration attacks
+    expect(response.status).toBe(200);
+    expect(data.success).toBe(true);
+    expect(data.message).toContain('Registration successful');
   });
 
   it('should reject registration with missing fields', async () => {

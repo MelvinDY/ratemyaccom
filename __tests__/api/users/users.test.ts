@@ -1,4 +1,7 @@
 /**
+ * @jest-environment node
+ */
+/**
  * Tests for User Profile Endpoints
  * GET /api/users/[id] - Get User Profile
  * PUT /api/users/[id] - Update User Profile
@@ -48,7 +51,7 @@ describe('GET /api/users/[id]', () => {
     expect(response.status).toBe(200);
     expect(data.success).toBe(true);
     expect(data.data.user.id).toBe(userId);
-    expect(data.data.reviewCount).toBe(1);
+    expect(data.data.user.reviewCount).toBe(1);
   });
 
   it('should return 404 for non-existent user', async () => {
@@ -79,6 +82,8 @@ describe('PUT /api/users/[id]', () => {
       university: 'Updated University',
     };
 
+    // Mock user lookup for authentication middleware
+    prismaMock.user.findUnique.mockResolvedValue(mockUser as any);
     prismaMock.user.update.mockResolvedValue({
       ...mockUser,
       ...updateData,
@@ -129,6 +134,9 @@ describe('PUT /api/users/[id]', () => {
 
   it('should reject update with no fields', async () => {
     const user = createMockUser({ userId: mockUser.id });
+
+    // Mock user lookup for authentication middleware
+    prismaMock.user.findUnique.mockResolvedValue(mockUser as any);
 
     const request = createAuthenticatedRequest(user, {
       method: 'PUT',

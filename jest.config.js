@@ -28,16 +28,15 @@ const customJestConfig = {
     '/node_modules/',
     '/e2e/',
     '/.next/',
-    '/__tests__/utils/',
-    '/__tests__/api/',
+    // Skip sanitize test due to jsdom/parse5 compatibility issue
     '/__tests__/lib/validation/sanitize.test.ts',
   ],
   coverageThreshold: {
     global: {
-      statements: 30,
-      branches: 30,
-      functions: 30,
-      lines: 30,
+      statements: 50,
+      branches: 50,
+      functions: 50,
+      lines: 50,
     },
   },
 };

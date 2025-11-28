@@ -1,4 +1,7 @@
 /**
+ * @jest-environment node
+ */
+/**
  * Tests for POST /api/auth/login
  * User Login Endpoint
  */

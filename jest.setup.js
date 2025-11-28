@@ -1,9 +1,27 @@
 import '@testing-library/jest-dom';
 import { TextEncoder, TextDecoder } from 'util';
+import { mockDeep, mockReset } from 'jest-mock-extended';
 
 // Polyfill for Web APIs needed by Next.js API routes
 global.TextEncoder = TextEncoder;
 global.TextDecoder = TextDecoder;
+
+// Create shared prisma mock
+const prismaMock = mockDeep();
+
+// Mock prisma module globally
+jest.mock('@/lib/database/prisma', () => ({
+  __esModule: true,
+  prisma: prismaMock,
+}));
+
+// Export for tests to use
+global.__prismaMock = prismaMock;
+
+// Reset mock before each test
+beforeEach(() => {
+  mockReset(prismaMock);
+});
 
 // Mock Next.js router
 jest.mock('next/navigation', () => ({
@@ -26,31 +44,34 @@ jest.mock('next/navigation', () => ({
   },
 }));
 
-// Mock window.matchMedia
-Object.defineProperty(window, 'matchMedia', {
-  writable: true,
-  value: jest.fn().mockImplementation((query) => ({
-    matches: false,
-    media: query,
-    onchange: null,
-    addListener: jest.fn(),
-    removeListener: jest.fn(),
-    addEventListener: jest.fn(),
-    removeEventListener: jest.fn(),
-    dispatchEvent: jest.fn(),
-  })),
-});
+// Only apply browser-specific mocks in jsdom environment
+if (typeof window !== 'undefined') {
+  // Mock window.matchMedia
+  Object.defineProperty(window, 'matchMedia', {
+    writable: true,
+    value: jest.fn().mockImplementation((query) => ({
+      matches: false,
+      media: query,
+      onchange: null,
+      addListener: jest.fn(),
+      removeListener: jest.fn(),
+      addEventListener: jest.fn(),
+      removeEventListener: jest.fn(),
+      dispatchEvent: jest.fn(),
+    })),
+  });
 
-// Mock IntersectionObserver
-global.IntersectionObserver = class IntersectionObserver {
-  constructor() {}
-  disconnect() {}
-  observe() {}
-  takeRecords() {
-    return [];
-  }
-  unobserve() {}
-};
+  // Mock IntersectionObserver
+  global.IntersectionObserver = class IntersectionObserver {
+    constructor() {}
+    disconnect() {}
+    observe() {}
+    takeRecords() {
+      return [];
+    }
+    unobserve() {}
+  };
+}
 
 // Setup global test utilities
 global.console = {

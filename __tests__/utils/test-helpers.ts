@@ -116,7 +116,7 @@ export function assertJsonResponse(response: Response) {
 export const testData = {
   user: {
     email: 'test@unsw.edu.au',
-    password: 'TestPass123',
+    password: 'TestPass123!', // Must include special character
     name: 'Test User',
     university: 'University of New South Wales (UNSW)',
   },

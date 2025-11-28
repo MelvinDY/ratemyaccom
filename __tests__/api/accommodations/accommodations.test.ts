@@ -1,4 +1,7 @@
 /**
+ * @jest-environment node
+ */
+/**
  * Tests for Accommodation Endpoints
  * GET /api/accommodations - List Accommodations
  * POST /api/accommodations - Create Accommodation
@@ -22,7 +25,7 @@ import {
   testData,
   parseJsonResponse,
 } from '@/__tests__/utils/test-helpers';
-import { prismaMock, mockAccommodation } from '@/__tests__/utils/prisma-mock';
+import { prismaMock, mockAccommodation, mockUser } from '@/__tests__/utils/prisma-mock';
 
 describe('GET /api/accommodations', () => {
   beforeEach(() => {
@@ -82,6 +85,12 @@ describe('POST /api/accommodations', () => {
   it('should create accommodation as admin', async () => {
     const admin = createMockAdmin();
 
+    // Mock user lookup for authentication middleware
+    prismaMock.user.findUnique.mockResolvedValue({
+      ...mockUser,
+      id: admin.userId,
+      role: 'ADMIN',
+    } as any);
     prismaMock.accommodation.findUnique.mockResolvedValue(null);
     prismaMock.accommodation.create.mockResolvedValue(mockAccommodation as any);
 
@@ -100,6 +109,13 @@ describe('POST /api/accommodations', () => {
 
   it('should reject creation by non-admin', async () => {
     const user = createMockUser();
+
+    // Mock user lookup for authentication middleware
+    prismaMock.user.findUnique.mockResolvedValue({
+      ...mockUser,
+      id: user.userId,
+      role: 'USER',
+    } as any);
 
     const request = createAuthenticatedRequest(user, {
       method: 'POST',
@@ -135,6 +151,12 @@ describe('PUT /api/accommodations/[id]', () => {
   it('should update accommodation as admin', async () => {
     const admin = createMockAdmin();
 
+    // Mock user lookup for authentication middleware
+    prismaMock.user.findUnique.mockResolvedValue({
+      ...mockUser,
+      id: admin.userId,
+      role: 'ADMIN',
+    } as any);
     prismaMock.accommodation.findUnique.mockResolvedValue(mockAccommodation as any);
     prismaMock.accommodation.update.mockResolvedValue({
       ...mockAccommodation,
@@ -157,6 +179,13 @@ describe('PUT /api/accommodations/[id]', () => {
 
   it('should reject update by non-admin', async () => {
     const user = createMockUser();
+
+    // Mock user lookup for authentication middleware
+    prismaMock.user.findUnique.mockResolvedValue({
+      ...mockUser,
+      id: user.userId,
+      role: 'USER',
+    } as any);
 
     const request = createAuthenticatedRequest(user, {
       method: 'PUT',
@@ -181,6 +210,12 @@ describe('DELETE /api/accommodations/[id]', () => {
   it('should delete accommodation as admin', async () => {
     const admin = createMockAdmin();
 
+    // Mock user lookup for authentication middleware
+    prismaMock.user.findUnique.mockResolvedValue({
+      ...mockUser,
+      id: admin.userId,
+      role: 'ADMIN',
+    } as any);
     prismaMock.accommodation.findUnique.mockResolvedValue(mockAccommodation as any);
     prismaMock.accommodation.delete.mockResolvedValue(mockAccommodation as any);
 
@@ -199,6 +234,13 @@ describe('DELETE /api/accommodations/[id]', () => {
 
   it('should reject deletion by non-admin', async () => {
     const moderator = createMockUser({ role: 'MODERATOR' });
+
+    // Mock user lookup for authentication middleware
+    prismaMock.user.findUnique.mockResolvedValue({
+      ...mockUser,
+      id: moderator.userId,
+      role: 'MODERATOR',
+    } as any);
 
     const request = createAuthenticatedRequest(moderator, {
       method: 'DELETE',

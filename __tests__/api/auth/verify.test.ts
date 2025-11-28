@@ -1,4 +1,7 @@
 /**
+ * @jest-environment node
+ */
+/**
  * Tests for POST /api/auth/verify
  * Email Verification Endpoint
  */

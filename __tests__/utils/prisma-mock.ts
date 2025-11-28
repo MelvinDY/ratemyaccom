@@ -4,24 +4,15 @@
  */
 
 import { PrismaClient } from '@prisma/client';
-import { mockDeep, mockReset, DeepMockProxy } from 'jest-mock-extended';
+import { DeepMockProxy } from 'jest-mock-extended';
 
 export type MockPrismaContext = {
   prisma: DeepMockProxy<PrismaClient>;
 };
 
-export const prismaMock = mockDeep<PrismaClient>();
-
-// Reset mock before each test
-beforeEach(() => {
-  mockReset(prismaMock);
-});
-
-// Mock prisma client module
-jest.mock('@/lib/database/prisma', () => ({
-  __esModule: true,
-  prisma: prismaMock,
-}));
+// Use the global mock created in jest.setup.js
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const prismaMock = (global as any).__prismaMock as DeepMockProxy<PrismaClient>;
 
 /**
  * Mock user data

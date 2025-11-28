@@ -1,4 +1,7 @@
 /**
+ * @jest-environment node
+ */
+/**
  * Tests for Review Endpoints
  * POST /api/accommodations/[id]/reviews - Create Review
  * PUT /api/reviews/[id] - Update Review
@@ -24,9 +27,10 @@ describe('POST /api/accommodations/[id]/reviews', () => {
   it('should create review successfully', async () => {
     const user = createMockUser({ userId: mockUser.id });
 
+    // Mock user lookup for authentication middleware - must be first
+    prismaMock.user.findUnique.mockResolvedValue(mockUser as any);
     prismaMock.accommodation.findUnique.mockResolvedValue(mockAccommodation as any);
     prismaMock.review.findFirst.mockResolvedValue(null); // No existing review
-    prismaMock.user.findUnique.mockResolvedValue(mockUser);
     prismaMock.review.create.mockResolvedValue({
       ...mockReview,
       user: mockUser,
@@ -67,6 +71,8 @@ describe('POST /api/accommodations/[id]/reviews', () => {
   it('should reject duplicate review', async () => {
     const user = createMockUser({ userId: mockUser.id });
 
+    // Mock user lookup for authentication middleware
+    prismaMock.user.findUnique.mockResolvedValue(mockUser as any);
     prismaMock.accommodation.findUnique.mockResolvedValue(mockAccommodation as any);
     prismaMock.review.findFirst.mockResolvedValue(mockReview); // Existing review
 
@@ -88,6 +94,8 @@ describe('POST /api/accommodations/[id]/reviews', () => {
   it('should reject review with invalid rating', async () => {
     const user = createMockUser({ userId: mockUser.id });
 
+    // Mock user lookup for authentication middleware
+    prismaMock.user.findUnique.mockResolvedValue(mockUser as any);
     prismaMock.accommodation.findUnique.mockResolvedValue(mockAccommodation as any);
 
     const request = createAuthenticatedRequest(user, {
@@ -117,6 +125,8 @@ describe('PUT /api/reviews/[id]', () => {
   it('should update review successfully', async () => {
     const user = createMockUser({ userId: mockUser.id });
 
+    // Mock user lookup for authentication middleware
+    prismaMock.user.findUnique.mockResolvedValue(mockUser as any);
     prismaMock.review.findUnique.mockResolvedValue(mockReview);
     prismaMock.review.update.mockResolvedValue({
       ...mockReview,
@@ -145,6 +155,11 @@ describe('PUT /api/reviews/[id]', () => {
   it('should reject update by non-author', async () => {
     const differentUser = createMockUser({ userId: 'different-user-id' });
 
+    // Mock user lookup for authentication middleware
+    prismaMock.user.findUnique.mockResolvedValue({
+      ...mockUser,
+      id: 'different-user-id',
+    } as any);
     prismaMock.review.findUnique.mockResolvedValue(mockReview);
 
     const request = createAuthenticatedRequest(differentUser, {
@@ -170,6 +185,8 @@ describe('DELETE /api/reviews/[id]', () => {
   it('should delete review successfully', async () => {
     const user = createMockUser({ userId: mockUser.id });
 
+    // Mock user lookup for authentication middleware
+    prismaMock.user.findUnique.mockResolvedValue(mockUser as any);
     prismaMock.review.findUnique.mockResolvedValue(mockReview);
     prismaMock.review.delete.mockResolvedValue(mockReview);
     prismaMock.review.findMany.mockResolvedValue([]);
@@ -191,6 +208,12 @@ describe('DELETE /api/reviews/[id]', () => {
   it('should allow admin to delete any review', async () => {
     const admin = createMockUser({ userId: 'admin-id', role: 'ADMIN' });
 
+    // Mock user lookup for authentication middleware
+    prismaMock.user.findUnique.mockResolvedValue({
+      ...mockUser,
+      id: 'admin-id',
+      role: 'ADMIN',
+    } as any);
     prismaMock.review.findUnique.mockResolvedValue(mockReview);
     prismaMock.review.delete.mockResolvedValue(mockReview);
     prismaMock.review.findMany.mockResolvedValue([]);
