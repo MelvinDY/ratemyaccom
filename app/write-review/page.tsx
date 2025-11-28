@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { useAuth } from '@/hooks/useAuth';
@@ -42,7 +42,7 @@ const RATING_CATEGORIES = [
   { key: 'safety', label: 'Safety', description: 'How safe do you feel?' },
 ];
 
-export default function WriteReviewPage() {
+function WriteReviewContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const preselectedAccommodationId = searchParams.get('accommodation');
@@ -693,5 +693,23 @@ export default function WriteReviewPage() {
         </form>
       </div>
     </div>
+  );
+}
+
+// Loading fallback for Suspense
+function WriteReviewLoading() {
+  return (
+    <div className="min-h-screen bg-charcoal-dark flex items-center justify-center">
+      <Loader2 className="w-8 h-8 text-lyra-purple-start animate-spin" />
+    </div>
+  );
+}
+
+// Wrap the main component in Suspense for useSearchParams
+export default function WriteReviewPage() {
+  return (
+    <Suspense fallback={<WriteReviewLoading />}>
+      <WriteReviewContent />
+    </Suspense>
   );
 }
