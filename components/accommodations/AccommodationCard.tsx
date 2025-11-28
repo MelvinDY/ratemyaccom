@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import Image from 'next/image';
 import { Accommodation } from '@/types';
 import { CheckCircle2, Star, MapPin, Navigation } from 'lucide-react';
 
@@ -12,6 +13,15 @@ export default function AccommodationCard({ accommodation }: AccommodationCardPr
       <div className="group bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl overflow-hidden h-full flex flex-col hover:bg-white/[0.07] hover:border-lyra-purple-start/30 hover:shadow-2xl hover:shadow-lyra-purple-start/20 transition-all duration-300">
         {/* Image Section with Gradient Overlay */}
         <div className="relative h-48 bg-gradient-to-br from-lyra-purple-start/80 via-lyra-purple-end/60 to-lyra-purple-start/40 overflow-hidden">
+          {/* Accommodation Image */}
+          {accommodation.images && accommodation.images.length > 0 && accommodation.images[0] && (
+            <Image
+              src={accommodation.images[0]}
+              alt={accommodation.name}
+              fill
+              className="object-cover transition-transform duration-300 group-hover:scale-105"
+            />
+          )}
           {/* Animated gradient overlay on hover */}
           <div className="absolute inset-0 bg-gradient-to-br from-lyra-purple-start to-lyra-purple-end opacity-0 group-hover:opacity-20 transition-opacity duration-300"></div>
 
@@ -56,7 +66,9 @@ export default function AccommodationCard({ accommodation }: AccommodationCardPr
           {/* Location */}
           <div className="flex items-center gap-1.5 text-sm text-white/60 mb-2">
             <MapPin className="w-4 h-4 text-lyra-purple-start" />
-            <span>{accommodation.location.suburb}, {accommodation.location.state}</span>
+            <span>
+              {accommodation.location.suburb}, {accommodation.location.state}
+            </span>
           </div>
 
           {/* Distance */}

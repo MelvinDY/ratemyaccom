@@ -1,27 +1,79 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import Image from 'next/image';
-import { ChevronLeft, ChevronRight, X, ImageIcon } from 'lucide-react';
+import { ChevronLeft, ChevronRight, X } from 'lucide-react';
 
 interface ImageGalleryProps {
   images: string[];
   name: string;
 }
 
+// Skeleton loading component
+function ImageSkeleton({
+  className = '',
+  size = 'large',
+}: {
+  className?: string;
+  size?: 'large' | 'small';
+}) {
+  return (
+    <div
+      className={`absolute inset-0 bg-gradient-to-br from-charcoal-light to-charcoal ${className}`}
+    >
+      <div className="absolute inset-0 overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent skeleton-shimmer" />
+      </div>
+      <div className="absolute inset-0 flex items-center justify-center">
+        <div
+          className={`rounded-full border-4 border-purple-500/30 border-t-purple-500 animate-spin ${
+            size === 'large' ? 'w-16 h-16' : 'w-6 h-6 border-2'
+          }`}
+        />
+      </div>
+    </div>
+  );
+}
+
 export default function ImageGallery({ images, name }: ImageGalleryProps) {
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [loadedImages, setLoadedImages] = useState<Set<number>>(new Set());
+  const [loadedThumbnails, setLoadedThumbnails] = useState<Set<number>>(new Set());
+  const [modalImageLoaded, setModalImageLoaded] = useState(false);
+
+  // Track when an image finishes loading
+  const handleImageLoad = useCallback((index: number) => {
+    setLoadedImages((prev) => new Set(prev).add(index));
+  }, []);
+
+  // Track when a thumbnail finishes loading
+  const handleThumbnailLoad = useCallback((index: number) => {
+    setLoadedThumbnails((prev) => new Set(prev).add(index));
+  }, []);
+
+  // Reset modal image loaded state when changing images
+  const handleImageChange = useCallback(
+    (newIndex: number) => {
+      if (isModalOpen) {
+        setModalImageLoaded(false);
+      }
+      setSelectedIndex(newIndex);
+    },
+    [isModalOpen]
+  );
 
   // Use placeholder images if none provided
   const displayImages = images.length > 0 ? images : ['/images/placeholder-accommodation.jpg'];
 
   const handlePrevious = () => {
-    setSelectedIndex((prev) => (prev === 0 ? displayImages.length - 1 : prev - 1));
+    const newIndex = selectedIndex === 0 ? displayImages.length - 1 : selectedIndex - 1;
+    handleImageChange(newIndex);
   };
 
   const handleNext = () => {
-    setSelectedIndex((prev) => (prev === displayImages.length - 1 ? 0 : prev + 1));
+    const newIndex = selectedIndex === displayImages.length - 1 ? 0 : selectedIndex + 1;
+    handleImageChange(newIndex);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -50,20 +102,19 @@ export default function ImageGallery({ images, name }: ImageGalleryProps) {
           onClick={() => setIsModalOpen(true)}
           aria-label={`View ${name} photos in gallery`}
         >
+          {/* Loading skeleton */}
+          {!loadedImages.has(selectedIndex) && <ImageSkeleton />}
+
           <div className="absolute inset-0 bg-gradient-to-br from-charcoal-light to-charcoal flex items-center justify-center">
-            {(displayImages[selectedIndex] ?? '').startsWith('/images/') ? (
-              <div className="flex flex-col items-center text-white/40">
-                <ImageIcon className="w-16 h-16 mb-2" />
-                <span className="text-sm">Image coming soon</span>
-              </div>
-            ) : (
-              <Image
-                src={displayImages[selectedIndex] ?? '/images/placeholder-accommodation.jpg'}
-                alt={`${name} - Photo ${selectedIndex + 1}`}
-                fill
-                className="object-cover transition-transform duration-300 group-hover:scale-105"
-              />
-            )}
+            <Image
+              src={displayImages[selectedIndex] ?? '/images/placeholder-accommodation.jpg'}
+              alt={`${name} - Photo ${selectedIndex + 1}`}
+              fill
+              className={`object-cover transition-all duration-500 group-hover:scale-105 ${
+                loadedImages.has(selectedIndex) ? 'opacity-100' : 'opacity-0'
+              }`}
+              onLoad={() => handleImageLoad(selectedIndex)}
+            />
           </div>
 
           {/* Hover overlay */}
@@ -118,17 +169,19 @@ export default function ImageGallery({ images, name }: ImageGalleryProps) {
                     : 'opacity-70 hover:opacity-100'
                 }`}
               >
+                {/* Thumbnail loading skeleton */}
+                {!loadedThumbnails.has(index) && <ImageSkeleton size="small" />}
+
                 <div className="absolute inset-0 bg-gradient-to-br from-charcoal-light to-charcoal flex items-center justify-center">
-                  {image.startsWith('/images/') ? (
-                    <ImageIcon className="w-6 h-6 text-white/40" />
-                  ) : (
-                    <Image
-                      src={image}
-                      alt={`${name} - Thumbnail ${index + 1}`}
-                      fill
-                      className="object-cover"
-                    />
-                  )}
+                  <Image
+                    src={image}
+                    alt={`${name} - Thumbnail ${index + 1}`}
+                    fill
+                    className={`object-cover transition-opacity duration-300 ${
+                      loadedThumbnails.has(index) ? 'opacity-100' : 'opacity-0'
+                    }`}
+                    onLoad={() => handleThumbnailLoad(index)}
+                  />
                 </div>
                 {index === 3 && displayImages.length > 4 && (
                   <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
@@ -169,20 +222,23 @@ export default function ImageGallery({ images, name }: ImageGalleryProps) {
             role="img"
             aria-label={`${name} - Photo ${selectedIndex + 1} of ${displayImages.length}`}
           >
+            {/* Modal loading skeleton */}
+            {!modalImageLoaded && (
+              <div className="absolute inset-0 flex items-center justify-center">
+                <div className="w-20 h-20 rounded-full border-4 border-purple-500/30 border-t-purple-500 animate-spin" />
+              </div>
+            )}
+
             <div className="relative w-full h-full flex items-center justify-center">
-              {(displayImages[selectedIndex] ?? '').startsWith('/images/') ? (
-                <div className="flex flex-col items-center text-white/40">
-                  <ImageIcon className="w-24 h-24 mb-4" />
-                  <span className="text-lg">Image coming soon</span>
-                </div>
-              ) : (
-                <Image
-                  src={displayImages[selectedIndex] ?? '/images/placeholder-accommodation.jpg'}
-                  alt={`${name} - Photo ${selectedIndex + 1}`}
-                  fill
-                  className="object-contain"
-                />
-              )}
+              <Image
+                src={displayImages[selectedIndex] ?? '/images/placeholder-accommodation.jpg'}
+                alt={`${name} - Photo ${selectedIndex + 1}`}
+                fill
+                className={`object-contain transition-opacity duration-300 ${
+                  modalImageLoaded ? 'opacity-100' : 'opacity-0'
+                }`}
+                onLoad={() => setModalImageLoaded(true)}
+              />
             </div>
 
             {/* Navigation Arrows */}
@@ -208,32 +264,32 @@ export default function ImageGallery({ images, name }: ImageGalleryProps) {
 
           {/* Thumbnail Strip */}
           {displayImages.length > 1 && (
-            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 bg-black/50 p-2 rounded-lg">
+            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 bg-black/50 p-2 rounded-lg max-w-[90vw] overflow-x-auto">
               {displayImages.map((image, index) => (
                 <button
                   key={index}
                   onClick={(e) => {
                     e.stopPropagation();
-                    setSelectedIndex(index);
+                    handleImageChange(index);
                   }}
-                  className={`relative w-16 h-12 rounded overflow-hidden transition-all duration-200 ${
+                  className={`relative w-16 h-12 rounded overflow-hidden transition-all duration-200 flex-shrink-0 ${
                     selectedIndex === index
                       ? 'ring-2 ring-lyra-purple-start'
                       : 'opacity-50 hover:opacity-100'
                   }`}
                 >
-                  {image.startsWith('/images/') ? (
-                    <div className="w-full h-full bg-charcoal flex items-center justify-center">
-                      <ImageIcon className="w-4 h-4 text-white/40" />
-                    </div>
-                  ) : (
-                    <Image
-                      src={image}
-                      alt={`Thumbnail ${index + 1}`}
-                      fill
-                      className="object-cover"
-                    />
-                  )}
+                  {/* Modal thumbnail loading skeleton */}
+                  {!loadedThumbnails.has(index) && <ImageSkeleton size="small" />}
+
+                  <Image
+                    src={image}
+                    alt={`Thumbnail ${index + 1}`}
+                    fill
+                    className={`object-cover transition-opacity duration-300 ${
+                      loadedThumbnails.has(index) ? 'opacity-100' : 'opacity-0'
+                    }`}
+                    onLoad={() => handleThumbnailLoad(index)}
+                  />
                 </button>
               ))}
             </div>
