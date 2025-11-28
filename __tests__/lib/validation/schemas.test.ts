@@ -92,8 +92,14 @@ describe('Validation Schemas', () => {
     });
 
     it('should reject invalid ratings', () => {
-      [0, 6, -1, 3.5].forEach((rating) => {
+      [0, 6, -1].forEach((rating) => {
         expect(() => ratingSchema.parse(rating)).toThrow();
+      });
+    });
+
+    it('should accept decimal ratings within range', () => {
+      [1.5, 2.5, 3.5, 4.5].forEach((rating) => {
+        expect(() => ratingSchema.parse(rating)).not.toThrow();
       });
     });
   });
