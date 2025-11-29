@@ -27,19 +27,23 @@ function BrowsePageContent() {
   const universityParam = searchParams.get('university');
 
   const [searchQuery, setSearchQuery] = useState('');
+  const [filters, setFilters] = useState<SearchFilters>({});
 
-  // Get initial university filter from URL params
-  const getInitialFilters = (): SearchFilters => {
+  // Update filters when URL parameter changes
+  useEffect(() => {
     if (universityParam) {
       const mappedUniversity = UNIVERSITY_MAP[universityParam.toLowerCase()];
       if (mappedUniversity) {
-        return { university: mappedUniversity };
+        setFilters((prev) => ({ ...prev, university: mappedUniversity }));
       }
+    } else {
+      // Clear university filter if param is removed
+      setFilters((prev) => {
+        const { university: _university, ...rest } = prev;
+        return rest;
+      });
     }
-    return {};
-  };
-
-  const [filters, setFilters] = useState<SearchFilters>(getInitialFilters);
+  }, [universityParam]);
   const [accommodations, setAccommodations] = useState<Accommodation[]>([]);
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
