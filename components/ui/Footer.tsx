@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
-import { Github, Twitter, Linkedin, Mail, Heart } from 'lucide-react';
+import { Github, Mail, Heart } from 'lucide-react';
 
 export default function Footer() {
   const pathname = usePathname();
@@ -76,17 +76,15 @@ export default function Footer() {
       { href: '/browse?university=macquarie', label: 'Macquarie University' },
     ],
     legal: [
-      { href: '/support', label: 'Help Center' },
-      { href: '/support', label: 'Contact Us' },
-      { href: '/support', label: 'Privacy Policy' },
-      { href: '/support', label: 'Terms of Service' },
+      { href: '/support?tab=help', label: 'Help Center' },
+      { href: '/support?tab=contact', label: 'Contact Us' },
+      { href: '/support?tab=privacy', label: 'Privacy Policy' },
+      { href: '/support?tab=terms', label: 'Terms of Service' },
     ],
   };
 
   const socialLinks = [
     { icon: Github, href: 'https://github.com/MelvinDY/ratemyaccom', label: 'GitHub' },
-    { icon: Twitter, href: '#', label: 'Twitter' },
-    { icon: Linkedin, href: '#', label: 'LinkedIn' },
     { icon: Mail, href: 'mailto:support@ratemyaccom.com.au', label: 'Email' },
   ];
 

@@ -1,6 +1,7 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, Suspense } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -31,9 +32,20 @@ import {
   MessageSquare,
   BookOpen,
   Scale,
+  Loader2,
 } from 'lucide-react';
 
-export default function SupportPage() {
+function SupportPageContent() {
+  const searchParams = useSearchParams();
+  const tabParam = searchParams.get('tab');
+  const [activeTab, setActiveTab] = useState(tabParam || 'help');
+
+  // Update active tab when URL parameter changes
+  useEffect(() => {
+    if (tabParam && ['help', 'contact', 'privacy', 'terms'].includes(tabParam)) {
+      setActiveTab(tabParam);
+    }
+  }, [tabParam]);
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -171,7 +183,7 @@ export default function SupportPage() {
 
       {/* Main Content */}
       <section className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 py-20">
-        <Tabs defaultValue="help" className="w-full">
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
           <TabsList className="grid w-full grid-cols-2 md:grid-cols-4 h-auto gap-2 bg-transparent mb-12">
             <TabsTrigger
               value="help"
@@ -895,5 +907,26 @@ export default function SupportPage() {
         </Tabs>
       </section>
     </div>
+  );
+}
+
+// Loading component for Suspense
+function SupportPageLoading() {
+  return (
+    <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white flex items-center justify-center">
+      <div className="flex items-center gap-3 text-gray-600">
+        <Loader2 className="h-6 w-6 animate-spin" />
+        <span>Loading...</span>
+      </div>
+    </div>
+  );
+}
+
+// Main export with Suspense wrapper
+export default function SupportPage() {
+  return (
+    <Suspense fallback={<SupportPageLoading />}>
+      <SupportPageContent />
+    </Suspense>
   );
 }
