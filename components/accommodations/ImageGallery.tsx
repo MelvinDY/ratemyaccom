@@ -96,10 +96,17 @@ export default function ImageGallery({ images, name }: ImageGalleryProps) {
         </h2>
 
         {/* Main Image */}
-        <button
-          type="button"
+        <div
           className="relative w-full aspect-video rounded-lg overflow-hidden cursor-pointer group mb-4"
           onClick={() => setIsModalOpen(true)}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              setIsModalOpen(true);
+            }
+          }}
+          role="button"
+          tabIndex={0}
           aria-label={`View ${name} photos in gallery`}
         >
           {/* Loading skeleton */}
@@ -154,7 +161,7 @@ export default function ImageGallery({ images, name }: ImageGalleryProps) {
           <div className="absolute bottom-2 right-2 bg-black/60 text-white text-sm px-3 py-1 rounded-full">
             {selectedIndex + 1} / {displayImages.length}
           </div>
-        </button>
+        </div>
 
         {/* Thumbnail Grid */}
         {displayImages.length > 1 && (
