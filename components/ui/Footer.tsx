@@ -73,7 +73,9 @@ export default function Footer() {
     universities: [
       { href: '/browse?university=unsw', label: 'UNSW' },
       { href: '/browse?university=sydney', label: 'University of Sydney' },
+      { href: '/browse?university=uts', label: 'UTS' },
       { href: '/browse?university=macquarie', label: 'Macquarie University' },
+      { href: '/browse?university=wsu', label: 'Western Sydney University' },
     ],
     legal: [
       { href: '/support?tab=help', label: 'Help Center' },

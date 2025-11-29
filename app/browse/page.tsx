@@ -1,6 +1,7 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, Suspense } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { SearchFilters, Accommodation } from '@/types';
 import BrowseSearch from '@/components/browse/BrowseSearch';
 import BrowseFilters from '@/components/browse/BrowseFilters';
@@ -8,13 +9,37 @@ import AccommodationCard from '@/components/accommodations/AccommodationCard';
 import AccommodationCardSkeleton from '@/components/browse/AccommodationCardSkeleton';
 import EmptyState from '@/components/browse/EmptyState';
 import { Button } from '@/components/ui/button';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Loader2 } from 'lucide-react';
 
 const ITEMS_PER_PAGE = 12;
 
-export default function BrowsePage() {
+// Map short university names to full names used in filters
+const UNIVERSITY_MAP: Record<string, string> = {
+  unsw: 'University of New South Wales (UNSW)',
+  sydney: 'University of Sydney',
+  uts: 'University of Technology Sydney (UTS)',
+  macquarie: 'Macquarie University',
+  wsu: 'Western Sydney University',
+};
+
+function BrowsePageContent() {
+  const searchParams = useSearchParams();
+  const universityParam = searchParams.get('university');
+
   const [searchQuery, setSearchQuery] = useState('');
-  const [filters, setFilters] = useState<SearchFilters>({});
+
+  // Get initial university filter from URL params
+  const getInitialFilters = (): SearchFilters => {
+    if (universityParam) {
+      const mappedUniversity = UNIVERSITY_MAP[universityParam.toLowerCase()];
+      if (mappedUniversity) {
+        return { university: mappedUniversity };
+      }
+    }
+    return {};
+  };
+
+  const [filters, setFilters] = useState<SearchFilters>(getInitialFilters);
   const [accommodations, setAccommodations] = useState<Accommodation[]>([]);
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
@@ -267,5 +292,26 @@ export default function BrowsePage() {
         </div>
       </div>
     </div>
+  );
+}
+
+// Loading component for Suspense
+function BrowsePageLoading() {
+  return (
+    <div className="min-h-screen bg-charcoal flex items-center justify-center">
+      <div className="flex items-center gap-3 text-white/70">
+        <Loader2 className="h-6 w-6 animate-spin" />
+        <span>Loading accommodations...</span>
+      </div>
+    </div>
+  );
+}
+
+// Main export with Suspense wrapper
+export default function BrowsePage() {
+  return (
+    <Suspense fallback={<BrowsePageLoading />}>
+      <BrowsePageContent />
+    </Suspense>
   );
 }
