@@ -1175,6 +1175,27 @@ async function main() {
   // Create Sample Reviews (0-2 per accommodation)
   console.log('📝 Creating sample reviews...');
 
+  // Type for review data
+  interface ReviewData {
+    userId: string;
+    ratingBreakdown: {
+      cleanliness: number;
+      location: number;
+      value: number;
+      amenities: number;
+      management: number;
+      safety: number;
+    };
+    title: string;
+    text: string;
+    pros: string[];
+    cons: string[];
+    verified: boolean;
+    roomType: string;
+    stayDuration: string;
+    isAnonymous?: boolean;
+  }
+
   // Helper function to calculate average rating from breakdown
   const calculateOverallRating = (breakdown: {
     cleanliness: number;
@@ -1243,13 +1264,20 @@ async function main() {
   };
 
   // Define reviews data for each accommodation (0-2 reviews each)
-  const reviewsData = [
-    // UNSW Village - 2 reviews
+  // User index mapping by university:
+  // users[0] = Sarah Thompson (UNSW)
+  // users[1] = Michael Kim (University of Sydney)
+  // users[2] = Emma Wilson (UTS)
+  // users[3] = James Liu (Macquarie University)
+  // users[4] = Olivia Nguyen (Western Sydney University)
+
+  const reviewsData: { accommodationId: string; reviews: ReviewData[] }[] = [
+    // UNSW Village - 2 reviews (UNSW students only)
     {
       accommodationId: unswVillage.id,
       reviews: [
         {
-          userId: users[0].id,
+          userId: users[0].id, // Sarah - UNSW student
           ratingBreakdown: {
             cleanliness: 4,
             location: 5,
@@ -1266,32 +1294,14 @@ async function main() {
           roomType: 'Single',
           stayDuration: '2 semesters',
         },
-        {
-          userId: users[1].id,
-          ratingBreakdown: {
-            cleanliness: 5,
-            location: 5,
-            value: 3,
-            amenities: 4,
-            management: 4,
-            safety: 5,
-          },
-          title: 'Convenient but pricey',
-          text: 'The convenience of living on campus is unmatched. Everything is clean and security is excellent. However, it is quite expensive compared to off-campus options. The social events are great for meeting people.',
-          pros: ['On campus location', 'Clean rooms', 'Good security'],
-          cons: ['Expensive', 'Small rooms'],
-          verified: true,
-          roomType: 'Studio',
-          stayDuration: '1 year',
-        },
       ],
     },
-    // Kensington Colleges - 1 review
+    // Kensington Colleges - 1 review (UNSW student)
     {
       accommodationId: unswKensingtonColleges.id,
       reviews: [
         {
-          userId: users[2].id,
+          userId: users[0].id, // Sarah - UNSW student
           ratingBreakdown: {
             cleanliness: 4,
             location: 5,
@@ -1315,12 +1325,12 @@ async function main() {
       accommodationId: unilodgeKensington.id,
       reviews: [],
     },
-    // UniLodge Broadway - 2 reviews
+    // UniLodge Broadway - 2 reviews (USYD students only)
     {
       accommodationId: unilodgeBroadway.id,
       reviews: [
         {
-          userId: users[3].id,
+          userId: users[1].id, // Michael - USYD student
           ratingBreakdown: {
             cleanliness: 4,
             location: 5,
@@ -1337,33 +1347,14 @@ async function main() {
           roomType: 'Ensuite',
           stayDuration: '1 semester',
         },
-        {
-          userId: users[4].id,
-          ratingBreakdown: {
-            cleanliness: 3,
-            location: 5,
-            value: 2,
-            amenities: 4,
-            management: 3,
-            safety: 4,
-          },
-          title: 'Great location but overpriced',
-          text: 'The location is absolutely perfect for USYD students. However, for what you pay, I expected better quality. The rooms are small and maintenance can be slow.',
-          pros: ['Central location', 'Good facilities'],
-          cons: ['Very expensive', 'Slow maintenance', 'Thin walls'],
-          verified: true,
-          roomType: 'Studio',
-          stayDuration: '2 semesters',
-          isAnonymous: true,
-        },
       ],
     },
-    // St John's College - 1 review
+    // St John's College - 1 review (USYD student)
     {
       accommodationId: stJohnsCollege.id,
       reviews: [
         {
-          userId: users[0].id,
+          userId: users[1].id, // Michael - USYD student
           ratingBreakdown: {
             cleanliness: 5,
             location: 5,
@@ -1387,12 +1378,12 @@ async function main() {
       accommodationId: queenMaryBuilding.id,
       reviews: [],
     },
-    // Yura Mudang - 2 reviews
+    // Yura Mudang - 2 reviews (UTS students only)
     {
       accommodationId: yuraMudang.id,
       reviews: [
         {
-          userId: users[1].id,
+          userId: users[2].id, // Emma - UTS student
           ratingBreakdown: {
             cleanliness: 5,
             location: 5,
@@ -1409,32 +1400,14 @@ async function main() {
           roomType: 'Studio',
           stayDuration: '1 year',
         },
-        {
-          userId: users[2].id,
-          ratingBreakdown: {
-            cleanliness: 4,
-            location: 5,
-            value: 3,
-            amenities: 5,
-            management: 4,
-            safety: 5,
-          },
-          title: 'Modern and well-located',
-          text: 'Really enjoyed my time at Yura Mudang. The facilities are top-notch and the location cannot be beaten. Staff are friendly and helpful. Only downside is the cost.',
-          pros: ['Brand new building', 'Amazing facilities', 'Central location'],
-          cons: ['High rent', 'Noise from city'],
-          verified: true,
-          roomType: 'Twin Share',
-          stayDuration: '1 semester',
-        },
       ],
     },
-    // Urbanest Darling - 1 review
+    // Urbanest Darling - 1 review (UTS student)
     {
       accommodationId: urbanestDarling.id,
       reviews: [
         {
-          userId: users[3].id,
+          userId: users[2].id, // Emma - UTS student
           ratingBreakdown: {
             cleanliness: 4,
             location: 5,
@@ -1443,9 +1416,9 @@ async function main() {
             management: 4,
             safety: 4,
           },
-          title: 'Perfect for UTS and USYD',
-          text: 'Great location between UTS and USYD campuses. The building is modern and clean. Social events are fun. A bit pricey but worth it for the convenience.',
-          pros: ['Central to unis', 'Modern building', 'Good social life'],
+          title: 'Perfect for UTS students',
+          text: 'Great location right near UTS campus. The building is modern and clean. Social events are fun. A bit pricey but worth it for the convenience.',
+          pros: ['Close to UTS', 'Modern building', 'Good social life'],
           cons: ['Expensive', 'Small rooms'],
           verified: true,
           roomType: 'Ensuite',
@@ -1458,12 +1431,12 @@ async function main() {
       accommodationId: igluCentral.id,
       reviews: [],
     },
-    // Macquarie Village - 2 reviews
+    // Macquarie Village - 2 reviews (Macquarie students only)
     {
       accommodationId: mqVillage.id,
       reviews: [
         {
-          userId: users[4].id,
+          userId: users[3].id, // James - Macquarie student
           ratingBreakdown: {
             cleanliness: 4,
             location: 5,
@@ -1480,33 +1453,14 @@ async function main() {
           roomType: 'Single',
           stayDuration: '2 years',
         },
-        {
-          userId: users[0].id,
-          ratingBreakdown: {
-            cleanliness: 3,
-            location: 5,
-            value: 5,
-            amenities: 3,
-            management: 4,
-            safety: 4,
-          },
-          title: 'Budget-friendly option',
-          text: 'If youre looking for affordable accommodation near Macquarie, this is a solid choice. The buildings are a bit dated but everything works fine. Great community atmosphere.',
-          pros: ['Affordable', 'Good community', 'Close to campus'],
-          cons: ['Dated interiors', 'Far from CBD'],
-          verified: true,
-          roomType: 'Twin Share',
-          stayDuration: '1 semester',
-          isAnonymous: true,
-        },
       ],
     },
-    // Dunmore Lang College - 1 review
+    // Dunmore Lang College - 1 review (Macquarie student)
     {
       accommodationId: dunmoreLang.id,
       reviews: [
         {
-          userId: users[1].id,
+          userId: users[3].id, // James - Macquarie student
           ratingBreakdown: {
             cleanliness: 4,
             location: 5,
@@ -1530,12 +1484,12 @@ async function main() {
       accommodationId: robertMenzies.id,
       reviews: [],
     },
-    // WSU Village Penrith - 2 reviews
+    // WSU Village Penrith - 2 reviews (WSU students only)
     {
       accommodationId: wsuVillagePenrith.id,
       reviews: [
         {
-          userId: users[2].id,
+          userId: users[4].id, // Olivia - WSU student
           ratingBreakdown: {
             cleanliness: 4,
             location: 4,
@@ -1552,32 +1506,14 @@ async function main() {
           roomType: 'Twin Share',
           stayDuration: '3 semesters',
         },
-        {
-          userId: users[3].id,
-          ratingBreakdown: {
-            cleanliness: 4,
-            location: 3,
-            value: 5,
-            amenities: 4,
-            management: 4,
-            safety: 5,
-          },
-          title: 'Best value in Western Sydney',
-          text: 'You wont find better value anywhere else. The rooms are decent, staff are helpful, and the community is great. Just need a car to get around easily.',
-          pros: ['Excellent value', 'Safe environment', 'Good facilities'],
-          cons: ['Need a car', 'Remote location'],
-          verified: true,
-          roomType: 'Single',
-          stayDuration: '1 year',
-        },
       ],
     },
-    // WSU Village Parramatta - 1 review
+    // WSU Village Parramatta - 1 review (WSU student)
     {
       accommodationId: wsuVillageParramatta.id,
       reviews: [
         {
-          userId: users[4].id,
+          userId: users[4].id, // Olivia - WSU student
           ratingBreakdown: {
             cleanliness: 4,
             location: 5,
@@ -1596,7 +1532,7 @@ async function main() {
         },
       ],
     },
-    // UniLodge Bankstown - 0 reviews
+    // WSU Village Bankstown - 0 reviews
     {
       accommodationId: unilodgeBankstown.id,
       reviews: [],
