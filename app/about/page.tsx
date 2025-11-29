@@ -155,9 +155,9 @@ export default function AboutPage() {
               className="grid grid-cols-3 gap-8 max-w-3xl mx-auto"
             >
               {[
-                { label: 'Reviews', value: '1,000+' },
-                { label: 'Accommodations', value: '200+' },
-                { label: 'Universities', value: '13' },
+                { label: 'Universities', value: '5' },
+                { label: 'Accommodations', value: '15+' },
+                { label: 'Rating Categories', value: '6' },
               ].map((stat, index) => (
                 <motion.div
                   key={index}
@@ -449,7 +449,7 @@ export default function AboutPage() {
               variants={itemVariants}
               className="text-xl md:text-2xl text-gray-700 mb-12 font-medium"
             >
-              Join thousands of NSW students making informed accommodation decisions.
+              Join NSW students making informed accommodation decisions.
             </motion.p>
             <motion.div
               variants={itemVariants}

@@ -20,9 +20,9 @@ export interface RatingBreakdown {
 export interface Review {
   id: string;
   accommodationId: string;
-  userId: string;
+  userId: string | null;
   userName: string;
-  userUniversity?: string;
+  userUniversity?: string | null;
   rating: number;
   ratingBreakdown: RatingBreakdown;
   title: string;
@@ -30,6 +30,7 @@ export interface Review {
   pros?: string[];
   cons?: string[];
   verified: boolean;
+  isAnonymous?: boolean;
   roomType?: string;
   stayDuration?: string;
   createdAt: Date;

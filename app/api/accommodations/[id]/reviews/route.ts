@@ -53,7 +53,17 @@ export async function POST(request: NextRequest, { params }: { params: { id: str
     }
 
     const body = await request.json();
-    const { rating, ratingBreakdown, title, text, pros, cons, roomType, stayDuration } = body;
+    const {
+      rating,
+      ratingBreakdown,
+      title,
+      text,
+      pros,
+      cons,
+      roomType,
+      stayDuration,
+      isAnonymous,
+    } = body;
 
     // Validate required fields
     if (!rating || !ratingBreakdown || !title || !text) {
@@ -126,6 +136,7 @@ export async function POST(request: NextRequest, { params }: { params: { id: str
         roomType,
         stayDuration,
         verified: isVerified || false,
+        isAnonymous: isAnonymous || false,
         status: 'PUBLISHED',
       },
       include: {
@@ -180,9 +191,9 @@ export async function POST(request: NextRequest, { params }: { params: { id: str
           review: {
             id: review.id,
             accommodationId: review.accommodationId,
-            userId: review.userId,
-            userName: review.user.name,
-            userUniversity: review.user.university,
+            userId: review.isAnonymous ? null : review.userId,
+            userName: review.isAnonymous ? 'Anonymous Student' : review.user.name,
+            userUniversity: review.isAnonymous ? null : review.user.university,
             rating: review.rating,
             ratingBreakdown: {
               cleanliness: review.ratingCleanliness,
@@ -197,6 +208,7 @@ export async function POST(request: NextRequest, { params }: { params: { id: str
             pros: review.pros,
             cons: review.cons,
             verified: review.verified,
+            isAnonymous: review.isAnonymous,
             roomType: review.roomType,
             stayDuration: review.stayDuration,
             createdAt: review.createdAt,
@@ -311,9 +323,9 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
         data: reviews.map((review) => ({
           id: review.id,
           accommodationId: review.accommodationId,
-          userId: review.userId,
-          userName: review.user.name,
-          userUniversity: review.user.university,
+          userId: review.isAnonymous ? null : review.userId,
+          userName: review.isAnonymous ? 'Anonymous Student' : review.user.name,
+          userUniversity: review.isAnonymous ? null : review.user.university,
           rating: review.rating,
           ratingBreakdown: {
             cleanliness: review.ratingCleanliness,
@@ -328,6 +340,7 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
           pros: review.pros,
           cons: review.cons,
           verified: review.verified,
+          isAnonymous: review.isAnonymous,
           roomType: review.roomType,
           stayDuration: review.stayDuration,
           helpful: review.helpful,

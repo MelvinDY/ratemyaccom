@@ -34,7 +34,7 @@ describe('Features Component', () => {
     it('should display the subheading', () => {
       render(<Features />);
       expect(
-        screen.getByText(/Discover why thousands of students trust Rate My Accom/i)
+        screen.getByText(/Discover how Rate My Accom helps students make informed decisions/i)
       ).toBeInTheDocument();
     });
 

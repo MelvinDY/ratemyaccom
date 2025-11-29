@@ -94,9 +94,7 @@ export default function Hero() {
           <motion.div variants={itemVariants} className="inline-flex items-center mb-8">
             <div className="flex items-center gap-2 px-4 py-2 bg-white/10 backdrop-blur-md rounded-full border border-purple-300/30">
               <Sparkles className="w-4 h-4 text-purple-300" />
-              <span className="text-sm font-medium text-purple-100">
-                Trusted by 5,000+ Students
-              </span>
+              <span className="text-sm font-medium text-purple-100">Built for NSW Students</span>
             </div>
           </motion.div>
 

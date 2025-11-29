@@ -99,6 +99,7 @@ export const mockReview = {
   pros: ['Close to campus', 'Clean'],
   cons: ['Bit expensive'],
   verified: true,
+  isAnonymous: false,
   roomType: 'Single',
   stayDuration: '1 year',
   helpful: 5,

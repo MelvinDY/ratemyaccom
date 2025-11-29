@@ -7,30 +7,30 @@ import { Users, Target, Award, TrendingUp } from 'lucide-react';
 const stats = [
   {
     icon: Users,
-    number: '5,000+',
-    label: 'Active Students',
-    description: 'Verified students contributing reviews',
+    number: '5',
+    label: 'Universities',
+    description: 'NSW universities covered',
     gradient: 'from-purple-500 to-pink-500',
   },
   {
     icon: Award,
-    number: '200+',
+    number: '15+',
     label: 'Accommodations',
-    description: 'Across NSW universities',
+    description: 'Verified listings available',
     gradient: 'from-pink-500 to-purple-600',
   },
   {
     icon: TrendingUp,
-    number: '98%',
-    label: 'Satisfaction Rate',
-    description: 'Students found helpful info',
+    number: '100%',
+    label: 'Verified Reviews',
+    description: 'From real university students',
     gradient: 'from-purple-600 to-indigo-500',
   },
   {
     icon: Target,
-    number: '15K+',
-    label: 'Reviews',
-    description: 'Honest feedback shared',
+    number: '6',
+    label: 'Rating Categories',
+    description: 'Detailed accommodation insights',
     gradient: 'from-indigo-500 to-blue-500',
   },
 ];
@@ -175,8 +175,8 @@ export default function AboutUs() {
                   <h3 className="text-xl font-bold text-white mb-2">Our Mission</h3>
                   <p className="text-purple-100/70">
                     To create the most trusted and comprehensive student accommodation review
-                    platform in NSW, helping thousands of students find safe, comfortable, and
-                    affordable homes near their universities.
+                    platform in NSW, helping students find safe, comfortable, and affordable homes
+                    near their universities.
                   </p>
                 </div>
               </div>

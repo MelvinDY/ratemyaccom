@@ -4,8 +4,9 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { Button } from '@/components/ui/button';
-import { useState, useEffect } from 'react';
-import { Menu, X } from 'lucide-react';
+import { useState, useEffect, useRef } from 'react';
+import { Menu, X, User, LogOut, ChevronDown } from 'lucide-react';
+import { useAuth } from '@/hooks/useAuth';
 
 const navLinks = [
   { href: '/', label: 'Home' },
@@ -19,6 +20,9 @@ export default function Header() {
   const pathname = usePathname();
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [userMenuOpen, setUserMenuOpen] = useState(false);
+  const userMenuRef = useRef<HTMLDivElement>(null);
+  const { user, isAuthenticated, logout } = useAuth();
 
   // Track scroll position for glassmorphism effect
   useEffect(() => {
@@ -28,6 +32,22 @@ export default function Header() {
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  // Handle click outside to close user menu
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (userMenuRef.current && !userMenuRef.current.contains(event.target as Node)) {
+        setUserMenuOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  const handleLogout = async () => {
+    await logout();
+    setUserMenuOpen(false);
+  };
 
   // Page-specific theme configuration
   const getPageTheme = () => {
@@ -137,18 +157,64 @@ export default function Header() {
 
           {/* Action Buttons */}
           <div className="hidden md:flex items-center space-x-3">
-            <Link href="/login">
-              <button className="border-2 border-white/20 text-white/90 px-4 py-2 rounded-xl font-medium hover:bg-white/10 hover:border-white/30 backdrop-blur-sm transition-all duration-300 text-sm">
-                Sign In
-              </button>
-            </Link>
-            <Link href="/write-review">
-              <button
-                className={`bg-gradient-to-r ${theme.accentGradient} text-white px-4 py-2 rounded-xl font-medium hover:shadow-lg hover:scale-105 transition-all duration-300 text-sm`}
-              >
-                Write Review
-              </button>
-            </Link>
+            {isAuthenticated && user ? (
+              <>
+                <Link href="/write-review">
+                  <button
+                    className={`bg-gradient-to-r ${theme.accentGradient} text-white px-4 py-2 rounded-xl font-medium hover:shadow-lg hover:scale-105 transition-all duration-300 text-sm`}
+                  >
+                    Write Review
+                  </button>
+                </Link>
+                <div className="relative" ref={userMenuRef}>
+                  <button
+                    onClick={() => setUserMenuOpen(!userMenuOpen)}
+                    className="flex items-center space-x-2 border-2 border-white/20 text-white/90 px-3 py-2 rounded-xl font-medium hover:bg-white/10 hover:border-white/30 backdrop-blur-sm transition-all duration-300 text-sm"
+                  >
+                    <div className="w-6 h-6 rounded-full bg-gradient-to-r from-lyra-purple-start to-lyra-purple-end flex items-center justify-center">
+                      <User className="w-4 h-4 text-white" />
+                    </div>
+                    <span className="max-w-[100px] truncate">{user.name.split(' ')[0]}</span>
+                    <ChevronDown
+                      className={`w-4 h-4 transition-transform ${userMenuOpen ? 'rotate-180' : ''}`}
+                    />
+                  </button>
+
+                  {userMenuOpen && (
+                    <div className="absolute right-0 mt-2 w-56 bg-charcoal border border-white/20 rounded-xl shadow-xl overflow-hidden z-50">
+                      <div className="px-4 py-3 border-b border-white/10">
+                        <p className="text-white font-medium truncate">{user.name}</p>
+                        <p className="text-white/50 text-sm truncate">{user.email}</p>
+                      </div>
+                      <div className="py-1">
+                        <button
+                          onClick={handleLogout}
+                          className="w-full flex items-center space-x-2 px-4 py-2 text-white/70 hover:bg-white/10 hover:text-white transition-colors text-left"
+                        >
+                          <LogOut className="w-4 h-4" />
+                          <span>Sign Out</span>
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </>
+            ) : (
+              <>
+                <Link href="/login">
+                  <button className="border-2 border-white/20 text-white/90 px-4 py-2 rounded-xl font-medium hover:bg-white/10 hover:border-white/30 backdrop-blur-sm transition-all duration-300 text-sm">
+                    Sign In
+                  </button>
+                </Link>
+                <Link href="/write-review">
+                  <button
+                    className={`bg-gradient-to-r ${theme.accentGradient} text-white px-4 py-2 rounded-xl font-medium hover:shadow-lg hover:scale-105 transition-all duration-300 text-sm`}
+                  >
+                    Write Review
+                  </button>
+                </Link>
+              </>
+            )}
           </div>
 
           {/* Mobile Menu Button */}
@@ -182,18 +248,53 @@ export default function Header() {
               );
             })}
             <div className="pt-4 space-y-2 border-t border-white/10 mt-4">
-              <Link href="/login" onClick={() => setMobileMenuOpen(false)}>
-                <button className="w-full border-2 border-white/20 text-white/90 px-4 py-3 rounded-xl font-medium hover:bg-white/10 backdrop-blur-sm transition-all duration-300">
-                  Sign In
-                </button>
-              </Link>
-              <Link href="/write-review" onClick={() => setMobileMenuOpen(false)}>
-                <button
-                  className={`w-full bg-gradient-to-r ${theme.accentGradient} text-white px-4 py-3 rounded-xl font-medium hover:shadow-lg transition-all duration-300`}
-                >
-                  Write Review
-                </button>
-              </Link>
+              {isAuthenticated && user ? (
+                <>
+                  <div className="px-4 py-3 bg-white/5 rounded-xl">
+                    <div className="flex items-center space-x-3">
+                      <div className="w-10 h-10 rounded-full bg-gradient-to-r from-lyra-purple-start to-lyra-purple-end flex items-center justify-center">
+                        <User className="w-5 h-5 text-white" />
+                      </div>
+                      <div>
+                        <p className="text-white font-medium">{user.name}</p>
+                        <p className="text-white/50 text-sm truncate">{user.email}</p>
+                      </div>
+                    </div>
+                  </div>
+                  <Link href="/write-review" onClick={() => setMobileMenuOpen(false)}>
+                    <button
+                      className={`w-full bg-gradient-to-r ${theme.accentGradient} text-white px-4 py-3 rounded-xl font-medium hover:shadow-lg transition-all duration-300`}
+                    >
+                      Write Review
+                    </button>
+                  </Link>
+                  <button
+                    onClick={() => {
+                      handleLogout();
+                      setMobileMenuOpen(false);
+                    }}
+                    className="w-full flex items-center justify-center space-x-2 border-2 border-white/20 text-white/90 px-4 py-3 rounded-xl font-medium hover:bg-white/10 backdrop-blur-sm transition-all duration-300"
+                  >
+                    <LogOut className="w-4 h-4" />
+                    <span>Sign Out</span>
+                  </button>
+                </>
+              ) : (
+                <>
+                  <Link href="/login" onClick={() => setMobileMenuOpen(false)}>
+                    <button className="w-full border-2 border-white/20 text-white/90 px-4 py-3 rounded-xl font-medium hover:bg-white/10 backdrop-blur-sm transition-all duration-300">
+                      Sign In
+                    </button>
+                  </Link>
+                  <Link href="/write-review" onClick={() => setMobileMenuOpen(false)}>
+                    <button
+                      className={`w-full bg-gradient-to-r ${theme.accentGradient} text-white px-4 py-3 rounded-xl font-medium hover:shadow-lg transition-all duration-300`}
+                    >
+                      Write Review
+                    </button>
+                  </Link>
+                </>
+              )}
             </div>
           </div>
         )}

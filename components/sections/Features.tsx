@@ -144,8 +144,8 @@ export default function Features() {
             </span>
           </h2>
           <p className="text-lg sm:text-xl text-purple-100/80 max-w-3xl mx-auto">
-            Discover why thousands of students trust Rate My Accom to make informed decisions about
-            their accommodation.
+            Discover how Rate My Accom helps students make informed decisions about their
+            accommodation.
           </p>
         </motion.div>
 

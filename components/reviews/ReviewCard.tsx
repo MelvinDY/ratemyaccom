@@ -127,19 +127,26 @@ export default function ReviewCard({ review }: ReviewCardProps) {
       <div className="flex items-start justify-between mb-4">
         <div className="flex-1">
           <div className="flex items-center space-x-2 mb-2">
-            <div className="bg-gradient-to-br from-purple-600 to-pink-600 text-white w-10 h-10 rounded-full flex items-center justify-center font-bold">
-              {review.userName.charAt(0)}
+            <div
+              className={`${review.isAnonymous ? 'bg-gradient-to-br from-gray-500 to-gray-600' : 'bg-gradient-to-br from-purple-600 to-pink-600'} text-white w-10 h-10 rounded-full flex items-center justify-center font-bold`}
+            >
+              {review.isAnonymous ? '?' : review.userName.charAt(0)}
             </div>
             <div>
               <div className="flex items-center space-x-2">
                 <h4 className="font-semibold text-white">{review.userName}</h4>
-                {review.verified && (
+                {review.isAnonymous && (
+                  <span className="bg-gray-600/30 text-gray-300 border border-gray-500/50 px-2 py-0.5 rounded-full text-xs">
+                    Anonymous
+                  </span>
+                )}
+                {review.verified && !review.isAnonymous && (
                   <span className="bg-green-600/30 text-green-300 border border-green-500/50 px-2 py-0.5 rounded-full text-xs">
                     Verified
                   </span>
                 )}
               </div>
-              {review.userUniversity && (
+              {review.userUniversity && !review.isAnonymous && (
                 <p className="text-sm text-purple-200">{review.userUniversity}</p>
               )}
             </div>

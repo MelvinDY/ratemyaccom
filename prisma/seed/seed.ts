@@ -172,9 +172,11 @@ async function main() {
         'Modern student accommodation located on the UNSW campus, offering a vibrant community with excellent facilities and convenient access to university resources. Features fully furnished rooms with private bathrooms, shared kitchens, and a range of social and study spaces.',
       type: 'ON_CAMPUS',
       images: [
-        '/images/unsw-village-1.jpg',
-        '/images/unsw-village-2.jpg',
-        '/images/unsw-village-3.jpg',
+        '/images/accommodations/unsw-village-1.jpg',
+        '/images/accommodations/unsw-village-2.jpg',
+        '/images/accommodations/unsw-village-3.jpg',
+        '/images/accommodations/unsw-village-4.jpg',
+        '/images/accommodations/unsw-village-5.jpg',
       ],
       priceMin: 409,
       priceMax: 646,
@@ -187,13 +189,13 @@ async function main() {
         email: 'village@unsw.edu.au',
         website: 'https://www.unswvillage.com.au',
       },
-      ratingOverall: 4.3,
-      ratingCleanliness: 4.5,
-      ratingLocation: 4.8,
-      ratingValue: 4.0,
-      ratingAmenities: 4.4,
-      ratingManagement: 4.2,
-      ratingSafety: 4.7,
+      ratingOverall: 0,
+      ratingCleanliness: 0,
+      ratingLocation: 0,
+      ratingValue: 0,
+      ratingAmenities: 0,
+      ratingManagement: 0,
+      ratingSafety: 0,
       totalReviews: 0,
       distanceToCampus: 0.2,
       distanceToTransport: 0.5,
@@ -234,7 +236,13 @@ async function main() {
       description:
         'Traditional collegiate-style living with a strong sense of community. Includes Basser College, Goldstein College, and Philip Baxter College. Offers catered meals and pastoral care programs.',
       type: 'COLLEGE',
-      images: ['/images/unsw-kensington-1.jpg', '/images/unsw-kensington-2.jpg'],
+      images: [
+        '/images/accommodations/unsw-kensington-colleges-1.jpg',
+        '/images/accommodations/unsw-kensington-colleges-2.jpg',
+        '/images/accommodations/unsw-kensington-colleges-3.jpg',
+        '/images/accommodations/unsw-kensington-colleges-4.jpg',
+        '/images/accommodations/unsw-kensington-colleges-5.jpg',
+      ],
       priceMin: 450,
       priceMax: 650,
       currency: 'AUD',
@@ -246,13 +254,13 @@ async function main() {
         email: 'colleges@unsw.edu.au',
         website: 'https://www.kensingtoncolleges.unsw.edu.au',
       },
-      ratingOverall: 4.5,
-      ratingCleanliness: 4.4,
-      ratingLocation: 4.9,
-      ratingValue: 4.1,
-      ratingAmenities: 4.6,
-      ratingManagement: 4.5,
-      ratingSafety: 4.8,
+      ratingOverall: 0,
+      ratingCleanliness: 0,
+      ratingLocation: 0,
+      ratingValue: 0,
+      ratingAmenities: 0,
+      ratingManagement: 0,
+      ratingSafety: 0,
       totalReviews: 0,
       distanceToCampus: 0.1,
       distanceToTransport: 0.6,
@@ -295,7 +303,13 @@ async function main() {
       description:
         'Modern purpose-built student accommodation near UNSW with premium facilities. Features fully furnished apartments with modern kitchens, ensuite bathrooms, and a vibrant student community. Includes gym, yoga studio, cinema, music room, and games area.',
       type: 'OFF_CAMPUS',
-      images: ['/images/unilodge-kensington-1.jpg', '/images/unilodge-kensington-2.jpg'],
+      images: [
+        '/images/accommodations/iglu-kensington-1.jpg',
+        '/images/accommodations/iglu-kensington-2.jpg',
+        '/images/accommodations/iglu-kensington-3.jpg',
+        '/images/accommodations/iglu-kensington-4.jpg',
+        '/images/accommodations/iglu-kensington-5.jpg',
+      ],
       priceMin: 566,
       priceMax: 806,
       currency: 'AUD',
@@ -313,13 +327,13 @@ async function main() {
         email: 'kensington@unilodge.com.au',
         website: 'https://www.unilodge.com.au/student-accommodation-sydney/kensington',
       },
-      ratingOverall: 4.2,
-      ratingCleanliness: 4.6,
-      ratingLocation: 4.5,
-      ratingValue: 3.8,
-      ratingAmenities: 4.7,
-      ratingManagement: 4.0,
-      ratingSafety: 4.5,
+      ratingOverall: 0,
+      ratingCleanliness: 0,
+      ratingLocation: 0,
+      ratingValue: 0,
+      ratingAmenities: 0,
+      ratingManagement: 0,
+      ratingSafety: 0,
       totalReviews: 0,
       distanceToCampus: 0.4,
       distanceToTransport: 0.3,
@@ -367,7 +381,13 @@ async function main() {
       description:
         'Purpose-built student accommodation in the heart of Sydney, close to University of Sydney. Features modern amenities, a vibrant student community, and easy access to public transport.',
       type: 'OFF_CAMPUS',
-      images: ['/images/unilodge-broadway-1.jpg', '/images/unilodge-broadway-2.jpg'],
+      images: [
+        '/images/accommodations/unilodge-broadway-1.jpg',
+        '/images/accommodations/unilodge-broadway-2.jpg',
+        '/images/accommodations/unilodge-broadway-3.jpg',
+        '/images/accommodations/unilodge-broadway-4.jpg',
+        '/images/accommodations/unilodge-broadway-5.jpg',
+      ],
       priceMin: 395,
       priceMax: 695,
       currency: 'AUD',
@@ -379,13 +399,13 @@ async function main() {
         email: 'broadway@unilodge.com.au',
         website: 'https://www.unilodge.com.au/broadway',
       },
-      ratingOverall: 4.1,
-      ratingCleanliness: 4.3,
-      ratingLocation: 4.6,
-      ratingValue: 3.8,
-      ratingAmenities: 4.5,
-      ratingManagement: 3.9,
-      ratingSafety: 4.4,
+      ratingOverall: 0,
+      ratingCleanliness: 0,
+      ratingLocation: 0,
+      ratingValue: 0,
+      ratingAmenities: 0,
+      ratingManagement: 0,
+      ratingSafety: 0,
       totalReviews: 0,
       distanceToCampus: 1.2,
       distanceToTransport: 0.3,
@@ -428,7 +448,13 @@ async function main() {
       description:
         "A historic residential college affiliated with the University of Sydney, offering a traditional collegiate experience with academic support, pastoral care, and a strong sense of community. Founded in 1857, it's one of Australia's oldest colleges.",
       type: 'COLLEGE',
-      images: ['/images/st-johns-1.jpg', '/images/st-johns-2.jpg'],
+      images: [
+        '/images/accommodations/st-johns-college-1.jpg',
+        '/images/accommodations/st-johns-college-2.jpg',
+        '/images/accommodations/st-johns-college-3.jpg',
+        '/images/accommodations/st-johns-college-4.jpg',
+        '/images/accommodations/st-johns-college-5.jpg',
+      ],
       priceMin: 550,
       priceMax: 750,
       currency: 'AUD',
@@ -440,13 +466,13 @@ async function main() {
         email: 'reception@stjohnscollege.edu.au',
         website: 'https://www.stjohnscollege.edu.au',
       },
-      ratingOverall: 4.6,
-      ratingCleanliness: 4.5,
-      ratingLocation: 4.8,
-      ratingValue: 4.2,
-      ratingAmenities: 4.4,
-      ratingManagement: 4.7,
-      ratingSafety: 4.9,
+      ratingOverall: 0,
+      ratingCleanliness: 0,
+      ratingLocation: 0,
+      ratingValue: 0,
+      ratingAmenities: 0,
+      ratingManagement: 0,
+      ratingSafety: 0,
       totalReviews: 0,
       distanceToCampus: 0.3,
       distanceToTransport: 0.5,
@@ -489,7 +515,13 @@ async function main() {
       description:
         'Heritage-listed building converted to student accommodation, offering affordable self-catered living close to the University of Sydney main campus. Features a mix of single rooms and shared apartments.',
       type: 'ON_CAMPUS',
-      images: ['/images/queen-mary-1.jpg', '/images/queen-mary-2.jpg'],
+      images: [
+        '/images/accommodations/queen-mary-building-1.jpg',
+        '/images/accommodations/queen-mary-building-2.jpg',
+        '/images/accommodations/queen-mary-building-3.jpg',
+        '/images/accommodations/queen-mary-building-4.jpg',
+        '/images/accommodations/queen-mary-building-5.jpg',
+      ],
       priceMin: 380,
       priceMax: 441,
       currency: 'AUD',
@@ -501,13 +533,13 @@ async function main() {
         email: 'housing@sydney.edu.au',
         website: 'https://www.sydney.edu.au/campus-life/accommodation.html',
       },
-      ratingOverall: 4.0,
-      ratingCleanliness: 3.9,
-      ratingLocation: 4.7,
-      ratingValue: 4.4,
-      ratingAmenities: 3.8,
-      ratingManagement: 4.1,
-      ratingSafety: 4.3,
+      ratingOverall: 0,
+      ratingCleanliness: 0,
+      ratingLocation: 0,
+      ratingValue: 0,
+      ratingAmenities: 0,
+      ratingManagement: 0,
+      ratingSafety: 0,
       totalReviews: 0,
       distanceToCampus: 0.1,
       distanceToTransport: 0.7,
@@ -545,9 +577,11 @@ async function main() {
         "UTS's flagship on-campus student accommodation offering modern, purpose-built apartments with stunning city views. Features fully furnished studios and multi-share apartments with private bedrooms and shared living spaces. 'Yura Mudang' is Gadigal (local Aboriginal language) for 'Students live'.",
       type: 'ON_CAMPUS',
       images: [
-        '/images/yura-mudang-1.jpg',
-        '/images/yura-mudang-2.jpg',
-        '/images/yura-mudang-3.jpg',
+        '/images/accommodations/yura-mudang-1-exterior.jpg',
+        '/images/accommodations/yura-mudang-2-room.jpg',
+        '/images/accommodations/yura-mudang-3-rooftop.jpg',
+        '/images/accommodations/yura-mudang-4-common-area.jpg',
+        '/images/accommodations/yura-mudang-5-study-space.jpg',
       ],
       priceMin: 342,
       priceMax: 458,
@@ -560,13 +594,13 @@ async function main() {
         email: 'housing@uts.edu.au',
         website: 'https://www.uts.edu.au/current-students/support/accommodation',
       },
-      ratingOverall: 4.4,
-      ratingCleanliness: 4.5,
-      ratingLocation: 4.9,
-      ratingValue: 4.2,
-      ratingAmenities: 4.6,
-      ratingManagement: 4.3,
-      ratingSafety: 4.7,
+      ratingOverall: 0,
+      ratingCleanliness: 0,
+      ratingLocation: 0,
+      ratingValue: 0,
+      ratingAmenities: 0,
+      ratingManagement: 0,
+      ratingSafety: 0,
       totalReviews: 0,
       distanceToCampus: 0.1,
       distanceToTransport: 0.2,
@@ -611,7 +645,13 @@ async function main() {
       description:
         'Premium student accommodation in the heart of Sydney CBD, minutes from UTS and Central Station. Features modern studios and apartments with stunning views, premium facilities, and an active community program. All meals included at The Eatery.',
       type: 'OFF_CAMPUS',
-      images: ['/images/urbanest-darling-1.jpg', '/images/urbanest-darling-2.jpg'],
+      images: [
+        '/images/accommodations/scape-darling-square-1-building.jpg',
+        '/images/accommodations/scape-darling-square-2-studio.jpg',
+        '/images/accommodations/scape-darling-square-3-gym.jpg',
+        '/images/accommodations/scape-darling-square-4-rooftop.jpg',
+        '/images/accommodations/scape-darling-square-5-social-space.jpg',
+      ],
       priceMin: 560,
       priceMax: 679,
       currency: 'AUD',
@@ -623,13 +663,13 @@ async function main() {
         email: 'darlinghouse@urbanest.com.au',
         website: 'https://www.urbanest.com.au/darling-house',
       },
-      ratingOverall: 4.3,
-      ratingCleanliness: 4.6,
-      ratingLocation: 4.9,
-      ratingValue: 3.7,
-      ratingAmenities: 4.7,
-      ratingManagement: 4.2,
-      ratingSafety: 4.6,
+      ratingOverall: 0,
+      ratingCleanliness: 0,
+      ratingLocation: 0,
+      ratingValue: 0,
+      ratingAmenities: 0,
+      ratingManagement: 0,
+      ratingSafety: 0,
       totalReviews: 0,
       distanceToCampus: 0.5,
       distanceToTransport: 0.1,
@@ -673,7 +713,13 @@ async function main() {
       description:
         'Vibrant student living in Sydney CBD, perfectly positioned between UTS and the University of Sydney. Modern apartments with community spaces designed for student life. Includes free unlimited WiFi, coffee bar and weekday breakfast.',
       type: 'OFF_CAMPUS',
-      images: ['/images/iglu-central-1.jpg', '/images/iglu-central-2.jpg'],
+      images: [
+        '/images/accommodations/iglu-central-1-exterior.jpg',
+        '/images/accommodations/iglu-central-2-bedroom.jpg',
+        '/images/accommodations/iglu-central-3-kitchen.jpg',
+        '/images/accommodations/iglu-central-4-lounge.jpg',
+        '/images/accommodations/iglu-central-5-study.jpg',
+      ],
       priceMin: 709,
       priceMax: 939,
       currency: 'AUD',
@@ -685,13 +731,13 @@ async function main() {
         email: 'central@iglu.com.au',
         website: 'https://iglu.com.au/properties/sydney/central/',
       },
-      ratingOverall: 4.2,
-      ratingCleanliness: 4.4,
-      ratingLocation: 4.8,
-      ratingValue: 3.9,
-      ratingAmenities: 4.5,
-      ratingManagement: 4.1,
-      ratingSafety: 4.4,
+      ratingOverall: 0,
+      ratingCleanliness: 0,
+      ratingLocation: 0,
+      ratingValue: 0,
+      ratingAmenities: 0,
+      ratingManagement: 0,
+      ratingSafety: 0,
       totalReviews: 0,
       distanceToCampus: 0.4,
       distanceToTransport: 0.2,
@@ -737,7 +783,13 @@ async function main() {
       description:
         'On-campus accommodation offering a true university experience with modern facilities, diverse community, and easy access to all campus amenities. Located within walking distance to the Metro station.',
       type: 'ON_CAMPUS',
-      images: ['/images/mq-village-1.jpg', '/images/mq-village-2.jpg', '/images/mq-village-3.jpg'],
+      images: [
+        '/images/accommodations/macquarie-university-village-1.jpg',
+        '/images/accommodations/macquarie-university-village-2.jpg',
+        '/images/accommodations/macquarie-university-village-3.jpg',
+        '/images/accommodations/macquarie-university-village-4.jpg',
+        '/images/accommodations/macquarie-university-village-5.jpg',
+      ],
       priceMin: 361,
       priceMax: 436,
       currency: 'AUD',
@@ -749,13 +801,13 @@ async function main() {
         email: 'village@mq.edu.au',
         website: 'https://www.mq.edu.au/village',
       },
-      ratingOverall: 4.4,
-      ratingCleanliness: 4.2,
-      ratingLocation: 4.9,
-      ratingValue: 4.3,
-      ratingAmenities: 4.3,
-      ratingManagement: 4.5,
-      ratingSafety: 4.6,
+      ratingOverall: 0,
+      ratingCleanliness: 0,
+      ratingLocation: 0,
+      ratingValue: 0,
+      ratingAmenities: 0,
+      ratingManagement: 0,
+      ratingSafety: 0,
       totalReviews: 0,
       distanceToCampus: 0.1,
       distanceToTransport: 0.4,
@@ -798,7 +850,13 @@ async function main() {
       description:
         'A residential college offering a supportive academic community with tutorial programs, catered meals, and regular social events. Strong focus on academic achievement and personal development.',
       type: 'COLLEGE',
-      images: ['/images/dunmore-lang-1.jpg', '/images/dunmore-lang-2.jpg'],
+      images: [
+        '/images/accommodations/dunmore-lang-college-1.jpg',
+        '/images/accommodations/dunmore-lang-college-2.jpg',
+        '/images/accommodations/dunmore-lang-college-3.jpg',
+        '/images/accommodations/dunmore-lang-college-4.jpg',
+        '/images/accommodations/dunmore-lang-college-5.jpg',
+      ],
       priceMin: 400,
       priceMax: 550,
       currency: 'AUD',
@@ -810,13 +868,13 @@ async function main() {
         email: 'info@dlc.edu.au',
         website: 'https://www.dlc.edu.au',
       },
-      ratingOverall: 4.5,
-      ratingCleanliness: 4.4,
-      ratingLocation: 4.7,
-      ratingValue: 4.4,
-      ratingAmenities: 4.3,
-      ratingManagement: 4.6,
-      ratingSafety: 4.8,
+      ratingOverall: 0,
+      ratingCleanliness: 0,
+      ratingLocation: 0,
+      ratingValue: 0,
+      ratingAmenities: 0,
+      ratingManagement: 0,
+      ratingSafety: 0,
       totalReviews: 0,
       distanceToCampus: 0.2,
       distanceToTransport: 0.5,
@@ -859,7 +917,13 @@ async function main() {
       description:
         'A vibrant Anglican residential college committed to academic excellence and community engagement. Offers a collegiate experience with tutorials, mentoring, and a rich calendar of cultural and social activities. All-inclusive with meals, WiFi, utilities, and weekly linen changes.',
       type: 'COLLEGE',
-      images: ['/images/robert-menzies-1.jpg', '/images/robert-menzies-2.jpg'],
+      images: [
+        '/images/accommodations/robert-menzies-college-1.jpg',
+        '/images/accommodations/robert-menzies-college-2.webp',
+        '/images/accommodations/robert-menzies-college-3.webp',
+        '/images/accommodations/robert-menzies-college-4.webp',
+        '/images/accommodations/robert-menzies-college-5.webp',
+      ],
       priceMin: 491,
       priceMax: 743,
       currency: 'AUD',
@@ -871,13 +935,13 @@ async function main() {
         email: 'admin@rmc.edu.au',
         website: 'https://www.rmc.edu.au',
       },
-      ratingOverall: 4.4,
-      ratingCleanliness: 4.3,
-      ratingLocation: 4.6,
-      ratingValue: 4.2,
-      ratingAmenities: 4.5,
-      ratingManagement: 4.4,
-      ratingSafety: 4.7,
+      ratingOverall: 0,
+      ratingCleanliness: 0,
+      ratingLocation: 0,
+      ratingValue: 0,
+      ratingAmenities: 0,
+      ratingManagement: 0,
+      ratingSafety: 0,
       totalReviews: 0,
       distanceToCampus: 0.3,
       distanceToTransport: 0.6,
@@ -924,7 +988,13 @@ async function main() {
       description:
         'Modern on-campus accommodation at WSU Penrith campus, offering affordable living with excellent facilities. Features self-catered apartments and a supportive student community. Just a 5-minute walk to campus.',
       type: 'ON_CAMPUS',
-      images: ['/images/wsu-penrith-1.jpg', '/images/wsu-penrith-2.jpg'],
+      images: [
+        '/images/accommodations/wsu-village-penrith-1.jpg',
+        '/images/accommodations/wsu-village-penrith-2.jpg',
+        '/images/accommodations/wsu-village-penrith-3.jpg',
+        '/images/accommodations/wsu-village-penrith-4.jpg',
+        '/images/accommodations/wsu-village-penrith-5.jpg',
+      ],
       priceMin: 170,
       priceMax: 350,
       currency: 'AUD',
@@ -936,13 +1006,13 @@ async function main() {
         email: 'housing@westernsydney.edu.au',
         website: 'https://www.westernsydney.edu.au/accommodation',
       },
-      ratingOverall: 4.1,
-      ratingCleanliness: 4.0,
-      ratingLocation: 4.3,
-      ratingValue: 4.6,
-      ratingAmenities: 4.0,
-      ratingManagement: 4.2,
-      ratingSafety: 4.4,
+      ratingOverall: 0,
+      ratingCleanliness: 0,
+      ratingLocation: 0,
+      ratingValue: 0,
+      ratingAmenities: 0,
+      ratingManagement: 0,
+      ratingSafety: 0,
       totalReviews: 0,
       distanceToCampus: 0.1,
       distanceToTransport: 0.8,
@@ -984,7 +1054,13 @@ async function main() {
       description:
         'Student accommodation at the Parramatta City campus, close to the vibrant Parramatta CBD. Offers modern facilities and easy access to shopping, dining, and public transport. Includes swimming pool, games room, and BBQ deck.',
       type: 'ON_CAMPUS',
-      images: ['/images/wsu-parramatta-1.jpg', '/images/wsu-parramatta-2.jpg'],
+      images: [
+        '/images/accommodations/wsu-village-parramatta-1.jpg',
+        '/images/accommodations/wsu-village-parramatta-2.jpg',
+        '/images/accommodations/wsu-village-parramatta-3.jpg',
+        '/images/accommodations/wsu-village-parramatta-4.jpg',
+        '/images/accommodations/wsu-village-parramatta-5.jpg',
+      ],
       priceMin: 295,
       priceMax: 436,
       currency: 'AUD',
@@ -996,13 +1072,13 @@ async function main() {
         email: 'housing@westernsydney.edu.au',
         website: 'https://www.westernsydney.edu.au/accommodation',
       },
-      ratingOverall: 4.2,
-      ratingCleanliness: 4.2,
-      ratingLocation: 4.5,
-      ratingValue: 4.5,
-      ratingAmenities: 4.1,
-      ratingManagement: 4.2,
-      ratingSafety: 4.3,
+      ratingOverall: 0,
+      ratingCleanliness: 0,
+      ratingLocation: 0,
+      ratingValue: 0,
+      ratingAmenities: 0,
+      ratingManagement: 0,
+      ratingSafety: 0,
       totalReviews: 0,
       distanceToCampus: 0.2,
       distanceToTransport: 0.4,
@@ -1045,7 +1121,13 @@ async function main() {
       description:
         'Purpose-built student accommodation near WSU Bankstown campus. Features modern apartments with all utilities included and regular community events. Amenities include BBQ area, volleyball court, TV lounge, computer room, and pool/table tennis.',
       type: 'OFF_CAMPUS',
-      images: ['/images/wsu-bankstown-1.jpg', '/images/wsu-bankstown-2.jpg'],
+      images: [
+        '/images/accommodations/wsu-village-bankstown-1.jpg',
+        '/images/accommodations/wsu-village-bankstown-2.jpg',
+        '/images/accommodations/wsu-village-bankstown-3.jpg',
+        '/images/accommodations/wsu-village-bankstown-4.jpg',
+        '/images/accommodations/wsu-village-bankstown-5.jpg',
+      ],
       priceMin: 183,
       priceMax: 320,
       currency: 'AUD',
@@ -1057,13 +1139,13 @@ async function main() {
         email: 'bankstown@unilodge.com.au',
         website: 'https://www.unilodge.com.au/bankstown',
       },
-      ratingOverall: 4.0,
-      ratingCleanliness: 4.1,
-      ratingLocation: 4.0,
-      ratingValue: 4.4,
-      ratingAmenities: 3.9,
-      ratingManagement: 4.0,
-      ratingSafety: 4.2,
+      ratingOverall: 0,
+      ratingCleanliness: 0,
+      ratingLocation: 0,
+      ratingValue: 0,
+      ratingAmenities: 0,
+      ratingManagement: 0,
+      ratingSafety: 0,
       totalReviews: 0,
       distanceToCampus: 0.5,
       distanceToTransport: 0.6,
@@ -1090,151 +1172,479 @@ async function main() {
 
   console.log('✅ Created 15 sample accommodations across 5 universities');
 
-  // Create Sample Reviews
+  // Create Sample Reviews (0-2 per accommodation)
   console.log('📝 Creating sample reviews...');
 
-  // UNSW Village Review
-  await prisma.review.create({
-    data: {
+  // Helper function to calculate average rating from breakdown
+  const calculateOverallRating = (breakdown: {
+    cleanliness: number;
+    location: number;
+    value: number;
+    amenities: number;
+    management: number;
+    safety: number;
+  }) => {
+    return (
+      (breakdown.cleanliness +
+        breakdown.location +
+        breakdown.value +
+        breakdown.amenities +
+        breakdown.management +
+        breakdown.safety) /
+      6
+    );
+  };
+
+  // Helper function to update accommodation ratings based on reviews
+  const updateAccommodationRatings = async (accommodationId: string) => {
+    const reviews = await prisma.review.findMany({
+      where: { accommodationId, status: 'PUBLISHED' },
+    });
+
+    if (reviews.length === 0) {
+      await prisma.accommodation.update({
+        where: { id: accommodationId },
+        data: {
+          ratingOverall: 0,
+          ratingCleanliness: 0,
+          ratingLocation: 0,
+          ratingValue: 0,
+          ratingAmenities: 0,
+          ratingManagement: 0,
+          ratingSafety: 0,
+          totalReviews: 0,
+        },
+      });
+      return;
+    }
+
+    const avgRating = reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length;
+    const avgCleanliness =
+      reviews.reduce((sum, r) => sum + r.ratingCleanliness, 0) / reviews.length;
+    const avgLocation = reviews.reduce((sum, r) => sum + r.ratingLocation, 0) / reviews.length;
+    const avgValue = reviews.reduce((sum, r) => sum + r.ratingValue, 0) / reviews.length;
+    const avgAmenities = reviews.reduce((sum, r) => sum + r.ratingAmenities, 0) / reviews.length;
+    const avgManagement = reviews.reduce((sum, r) => sum + r.ratingManagement, 0) / reviews.length;
+    const avgSafety = reviews.reduce((sum, r) => sum + r.ratingSafety, 0) / reviews.length;
+
+    await prisma.accommodation.update({
+      where: { id: accommodationId },
+      data: {
+        ratingOverall: Math.round(avgRating * 10) / 10,
+        ratingCleanliness: Math.round(avgCleanliness * 10) / 10,
+        ratingLocation: Math.round(avgLocation * 10) / 10,
+        ratingValue: Math.round(avgValue * 10) / 10,
+        ratingAmenities: Math.round(avgAmenities * 10) / 10,
+        ratingManagement: Math.round(avgManagement * 10) / 10,
+        ratingSafety: Math.round(avgSafety * 10) / 10,
+        totalReviews: reviews.length,
+      },
+    });
+  };
+
+  // Define reviews data for each accommodation (0-2 reviews each)
+  const reviewsData = [
+    // UNSW Village - 2 reviews
+    {
       accommodationId: unswVillage.id,
-      userId: users[0].id,
-      rating: 4.5,
-      ratingCleanliness: 4,
-      ratingLocation: 5,
-      ratingValue: 4,
-      ratingAmenities: 5,
-      ratingManagement: 4,
-      ratingSafety: 5,
-      title: 'Great location and facilities!',
-      text: 'Living at UNSW Village has been fantastic. The location is unbeatable - just a 5-minute walk to my lectures. The facilities are modern and well-maintained. The gym is great and the study rooms are always available. Only minor complaint is the WiFi can be slow during peak times.',
-      pros: ['Perfect location', 'Modern facilities', 'Great community', 'Good security'],
-      cons: ['WiFi speed', 'Can be noisy on weekends'],
-      verified: true,
-      roomType: 'Single',
-      stayDuration: '2 semesters',
-      status: 'PUBLISHED',
+      reviews: [
+        {
+          userId: users[0].id,
+          ratingBreakdown: {
+            cleanliness: 4,
+            location: 5,
+            value: 4,
+            amenities: 5,
+            management: 4,
+            safety: 5,
+          },
+          title: 'Great location and facilities!',
+          text: 'Living at UNSW Village has been fantastic. The location is unbeatable - just a 5-minute walk to my lectures. The facilities are modern and well-maintained. The gym is great and the study rooms are always available.',
+          pros: ['Perfect location', 'Modern facilities', 'Great community'],
+          cons: ['WiFi can be slow', 'Can be noisy on weekends'],
+          verified: true,
+          roomType: 'Single',
+          stayDuration: '2 semesters',
+        },
+        {
+          userId: users[1].id,
+          ratingBreakdown: {
+            cleanliness: 5,
+            location: 5,
+            value: 3,
+            amenities: 4,
+            management: 4,
+            safety: 5,
+          },
+          title: 'Convenient but pricey',
+          text: 'The convenience of living on campus is unmatched. Everything is clean and security is excellent. However, it is quite expensive compared to off-campus options. The social events are great for meeting people.',
+          pros: ['On campus location', 'Clean rooms', 'Good security'],
+          cons: ['Expensive', 'Small rooms'],
+          verified: true,
+          roomType: 'Studio',
+          stayDuration: '1 year',
+        },
+      ],
     },
-  });
-
-  // UniLodge Broadway Review
-  await prisma.review.create({
-    data: {
+    // Kensington Colleges - 1 review
+    {
+      accommodationId: unswKensingtonColleges.id,
+      reviews: [
+        {
+          userId: users[2].id,
+          ratingBreakdown: {
+            cleanliness: 4,
+            location: 5,
+            value: 4,
+            amenities: 4,
+            management: 5,
+            safety: 5,
+          },
+          title: 'Traditional college experience',
+          text: 'If you want the full college experience with formal dinners and a strong community, this is the place. The tutoring support is excellent and the location is perfect for UNSW students.',
+          pros: ['Strong community', 'Academic support', 'Meal plan included'],
+          cons: ['Strict rules', 'Shared bathrooms'],
+          verified: true,
+          roomType: 'Single',
+          stayDuration: '1 year',
+        },
+      ],
+    },
+    // UniLodge Kensington - 0 reviews (no reviews)
+    {
+      accommodationId: unilodgeKensington.id,
+      reviews: [],
+    },
+    // UniLodge Broadway - 2 reviews
+    {
       accommodationId: unilodgeBroadway.id,
-      userId: users[1].id,
-      rating: 4.0,
-      ratingCleanliness: 4,
-      ratingLocation: 5,
-      ratingValue: 3,
-      ratingAmenities: 5,
-      ratingManagement: 4,
-      ratingSafety: 4,
-      title: 'Love the rooftop terrace!',
-      text: 'UniLodge Broadway is in a prime location with amazing facilities. The rooftop terrace is perfect for studying or hanging out. Close to Central Station and Chinatown. The only downside is the price and limited kitchen space in shared areas.',
-      pros: ['Excellent location', 'Rooftop terrace', 'Modern amenities', 'Social atmosphere'],
-      cons: ['Pricey', 'Small shared kitchens', 'Can hear train noise'],
-      verified: true,
-      roomType: 'Ensuite',
-      stayDuration: '1 semester',
-      status: 'PUBLISHED',
+      reviews: [
+        {
+          userId: users[3].id,
+          ratingBreakdown: {
+            cleanliness: 4,
+            location: 5,
+            value: 3,
+            amenities: 5,
+            management: 4,
+            safety: 4,
+          },
+          title: 'Love the rooftop terrace!',
+          text: 'UniLodge Broadway is in a prime location with amazing facilities. The rooftop terrace is perfect for studying or hanging out. Close to Central Station and Chinatown.',
+          pros: ['Excellent location', 'Rooftop terrace', 'Modern amenities'],
+          cons: ['Pricey', 'Small shared kitchens'],
+          verified: true,
+          roomType: 'Ensuite',
+          stayDuration: '1 semester',
+        },
+        {
+          userId: users[4].id,
+          ratingBreakdown: {
+            cleanliness: 3,
+            location: 5,
+            value: 2,
+            amenities: 4,
+            management: 3,
+            safety: 4,
+          },
+          title: 'Great location but overpriced',
+          text: 'The location is absolutely perfect for USYD students. However, for what you pay, I expected better quality. The rooms are small and maintenance can be slow.',
+          pros: ['Central location', 'Good facilities'],
+          cons: ['Very expensive', 'Slow maintenance', 'Thin walls'],
+          verified: true,
+          roomType: 'Studio',
+          stayDuration: '2 semesters',
+          isAnonymous: true,
+        },
+      ],
     },
-  });
-
-  // Yura Mudang Review
-  await prisma.review.create({
-    data: {
+    // St John's College - 1 review
+    {
+      accommodationId: stJohnsCollege.id,
+      reviews: [
+        {
+          userId: users[0].id,
+          ratingBreakdown: {
+            cleanliness: 5,
+            location: 5,
+            value: 4,
+            amenities: 4,
+            management: 5,
+            safety: 5,
+          },
+          title: 'Historic and prestigious',
+          text: 'St Johns offers a unique experience with its beautiful historic buildings and strong traditions. The pastoral care is excellent and the community is very supportive. Highly recommend for first-year students.',
+          pros: ['Beautiful grounds', 'Strong community', 'Academic support'],
+          cons: ['Traditional rules', 'Can feel old-fashioned'],
+          verified: true,
+          roomType: 'Single',
+          stayDuration: '2 years',
+        },
+      ],
+    },
+    // Queen Mary Building - 0 reviews
+    {
+      accommodationId: queenMaryBuilding.id,
+      reviews: [],
+    },
+    // Yura Mudang - 2 reviews
+    {
       accommodationId: yuraMudang.id,
-      userId: users[2].id,
-      rating: 4.5,
-      ratingCleanliness: 5,
-      ratingLocation: 5,
-      ratingValue: 4,
-      ratingAmenities: 5,
-      ratingManagement: 4,
-      ratingSafety: 5,
-      title: 'Best UTS accommodation!',
-      text: 'Yura Mudang exceeded my expectations. The apartments are modern and well-designed with amazing city views. Being right next to the campus is incredibly convenient. The community events are fun and help you meet other students. Staff are helpful and responsive.',
-      pros: ['On campus', 'Modern apartments', 'Great views', 'Active community'],
-      cons: ['Can be expensive', 'Shared apartments can be hit or miss'],
-      verified: true,
-      roomType: 'Studio',
-      stayDuration: '1 year',
-      status: 'PUBLISHED',
+      reviews: [
+        {
+          userId: users[1].id,
+          ratingBreakdown: {
+            cleanliness: 5,
+            location: 5,
+            value: 4,
+            amenities: 5,
+            management: 4,
+            safety: 5,
+          },
+          title: 'Best UTS accommodation!',
+          text: 'Yura Mudang exceeded my expectations. The apartments are modern and well-designed with amazing city views. Being right next to the campus is incredibly convenient.',
+          pros: ['On campus', 'Modern apartments', 'Great views'],
+          cons: ['Can be expensive', 'Shared apartments vary'],
+          verified: true,
+          roomType: 'Studio',
+          stayDuration: '1 year',
+        },
+        {
+          userId: users[2].id,
+          ratingBreakdown: {
+            cleanliness: 4,
+            location: 5,
+            value: 3,
+            amenities: 5,
+            management: 4,
+            safety: 5,
+          },
+          title: 'Modern and well-located',
+          text: 'Really enjoyed my time at Yura Mudang. The facilities are top-notch and the location cannot be beaten. Staff are friendly and helpful. Only downside is the cost.',
+          pros: ['Brand new building', 'Amazing facilities', 'Central location'],
+          cons: ['High rent', 'Noise from city'],
+          verified: true,
+          roomType: 'Twin Share',
+          stayDuration: '1 semester',
+        },
+      ],
     },
-  });
-
-  // Macquarie Village Review
-  await prisma.review.create({
-    data: {
+    // Urbanest Darling - 1 review
+    {
+      accommodationId: urbanestDarling.id,
+      reviews: [
+        {
+          userId: users[3].id,
+          ratingBreakdown: {
+            cleanliness: 4,
+            location: 5,
+            value: 3,
+            amenities: 4,
+            management: 4,
+            safety: 4,
+          },
+          title: 'Perfect for UTS and USYD',
+          text: 'Great location between UTS and USYD campuses. The building is modern and clean. Social events are fun. A bit pricey but worth it for the convenience.',
+          pros: ['Central to unis', 'Modern building', 'Good social life'],
+          cons: ['Expensive', 'Small rooms'],
+          verified: true,
+          roomType: 'Ensuite',
+          stayDuration: '1 year',
+        },
+      ],
+    },
+    // Iglu Central - 0 reviews
+    {
+      accommodationId: igluCentral.id,
+      reviews: [],
+    },
+    // Macquarie Village - 2 reviews
+    {
       accommodationId: mqVillage.id,
-      userId: users[3].id,
-      rating: 4.3,
-      ratingCleanliness: 4,
-      ratingLocation: 5,
-      ratingValue: 4,
-      ratingAmenities: 4,
-      ratingManagement: 5,
-      ratingSafety: 4,
-      title: 'Great value for money',
-      text: 'Macquarie University Village offers excellent value. The location right on campus is perfect, and the new Metro station makes getting to the city easy. The management team is very responsive. Rooms are comfortable and the community is diverse and welcoming.',
-      pros: ['On campus', 'Metro access', 'Responsive management', 'Good value'],
-      cons: ['Older buildings', 'Limited parking', 'Far from CBD'],
-      verified: true,
-      roomType: 'Single',
-      stayDuration: '2 years',
-      status: 'PUBLISHED',
+      reviews: [
+        {
+          userId: users[4].id,
+          ratingBreakdown: {
+            cleanliness: 4,
+            location: 5,
+            value: 4,
+            amenities: 4,
+            management: 5,
+            safety: 4,
+          },
+          title: 'Great value for money',
+          text: 'Macquarie University Village offers excellent value. The location right on campus is perfect, and the new Metro station makes getting to the city easy. Management is very responsive.',
+          pros: ['On campus', 'Metro access', 'Responsive management'],
+          cons: ['Older buildings', 'Limited parking'],
+          verified: true,
+          roomType: 'Single',
+          stayDuration: '2 years',
+        },
+        {
+          userId: users[0].id,
+          ratingBreakdown: {
+            cleanliness: 3,
+            location: 5,
+            value: 5,
+            amenities: 3,
+            management: 4,
+            safety: 4,
+          },
+          title: 'Budget-friendly option',
+          text: 'If youre looking for affordable accommodation near Macquarie, this is a solid choice. The buildings are a bit dated but everything works fine. Great community atmosphere.',
+          pros: ['Affordable', 'Good community', 'Close to campus'],
+          cons: ['Dated interiors', 'Far from CBD'],
+          verified: true,
+          roomType: 'Twin Share',
+          stayDuration: '1 semester',
+          isAnonymous: true,
+        },
+      ],
     },
-  });
-
-  // WSU Village Review
-  await prisma.review.create({
-    data: {
+    // Dunmore Lang College - 1 review
+    {
+      accommodationId: dunmoreLang.id,
+      reviews: [
+        {
+          userId: users[1].id,
+          ratingBreakdown: {
+            cleanliness: 4,
+            location: 5,
+            value: 4,
+            amenities: 4,
+            management: 5,
+            safety: 5,
+          },
+          title: 'Welcoming college community',
+          text: 'Dunmore Lang has a wonderful community feel. The pastoral care is excellent and they really help first-year students adjust. Meals are included which makes life easier.',
+          pros: ['Inclusive community', 'Meals included', 'Academic support'],
+          cons: ['Shared facilities', 'Some rules to follow'],
+          verified: true,
+          roomType: 'Single',
+          stayDuration: '1 year',
+        },
+      ],
+    },
+    // Robert Menzies College - 0 reviews
+    {
+      accommodationId: robertMenzies.id,
+      reviews: [],
+    },
+    // WSU Village Penrith - 2 reviews
+    {
       accommodationId: wsuVillagePenrith.id,
-      userId: users[4].id,
-      rating: 4.0,
-      ratingCleanliness: 4,
-      ratingLocation: 4,
-      ratingValue: 5,
-      ratingAmenities: 4,
-      ratingManagement: 4,
-      ratingSafety: 4,
-      title: 'Affordable and comfortable',
-      text: "WSU Village is perfect for students on a budget. The accommodation is clean and comfortable with everything you need. Being on campus means no commute time. The community is friendly and there are regular events. Only downside is it's a bit far from the train station.",
-      pros: ['Very affordable', 'On campus', 'Friendly community', 'Good facilities'],
-      cons: ['Far from train station', 'Limited nightlife nearby', 'Need car for shopping'],
-      verified: true,
-      roomType: 'Twin Share',
-      stayDuration: '3 semesters',
-      status: 'PUBLISHED',
+      reviews: [
+        {
+          userId: users[2].id,
+          ratingBreakdown: {
+            cleanliness: 4,
+            location: 4,
+            value: 5,
+            amenities: 4,
+            management: 4,
+            safety: 4,
+          },
+          title: 'Affordable and comfortable',
+          text: 'WSU Village is perfect for students on a budget. The accommodation is clean and comfortable with everything you need. Being on campus means no commute time.',
+          pros: ['Very affordable', 'On campus', 'Friendly community'],
+          cons: ['Far from train station', 'Limited nightlife nearby'],
+          verified: true,
+          roomType: 'Twin Share',
+          stayDuration: '3 semesters',
+        },
+        {
+          userId: users[3].id,
+          ratingBreakdown: {
+            cleanliness: 4,
+            location: 3,
+            value: 5,
+            amenities: 4,
+            management: 4,
+            safety: 5,
+          },
+          title: 'Best value in Western Sydney',
+          text: 'You wont find better value anywhere else. The rooms are decent, staff are helpful, and the community is great. Just need a car to get around easily.',
+          pros: ['Excellent value', 'Safe environment', 'Good facilities'],
+          cons: ['Need a car', 'Remote location'],
+          verified: true,
+          roomType: 'Single',
+          stayDuration: '1 year',
+        },
+      ],
     },
-  });
+    // WSU Village Parramatta - 1 review
+    {
+      accommodationId: wsuVillageParramatta.id,
+      reviews: [
+        {
+          userId: users[4].id,
+          ratingBreakdown: {
+            cleanliness: 4,
+            location: 5,
+            value: 4,
+            amenities: 4,
+            management: 4,
+            safety: 4,
+          },
+          title: 'Great Parramatta location',
+          text: 'Love being so close to Parramatta CBD. Easy access to shops, restaurants, and transport. The accommodation is modern and well-maintained. Good value for the location.',
+          pros: ['Close to Parramatta CBD', 'Modern facilities', 'Good transport links'],
+          cons: ['Can be noisy', 'Limited parking'],
+          verified: true,
+          roomType: 'Studio',
+          stayDuration: '2 semesters',
+        },
+      ],
+    },
+    // UniLodge Bankstown - 0 reviews
+    {
+      accommodationId: unilodgeBankstown.id,
+      reviews: [],
+    },
+  ];
 
-  // Update accommodation review counts
-  await prisma.accommodation.update({
-    where: { id: unswVillage.id },
-    data: { totalReviews: 1 },
-  });
+  // Create reviews and update accommodation ratings
+  let totalReviewsCreated = 0;
 
-  await prisma.accommodation.update({
-    where: { id: unilodgeBroadway.id },
-    data: { totalReviews: 1 },
-  });
+  for (const accomData of reviewsData) {
+    for (const reviewData of accomData.reviews) {
+      const overallRating = calculateOverallRating(reviewData.ratingBreakdown);
+      await prisma.review.create({
+        data: {
+          accommodationId: accomData.accommodationId,
+          userId: reviewData.userId,
+          rating: Math.round(overallRating * 10) / 10,
+          ratingCleanliness: reviewData.ratingBreakdown.cleanliness,
+          ratingLocation: reviewData.ratingBreakdown.location,
+          ratingValue: reviewData.ratingBreakdown.value,
+          ratingAmenities: reviewData.ratingBreakdown.amenities,
+          ratingManagement: reviewData.ratingBreakdown.management,
+          ratingSafety: reviewData.ratingBreakdown.safety,
+          title: reviewData.title,
+          text: reviewData.text,
+          pros: reviewData.pros,
+          cons: reviewData.cons,
+          verified: reviewData.verified,
+          isAnonymous: reviewData.isAnonymous || false,
+          roomType: reviewData.roomType,
+          stayDuration: reviewData.stayDuration,
+          status: 'PUBLISHED',
+        },
+      });
+      totalReviewsCreated++;
+    }
 
-  await prisma.accommodation.update({
-    where: { id: yuraMudang.id },
-    data: { totalReviews: 1 },
-  });
+    // Update accommodation ratings
+    await updateAccommodationRatings(accomData.accommodationId);
+  }
 
-  await prisma.accommodation.update({
-    where: { id: mqVillage.id },
-    data: { totalReviews: 1 },
-  });
+  console.log(`✅ Created ${totalReviewsCreated} sample reviews`);
 
-  await prisma.accommodation.update({
-    where: { id: wsuVillagePenrith.id },
-    data: { totalReviews: 1 },
-  });
-
-  console.log('✅ Created 5 sample reviews');
+  // Count accommodations with 0 reviews
+  const accommodationsWithNoReviews = reviewsData.filter((a) => a.reviews.length === 0).length;
+  console.log(
+    `   - ${accommodationsWithNoReviews} accommodations with 0 reviews (rating shows as 0 stars)`
+  );
 
   console.log('');
   console.log('✨ Database seeding completed successfully!');
@@ -1243,7 +1653,7 @@ async function main() {
   console.log(`  - ${amenities.length} amenities`);
   console.log(`  - ${users.length} users`);
   console.log('  - 15 accommodations (3 per university)');
-  console.log('  - 5 reviews (1 per university)');
+  console.log(`  - ${totalReviewsCreated} reviews (0-2 per accommodation)`);
   console.log('');
   console.log('🏫 Universities covered:');
   console.log('  - University of New South Wales (UNSW): 3 accommodations');

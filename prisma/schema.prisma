@@ -199,6 +199,7 @@ model Review {
 
   // Metadata
   verified        Boolean  @default(false)
+  isAnonymous     Boolean  @default(false)
   roomType        String?
   stayDuration    String?
 

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, Suspense } from 'react';
+import { useState, useEffect, useRef, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { useAuth } from '@/hooks/useAuth';
@@ -57,6 +57,7 @@ function WriteReviewContent() {
   const [searchQuery, setSearchQuery] = useState('');
   const [showDropdown, setShowDropdown] = useState(false);
   const [loadingAccommodations, setLoadingAccommodations] = useState(true);
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
   // Rating state
   const [overallRating, setOverallRating] = useState(0);
@@ -78,6 +79,7 @@ function WriteReviewContent() {
   const [roomType, setRoomType] = useState('');
   const [stayDuration, setStayDuration] = useState('');
   const [verified, setVerified] = useState(false);
+  const [isAnonymous, setIsAnonymous] = useState(false);
 
   // UI state
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -122,6 +124,20 @@ function WriteReviewContent() {
 
     fetchAccommodations();
   }, [preselectedAccommodationId]);
+
+  // Handle click outside to close dropdown
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setShowDropdown(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
 
   // Filter accommodations based on search
   const filteredAccommodations = accommodations.filter(
@@ -222,6 +238,7 @@ function WriteReviewContent() {
         cons: cons.filter((c) => c.trim().length > 0),
         roomType: roomType || undefined,
         stayDuration: stayDuration || undefined,
+        isAnonymous,
       };
 
       await api.post(`/accommodations/${selectedAccommodation.id}/reviews`, reviewData);
@@ -336,9 +353,9 @@ function WriteReviewContent() {
           )}
 
           {/* Select Accommodation */}
-          <div className="bg-white/5 backdrop-blur-md border border-white/10 rounded-xl p-6">
+          <div className="bg-white/5 backdrop-blur-md border border-white/10 rounded-xl p-6 relative z-20">
             <h2 className="text-xl font-bold text-white mb-4">Select Accommodation</h2>
-            <div className="relative">
+            <div className="relative" ref={dropdownRef}>
               <input
                 type="text"
                 value={selectedAccommodation ? selectedAccommodation.name : searchQuery}
@@ -353,7 +370,7 @@ function WriteReviewContent() {
               />
 
               {showDropdown && !selectedAccommodation && (
-                <div className="absolute z-10 w-full mt-2 bg-charcoal border border-white/20 rounded-xl shadow-xl max-h-60 overflow-y-auto">
+                <div className="absolute z-50 w-full mt-2 bg-charcoal border border-white/20 rounded-xl shadow-xl max-h-60 overflow-y-auto">
                   {loadingAccommodations ? (
                     <div className="p-4 text-center text-white/50">
                       <Loader2 className="w-5 h-5 animate-spin mx-auto" />
@@ -398,7 +415,7 @@ function WriteReviewContent() {
           </div>
 
           {/* Rating Breakdown */}
-          <div className="bg-white/5 backdrop-blur-md border border-white/10 rounded-xl p-6">
+          <div className="bg-white/5 backdrop-blur-md border border-white/10 rounded-xl p-6 relative z-10">
             <h2 className="text-xl font-bold text-white mb-6">Rate Your Experience</h2>
 
             <div className="space-y-6">
@@ -640,8 +657,36 @@ function WriteReviewContent() {
             </div>
           </div>
 
-          {/* Verification Checkbox */}
-          <div className="bg-white/5 backdrop-blur-md border border-white/10 rounded-xl p-6">
+          {/* Privacy & Verification Options */}
+          <div className="bg-white/5 backdrop-blur-md border border-white/10 rounded-xl p-6 space-y-6">
+            {/* Anonymous Review Toggle */}
+            <div className="flex items-start gap-3">
+              <input
+                type="checkbox"
+                id="anonymous-checkbox"
+                checked={isAnonymous}
+                onChange={(e) => setIsAnonymous(e.target.checked)}
+                className="mt-1 w-5 h-5 rounded border-white/30 bg-white/5 text-lyra-purple-start focus:ring-lyra-purple-start/50 cursor-pointer"
+                aria-describedby="anonymous-description"
+              />
+              <div>
+                <label
+                  htmlFor="anonymous-checkbox"
+                  className="text-white font-medium cursor-pointer"
+                >
+                  Post anonymously
+                </label>
+                <p id="anonymous-description" className="text-white/50 text-sm mt-1">
+                  Your name and university will be hidden from the review. Other users will see
+                  &quot;Anonymous Student&quot; instead.
+                </p>
+              </div>
+            </div>
+
+            {/* Divider */}
+            <div className="border-t border-white/10"></div>
+
+            {/* Verification Checkbox */}
             <div className="flex items-start gap-3">
               <input
                 type="checkbox"

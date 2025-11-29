@@ -32,9 +32,9 @@ vi.mock('framer-motion', () => ({
 
 describe('Hero Component', () => {
   describe('Visual Appearance', () => {
-    it('should display the badge with student count', () => {
+    it('should display the badge', () => {
       render(<Hero />);
-      expect(screen.getByText('Trusted by 5,000+ Students')).toBeInTheDocument();
+      expect(screen.getByText('Built for NSW Students')).toBeInTheDocument();
     });
 
     it('should display the main headline', () => {
