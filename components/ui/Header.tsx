@@ -26,9 +26,10 @@ export default function Header() {
   const lastScrollY = useRef(0);
   const { user, isAuthenticated, logout } = useAuth();
 
-  // Pages where header should always be visible (not hide on scroll)
-  const alwaysVisiblePages = ['/about', '/support'];
-  const shouldHideOnScroll = !alwaysVisiblePages.some((page) => pathname?.startsWith(page));
+  // Pages where header should always be visible (not hide on scroll) and always show background
+  const lightBackgroundPages = ['/about', '/support'];
+  const isLightPage = lightBackgroundPages.some((page) => pathname?.startsWith(page));
+  const shouldHideOnScroll = !isLightPage;
 
   // Hide header on scroll down, show on scroll up, track scrolled state
   useEffect(() => {
@@ -77,7 +78,7 @@ export default function Header() {
       animate={{ y: hidden ? -100 : 0, opacity: hidden ? 0 : 1 }}
       transition={{ duration: 0.4, ease: 'easeOut' }}
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
-        scrolled
+        scrolled || isLightPage
           ? 'bg-[#0a0a0a]/80 backdrop-blur-xl border-b border-white/[0.06]'
           : 'bg-transparent'
       }`}
