@@ -1,294 +1,236 @@
 'use client';
 
-import { motion, useScroll, useTransform } from 'framer-motion';
-import { ArrowRight } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { ArrowUpRight, Star } from 'lucide-react';
 import Link from 'next/link';
 
 export default function Hero() {
-  const { scrollY } = useScroll();
-  const opacity = useTransform(scrollY, [0, 300], [1, 0]);
-  const scale = useTransform(scrollY, [0, 300], [1, 0.95]);
-  const y = useTransform(scrollY, [0, 300], [0, 50]);
-
-  // Staggered text animation
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.08,
-        delayChildren: 0.3,
-      },
-    },
-  };
-
-  const letterVariants = {
-    hidden: {
-      opacity: 0,
-      y: 100,
-      rotateX: -90,
-    },
-    visible: {
-      opacity: 1,
-      y: 0,
-      rotateX: 0,
-      transition: {
-        duration: 0.8,
-        ease: [0.215, 0.61, 0.355, 1] as const,
-      },
-    },
-  };
-
-  const fadeUpVariants = {
-    hidden: { opacity: 0, y: 30 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: {
-        duration: 0.8,
-        ease: [0.215, 0.61, 0.355, 1] as const,
-      },
-    },
-  };
-
-  const scaleInVariants = {
-    hidden: { opacity: 0, scale: 0.8 },
-    visible: {
-      opacity: 1,
-      scale: 1,
-      transition: {
-        duration: 0.6,
-        ease: [0.215, 0.61, 0.355, 1] as const,
-      },
-    },
-  };
-
-  const words = ['Find', 'your', 'perfect'];
-  const highlightWords = ['student', 'home.'];
-
   return (
-    <div className="relative min-h-screen bg-black overflow-hidden">
-      {/* Animated gradient background */}
-      <div className="absolute inset-0">
-        <motion.div
-          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1000px] h-[1000px]"
-          animate={{
-            background: [
-              'radial-gradient(circle, rgba(147, 51, 234, 0.15) 0%, transparent 70%)',
-              'radial-gradient(circle, rgba(139, 92, 246, 0.12) 0%, transparent 70%)',
-              'radial-gradient(circle, rgba(147, 51, 234, 0.15) 0%, transparent 70%)',
-            ],
-          }}
-          transition={{
-            duration: 8,
-            repeat: Infinity,
-            ease: 'easeInOut',
-          }}
-        />
-        <motion.div
-          className="absolute top-1/4 right-1/4 w-[600px] h-[600px] bg-violet-500/5 rounded-full blur-[100px]"
-          animate={{
-            scale: [1, 1.2, 1],
-            opacity: [0.3, 0.5, 0.3],
-          }}
-          transition={{
-            duration: 10,
-            repeat: Infinity,
-            ease: 'easeInOut',
-          }}
-        />
-      </div>
+    <div className="relative min-h-screen bg-[#0a0a0a] overflow-hidden">
+      {/* Decorative elements */}
+      <div className="absolute top-0 right-0 w-1/2 h-full bg-gradient-to-l from-purple-500/[0.07] to-transparent" />
+      <div className="absolute bottom-0 left-0 w-full h-1/2 bg-gradient-to-t from-purple-900/10 to-transparent" />
 
-      {/* Grid pattern */}
-      <div
-        className="absolute inset-0 opacity-[0.02]"
-        style={{
-          backgroundImage: `linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px),
-                           linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)`,
-          backgroundSize: '100px 100px',
+      {/* Floating orbs */}
+      <motion.div
+        className="absolute top-20 right-20 w-72 h-72 rounded-full bg-purple-500/20 blur-[100px]"
+        animate={{
+          y: [0, -30, 0],
+          scale: [1, 1.1, 1],
         }}
+        transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' }}
+      />
+      <motion.div
+        className="absolute bottom-40 left-20 w-96 h-96 rounded-full bg-violet-600/10 blur-[120px]"
+        animate={{
+          y: [0, 20, 0],
+          scale: [1.1, 1, 1.1],
+        }}
+        transition={{ duration: 10, repeat: Infinity, ease: 'easeInOut' }}
       />
 
-      {/* Hero Content */}
-      <motion.div
-        style={{ opacity, scale, y }}
-        className="relative z-10 flex flex-col items-center justify-center min-h-screen px-4 sm:px-6 lg:px-8"
-      >
-        <div className="max-w-6xl mx-auto text-center">
-          {/* Eyebrow */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.1 }}
-            className="mb-8"
-          >
-            <Link href="/browse">
-              <motion.div
-                className="inline-flex items-center gap-3 px-5 py-2.5 bg-white/[0.03] backdrop-blur-sm rounded-full border border-white/[0.08] hover:bg-white/[0.06] hover:border-white/[0.12] transition-all duration-500 cursor-pointer group"
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-              >
-                <span className="relative flex h-2 w-2">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-purple-400 opacity-75" />
-                  <span className="relative inline-flex rounded-full h-2 w-2 bg-purple-500" />
-                </span>
-                <span className="text-sm text-neutral-400 font-light tracking-wide">
-                  NSW&apos;s Student Housing Platform
-                </span>
-                <ArrowRight className="w-3.5 h-3.5 text-neutral-500 group-hover:text-neutral-300 group-hover:translate-x-0.5 transition-all duration-300" />
-              </motion.div>
-            </Link>
-          </motion.div>
-
-          {/* Main headline with character animation */}
-          <div className="mb-8 overflow-hidden perspective-[1000px]">
-            <motion.div
-              variants={containerVariants}
-              initial="hidden"
-              animate="visible"
-              className="flex flex-wrap justify-center gap-x-[0.3em] gap-y-2"
-            >
-              {words.map((word, wordIndex) => (
-                <motion.span
-                  key={wordIndex}
-                  variants={letterVariants}
-                  className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-[6.5rem] font-medium text-white tracking-[-0.04em] leading-[0.95]"
-                  style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}
-                >
-                  {word}
-                </motion.span>
-              ))}
-            </motion.div>
-
-            <motion.div
-              variants={containerVariants}
-              initial="hidden"
-              animate="visible"
-              className="flex flex-wrap justify-center gap-x-[0.3em] gap-y-2 mt-2"
-            >
-              {highlightWords.map((word, wordIndex) => (
-                <motion.span
-                  key={wordIndex}
-                  variants={letterVariants}
-                  className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-[6.5rem] font-medium tracking-[-0.04em] leading-[0.95] bg-gradient-to-r from-purple-300 via-violet-400 to-purple-400 bg-clip-text text-transparent"
-                  style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}
-                >
-                  {word}
-                </motion.span>
-              ))}
-            </motion.div>
+      {/* Main content */}
+      <div className="relative z-10 min-h-screen flex flex-col">
+        {/* Top bar */}
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          className="flex justify-between items-center px-6 sm:px-12 lg:px-20 py-8"
+        >
+          <div className="flex items-center gap-2">
+            <div className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
+            <span className="text-xs text-neutral-500 uppercase tracking-widest">Live</span>
           </div>
+          <div className="text-xs text-neutral-500 uppercase tracking-widest">Est. 2024</div>
+        </motion.div>
 
-          {/* Subtitle */}
-          <motion.p
-            variants={fadeUpVariants}
-            initial="hidden"
-            animate="visible"
-            transition={{ delay: 0.8 }}
-            className="text-lg sm:text-xl md:text-2xl text-neutral-400 mb-12 max-w-2xl mx-auto leading-relaxed font-light tracking-[-0.01em]"
-          >
-            Verified reviews from real students.
-            <br className="hidden sm:block" />
-            <span className="text-neutral-500"> Make confident housing decisions.</span>
-          </motion.p>
-
-          {/* CTA Buttons */}
-          <motion.div
-            variants={fadeUpVariants}
-            initial="hidden"
-            animate="visible"
-            transition={{ delay: 1 }}
-            className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-20"
-          >
-            <Link href="/browse">
-              <motion.button
-                whileHover={{ scale: 1.03, y: -2 }}
-                whileTap={{ scale: 0.97 }}
-                className="group relative px-8 py-4 bg-white text-black font-medium rounded-full overflow-hidden transition-all duration-300"
-              >
-                <span className="relative z-10 flex items-center gap-2 text-[15px]">
-                  Browse Accommodations
-                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300" />
-                </span>
+        {/* Hero content */}
+        <div className="flex-1 flex items-center px-6 sm:px-12 lg:px-20 pb-20">
+          <div className="w-full max-w-7xl mx-auto">
+            <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
+              {/* Left column - Typography */}
+              <div>
+                {/* Overline */}
                 <motion.div
-                  className="absolute inset-0 bg-gradient-to-r from-purple-100 to-violet-100"
-                  initial={{ x: '100%' }}
-                  whileHover={{ x: 0 }}
-                  transition={{ duration: 0.3 }}
-                />
-              </motion.button>
-            </Link>
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.6, delay: 0.2 }}
+                  className="flex items-center gap-4 mb-8"
+                >
+                  <div className="h-px w-12 bg-purple-500" />
+                  <span className="text-sm text-purple-400 uppercase tracking-[0.3em] font-light">
+                    NSW Universities
+                  </span>
+                </motion.div>
 
-            <Link href="/quiz">
-              <motion.button
-                whileHover={{ scale: 1.03, y: -2 }}
-                whileTap={{ scale: 0.97 }}
-                className="px-8 py-4 bg-transparent text-white font-medium rounded-full border border-neutral-800 hover:border-neutral-600 hover:bg-white/[0.02] transition-all duration-300 text-[15px]"
-              >
-                Take the Quiz
-              </motion.button>
-            </Link>
-          </motion.div>
-
-          {/* Stats with refined animation */}
-          <motion.div
-            variants={scaleInVariants}
-            initial="hidden"
-            animate="visible"
-            transition={{ delay: 1.2 }}
-            className="flex justify-center items-center"
-          >
-            <div className="flex items-center gap-8 sm:gap-12 md:gap-16 px-8 py-6 bg-white/[0.02] backdrop-blur-sm rounded-2xl border border-white/[0.05]">
-              {[
-                { value: '5', label: 'Universities' },
-                { value: '50+', label: 'Listings' },
-                { value: '100+', label: 'Reviews' },
-              ].map((stat, index) => (
-                <div key={stat.label} className="flex items-center gap-8 sm:gap-12 md:gap-16">
-                  {index > 0 && (
-                    <div className="w-px h-12 bg-gradient-to-b from-transparent via-neutral-700 to-transparent" />
-                  )}
-                  <div className="text-center">
-                    <motion.p
-                      className="text-3xl sm:text-4xl md:text-5xl font-semibold text-white tracking-tight"
-                      initial={{ opacity: 0, scale: 0.5 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      transition={{ delay: 1.4 + index * 0.1, duration: 0.5 }}
-                    >
-                      {stat.value}
-                    </motion.p>
-                    <p className="text-xs sm:text-sm text-neutral-500 mt-1 font-light tracking-wide uppercase">
-                      {stat.label}
-                    </p>
-                  </div>
+                {/* Main headline */}
+                <div className="space-y-2 mb-8">
+                  <motion.h1
+                    initial={{ opacity: 0, y: 40 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.8, delay: 0.3 }}
+                    className="text-6xl sm:text-7xl lg:text-8xl xl:text-9xl font-extralight text-white leading-[0.9] tracking-[-0.03em]"
+                  >
+                    Student
+                  </motion.h1>
+                  <motion.h1
+                    initial={{ opacity: 0, y: 40 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.8, delay: 0.4 }}
+                    className="text-6xl sm:text-7xl lg:text-8xl xl:text-9xl font-extralight leading-[0.9] tracking-[-0.03em]"
+                  >
+                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-violet-300 to-purple-400">
+                      Housing
+                    </span>
+                  </motion.h1>
+                  <motion.h1
+                    initial={{ opacity: 0, y: 40 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.8, delay: 0.5 }}
+                    className="text-6xl sm:text-7xl lg:text-8xl xl:text-9xl font-extralight text-white leading-[0.9] tracking-[-0.03em]"
+                  >
+                    Reviews
+                  </motion.h1>
                 </div>
-              ))}
+
+                {/* Description */}
+                <motion.p
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ duration: 0.8, delay: 0.7 }}
+                  className="text-lg text-neutral-400 max-w-md leading-relaxed font-light mb-10"
+                >
+                  Discover verified reviews from real students. Find your perfect accommodation with
+                  confidence.
+                </motion.p>
+
+                {/* CTA */}
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: 0.9 }}
+                  className="flex flex-wrap gap-4"
+                >
+                  <Link href="/browse">
+                    <motion.button
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                      className="group flex items-center gap-3 px-8 py-4 bg-white text-black rounded-full font-medium text-sm uppercase tracking-wider hover:bg-purple-100 transition-colors"
+                    >
+                      Explore
+                      <ArrowUpRight className="w-4 h-4 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+                    </motion.button>
+                  </Link>
+                  <Link href="/quiz">
+                    <motion.button
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                      className="px-8 py-4 text-white rounded-full font-medium text-sm uppercase tracking-wider border border-neutral-700 hover:border-neutral-500 hover:bg-white/5 transition-all"
+                    >
+                      Take Quiz
+                    </motion.button>
+                  </Link>
+                </motion.div>
+              </div>
+
+              {/* Right column - Stats cards */}
+              <motion.div
+                initial={{ opacity: 0, x: 40 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.8, delay: 0.6 }}
+                className="relative"
+              >
+                {/* Stats grid */}
+                <div className="grid grid-cols-2 gap-4">
+                  {/* Card 1 */}
+                  <motion.div
+                    whileHover={{ y: -5 }}
+                    className="col-span-2 p-8 rounded-3xl bg-gradient-to-br from-white/[0.08] to-white/[0.02] border border-white/10 backdrop-blur-sm"
+                  >
+                    <div className="flex items-center justify-between mb-4">
+                      <span className="text-xs text-neutral-500 uppercase tracking-widest">
+                        Total Reviews
+                      </span>
+                      <div className="flex">
+                        {[...Array(5)].map((_, i) => (
+                          <Star key={i} className="w-3 h-3 text-purple-400 fill-purple-400" />
+                        ))}
+                      </div>
+                    </div>
+                    <p className="text-5xl sm:text-6xl font-extralight text-white">100+</p>
+                    <p className="text-sm text-neutral-500 mt-2">Verified student reviews</p>
+                  </motion.div>
+
+                  {/* Card 2 */}
+                  <motion.div
+                    whileHover={{ y: -5 }}
+                    className="p-6 rounded-3xl bg-gradient-to-br from-purple-500/20 to-purple-500/5 border border-purple-500/20"
+                  >
+                    <p className="text-4xl sm:text-5xl font-extralight text-white mb-2">5</p>
+                    <p className="text-xs text-neutral-400 uppercase tracking-wider">
+                      Universities
+                    </p>
+                  </motion.div>
+
+                  {/* Card 3 */}
+                  <motion.div
+                    whileHover={{ y: -5 }}
+                    className="p-6 rounded-3xl bg-gradient-to-br from-white/[0.08] to-white/[0.02] border border-white/10"
+                  >
+                    <p className="text-4xl sm:text-5xl font-extralight text-white mb-2">50+</p>
+                    <p className="text-xs text-neutral-400 uppercase tracking-wider">Listings</p>
+                  </motion.div>
+
+                  {/* Card 4 - Feature highlight */}
+                  <motion.div
+                    whileHover={{ y: -5 }}
+                    className="col-span-2 p-6 rounded-3xl bg-white/[0.03] border border-white/5"
+                  >
+                    <div className="flex items-center gap-4">
+                      <div className="w-12 h-12 rounded-2xl bg-purple-500/20 flex items-center justify-center">
+                        <div className="w-3 h-3 rounded-full bg-purple-400" />
+                      </div>
+                      <div>
+                        <p className="text-white font-medium">Verified Only</p>
+                        <p className="text-sm text-neutral-500">All reviews from real students</p>
+                      </div>
+                    </div>
+                  </motion.div>
+                </div>
+              </motion.div>
             </div>
-          </motion.div>
+          </div>
         </div>
 
-        {/* Scroll indicator */}
+        {/* Bottom bar */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: 2, duration: 1 }}
-          className="absolute bottom-10 left-1/2 -translate-x-1/2"
+          transition={{ duration: 0.6, delay: 1.2 }}
+          className="px-6 sm:px-12 lg:px-20 py-8 border-t border-white/5"
         >
-          <motion.div
-            animate={{ y: [0, 10, 0] }}
-            transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
-            className="flex flex-col items-center gap-2"
-          >
-            <span className="text-[10px] text-neutral-600 uppercase tracking-[0.2em] font-light">
-              Scroll
-            </span>
-            <div className="w-px h-8 bg-gradient-to-b from-neutral-600 to-transparent" />
-          </motion.div>
+          <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
+            <div className="flex items-center gap-8">
+              {['UNSW', 'Sydney', 'UTS', 'Macquarie', 'WSU'].map((uni) => (
+                <span
+                  key={uni}
+                  className="text-xs text-neutral-600 uppercase tracking-widest hover:text-neutral-400 transition-colors cursor-default"
+                >
+                  {uni}
+                </span>
+              ))}
+            </div>
+            <motion.div
+              animate={{ y: [0, 5, 0] }}
+              transition={{ duration: 2, repeat: Infinity }}
+              className="text-xs text-neutral-600 uppercase tracking-widest"
+            >
+              Scroll to explore
+            </motion.div>
+          </div>
         </motion.div>
-      </motion.div>
-
-      {/* Bottom gradient */}
-      <div className="absolute bottom-0 left-0 right-0 h-40 bg-gradient-to-t from-black via-black/80 to-transparent pointer-events-none" />
+      </div>
     </div>
   );
 }
