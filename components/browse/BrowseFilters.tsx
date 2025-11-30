@@ -1,8 +1,8 @@
 'use client';
 
+import { motion } from 'framer-motion';
 import { SearchFilters } from '@/types';
 import { Label } from '@/components/ui/label';
-import { Input } from '@/components/ui/input';
 import {
   Select,
   SelectContent,
@@ -10,8 +10,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Button } from '@/components/ui/button';
-import { X } from 'lucide-react';
+import { X, SlidersHorizontal, MapPin, DollarSign, Star, GraduationCap } from 'lucide-react';
 
 interface BrowseFiltersProps {
   filters: SearchFilters;
@@ -99,30 +98,52 @@ export default function BrowseFilters({
   const hasActiveFilters = Object.keys(filters).length > 0;
 
   return (
-    <div className="w-full bg-white/5 backdrop-blur-md rounded-2xl shadow-lg shadow-black/20 p-6 border border-white/10 transition-all duration-300 hover:bg-white/[0.07] hover:border-white/20">
-      <div className="flex items-center justify-between mb-6">
-        <h2 className="text-xl font-bold bg-gradient-to-b from-white to-white/70 bg-clip-text text-transparent">
-          Filters
-        </h2>
-        {hasActiveFilters && (
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={onClearFilters}
-            className="text-lyra-purple-start hover:text-white hover:bg-white/10 transition-all duration-300 rounded-xl"
-            aria-label="Clear all filters"
-          >
-            <X className="h-4 w-4 mr-1" />
-            Clear All
-          </Button>
-        )}
+    <div className="w-full rounded-3xl bg-gradient-to-br from-white/[0.06] to-white/[0.02] border border-white/[0.08] overflow-hidden backdrop-blur-sm">
+      {/* Header - Hero style */}
+      <div className="p-6 border-b border-white/[0.06]">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            {/* Overline accent */}
+            <div className="h-px w-8 bg-purple-500" />
+            <div className="flex items-center gap-3">
+              <motion.div
+                whileHover={{ scale: 1.05 }}
+                className="w-12 h-12 rounded-2xl bg-gradient-to-br from-purple-500/20 to-violet-500/10 border border-purple-500/20 flex items-center justify-center"
+              >
+                <SlidersHorizontal className="w-5 h-5 text-purple-400" />
+              </motion.div>
+              <div>
+                <span className="text-xs text-purple-400 uppercase tracking-[0.2em] font-light block mb-1">
+                  Refine
+                </span>
+                <h2 className="text-xl font-extralight text-white tracking-tight">Filters</h2>
+              </div>
+            </div>
+          </div>
+          {hasActiveFilters && (
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={onClearFilters}
+              className="flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-medium text-neutral-400 hover:text-white bg-white/[0.03] hover:bg-white/[0.08] border border-white/[0.06] hover:border-white/[0.12] transition-all duration-300"
+              aria-label="Clear all filters"
+            >
+              <X className="h-3.5 w-3.5" />
+              Clear
+            </motion.button>
+          )}
+        </div>
       </div>
 
-      <div className="space-y-6">
+      <div className="p-6 space-y-8">
         {/* University Filter */}
-        <div className="space-y-2">
-          <Label htmlFor="university" className="text-sm font-semibold text-white/80">
-            University
+        <div className="space-y-3">
+          <Label
+            htmlFor="university"
+            className="flex items-center gap-3 text-sm font-light text-neutral-300"
+          >
+            <GraduationCap className="w-4 h-4 text-purple-400" />
+            <span className="uppercase tracking-wider text-xs">University</span>
           </Label>
           <Select
             value={filters.university || 'All Universities'}
@@ -130,17 +151,17 @@ export default function BrowseFilters({
           >
             <SelectTrigger
               id="university"
-              className="w-full bg-white/5 backdrop-blur-sm border-white/10 text-white hover:bg-white/10 hover:border-white/20 focus:border-lyra-purple-start/50 focus:ring-2 focus:ring-lyra-purple-start/30 transition-all duration-300 rounded-xl"
+              className="w-full bg-white/[0.03] border-white/[0.08] text-white hover:bg-white/[0.06] hover:border-white/[0.15] focus:border-purple-500/50 focus:ring-0 focus:ring-offset-0 transition-all duration-300 rounded-2xl h-12 font-light"
               aria-label="Filter by university"
             >
               <SelectValue placeholder="Select university" />
             </SelectTrigger>
-            <SelectContent className="bg-charcoal-light border-white/10 backdrop-blur-md">
+            <SelectContent className="bg-[#151515] border-white/10 rounded-2xl backdrop-blur-xl">
               {UNIVERSITIES.map((uni) => (
                 <SelectItem
                   key={uni}
                   value={uni}
-                  className="text-white hover:bg-white/10 focus:bg-white/10"
+                  className="text-neutral-300 hover:bg-white/10 focus:bg-white/10 rounded-xl font-light"
                 >
                   {uni}
                 </SelectItem>
@@ -150,54 +171,62 @@ export default function BrowseFilters({
         </div>
 
         {/* Location Filter */}
-        <div className="space-y-2">
-          <Label htmlFor="location" className="text-sm font-semibold text-white/80">
-            Location
+        <div className="space-y-3">
+          <Label
+            htmlFor="location"
+            className="flex items-center gap-3 text-sm font-light text-neutral-300"
+          >
+            <MapPin className="w-4 h-4 text-purple-400" />
+            <span className="uppercase tracking-wider text-xs">Location</span>
           </Label>
-          <Input
+          <input
             id="location"
             type="text"
             value={filters.location || ''}
             onChange={(e) => handleLocationChange(e.target.value)}
             placeholder="e.g., Kensington, Ultimo"
-            className="w-full bg-white/5 backdrop-blur-sm border-white/10 text-white placeholder:text-white/40 hover:bg-white/10 hover:border-white/20 focus:bg-white/10 focus:border-lyra-purple-start/50 focus:ring-2 focus:ring-lyra-purple-start/30 transition-all duration-300 rounded-xl"
+            className="w-full px-5 py-3.5 bg-white/[0.03] border border-white/[0.08] text-white placeholder:text-neutral-600 hover:bg-white/[0.06] hover:border-white/[0.15] focus:bg-white/[0.06] focus:border-purple-500/50 focus:outline-none transition-all duration-300 rounded-2xl text-sm font-light"
             aria-label="Filter by location"
           />
         </div>
 
         {/* Price Range Filter */}
-        <div className="space-y-4">
-          <Label className="text-sm font-semibold text-white/80">Price Range (per week)</Label>
-          <div className="grid grid-cols-2 gap-4">
+        <div className="space-y-3">
+          <Label className="flex items-center gap-3 text-sm font-light text-neutral-300">
+            <DollarSign className="w-4 h-4 text-purple-400" />
+            <span className="uppercase tracking-wider text-xs">Price Range</span>
+            <span className="text-neutral-600 text-xs normal-case tracking-normal">/week</span>
+          </Label>
+          <div className="grid grid-cols-2 gap-3">
             <div className="space-y-2">
-              <Label htmlFor="priceMin" className="text-xs text-white/60">
-                Min ($)
-              </Label>
-              <Input
+              <span className="text-[10px] text-neutral-500 uppercase tracking-widest pl-1">
+                Min
+              </span>
+              <input
                 id="priceMin"
                 type="number"
                 value={filters.priceMin || ''}
                 onChange={(e) => handlePriceMinChange(e.target.value)}
-                placeholder="0"
+                placeholder="$0"
                 min="0"
                 step="50"
-                className="w-full bg-white/5 backdrop-blur-sm border-white/10 text-white placeholder:text-white/40 hover:bg-white/10 hover:border-white/20 focus:bg-white/10 focus:border-lyra-purple-start/50 focus:ring-2 focus:ring-lyra-purple-start/30 transition-all duration-300 rounded-xl"
+                className="w-full px-4 py-3 bg-white/[0.03] border border-white/[0.08] text-white placeholder:text-neutral-600 hover:bg-white/[0.06] hover:border-white/[0.15] focus:bg-white/[0.06] focus:border-purple-500/50 focus:outline-none transition-all duration-300 rounded-2xl text-sm font-light"
                 aria-label="Minimum price"
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="priceMax" className="text-xs text-white/60">
-                Max ($)
-              </Label>
-              <Input
+              <span className="text-[10px] text-neutral-500 uppercase tracking-widest pl-1">
+                Max
+              </span>
+              <input
                 id="priceMax"
                 type="number"
                 value={filters.priceMax || ''}
                 onChange={(e) => handlePriceMaxChange(e.target.value)}
-                placeholder="1000"
+                placeholder="$1000"
                 min="0"
                 step="50"
-                className="w-full bg-white/5 backdrop-blur-sm border-white/10 text-white placeholder:text-white/40 hover:bg-white/10 hover:border-white/20 focus:bg-white/10 focus:border-lyra-purple-start/50 focus:ring-2 focus:ring-lyra-purple-start/30 transition-all duration-300 rounded-xl"
+                className="w-full px-4 py-3 bg-white/[0.03] border border-white/[0.08] text-white placeholder:text-neutral-600 hover:bg-white/[0.06] hover:border-white/[0.15] focus:bg-white/[0.06] focus:border-purple-500/50 focus:outline-none transition-all duration-300 rounded-2xl text-sm font-light"
                 aria-label="Maximum price"
               />
             </div>
@@ -205,24 +234,28 @@ export default function BrowseFilters({
         </div>
 
         {/* Rating Filter */}
-        <div className="space-y-2">
-          <Label htmlFor="rating" className="text-sm font-semibold text-white/80">
-            Minimum Rating
+        <div className="space-y-3">
+          <Label
+            htmlFor="rating"
+            className="flex items-center gap-3 text-sm font-light text-neutral-300"
+          >
+            <Star className="w-4 h-4 text-purple-400" />
+            <span className="uppercase tracking-wider text-xs">Min Rating</span>
           </Label>
           <Select value={filters.rating?.toString() || '0'} onValueChange={handleRatingChange}>
             <SelectTrigger
               id="rating"
-              className="w-full bg-white/5 backdrop-blur-sm border-white/10 text-white hover:bg-white/10 hover:border-white/20 focus:border-lyra-purple-start/50 focus:ring-2 focus:ring-lyra-purple-start/30 transition-all duration-300 rounded-xl"
+              className="w-full bg-white/[0.03] border-white/[0.08] text-white hover:bg-white/[0.06] hover:border-white/[0.15] focus:border-purple-500/50 focus:ring-0 focus:ring-offset-0 transition-all duration-300 rounded-2xl h-12 font-light"
               aria-label="Filter by minimum rating"
             >
               <SelectValue placeholder="Select rating" />
             </SelectTrigger>
-            <SelectContent className="bg-charcoal-light border-white/10 backdrop-blur-md">
+            <SelectContent className="bg-[#151515] border-white/10 rounded-2xl backdrop-blur-xl">
               {RATINGS.map((rating) => (
                 <SelectItem
                   key={rating.value}
                   value={rating.value}
-                  className="text-white hover:bg-white/10 focus:bg-white/10"
+                  className="text-neutral-300 hover:bg-white/10 focus:bg-white/10 rounded-xl font-light"
                 >
                   {rating.label}
                 </SelectItem>
@@ -232,37 +265,68 @@ export default function BrowseFilters({
         </div>
       </div>
 
-      {/* Active Filters Summary */}
+      {/* Active Filters Summary - Hero card style */}
       {hasActiveFilters && (
-        <div className="mt-6 pt-6 border-t border-white/10">
-          <p className="text-sm font-semibold text-white/80 mb-2">Active Filters:</p>
-          <div className="flex flex-wrap gap-2">
-            {filters.university && (
-              <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-gradient-to-r from-lyra-purple-start/20 to-lyra-purple-end/20 text-lyra-purple-start border border-lyra-purple-start/30">
-                {filters.university}
-              </span>
-            )}
-            {filters.location && (
-              <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-gradient-to-r from-lyra-purple-start/20 to-lyra-purple-end/20 text-lyra-purple-start border border-lyra-purple-start/30">
-                {filters.location}
-              </span>
-            )}
-            {filters.priceMin && (
-              <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-gradient-to-r from-lyra-purple-start/20 to-lyra-purple-end/20 text-lyra-purple-start border border-lyra-purple-start/30">
-                Min: ${filters.priceMin}
-              </span>
-            )}
-            {filters.priceMax && (
-              <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-gradient-to-r from-lyra-purple-start/20 to-lyra-purple-end/20 text-lyra-purple-start border border-lyra-purple-start/30">
-                Max: ${filters.priceMax}
-              </span>
-            )}
-            {filters.rating && (
-              <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-gradient-to-r from-lyra-purple-start/20 to-lyra-purple-end/20 text-lyra-purple-start border border-lyra-purple-start/30">
-                {filters.rating}+ Stars
-              </span>
-            )}
-          </div>
+        <div className="p-6 pt-0">
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="p-5 rounded-2xl bg-gradient-to-br from-purple-500/[0.12] to-purple-500/[0.04] border border-purple-500/20"
+          >
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-2 h-2 rounded-full bg-purple-400 animate-pulse" />
+              <p className="text-xs text-purple-400 uppercase tracking-[0.2em]">Active Filters</p>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {filters.university && (
+                <motion.span
+                  initial={{ scale: 0.9, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  className="inline-flex items-center px-4 py-2 rounded-full text-xs font-light bg-white/[0.06] text-white border border-white/[0.1]"
+                >
+                  {filters.university.includes('(')
+                    ? (filters.university.split('(')[1]?.replace(')', '') ?? filters.university)
+                    : filters.university}
+                </motion.span>
+              )}
+              {filters.location && (
+                <motion.span
+                  initial={{ scale: 0.9, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  className="inline-flex items-center px-4 py-2 rounded-full text-xs font-light bg-white/[0.06] text-white border border-white/[0.1]"
+                >
+                  {filters.location}
+                </motion.span>
+              )}
+              {filters.priceMin && (
+                <motion.span
+                  initial={{ scale: 0.9, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  className="inline-flex items-center px-4 py-2 rounded-full text-xs font-light bg-white/[0.06] text-white border border-white/[0.1]"
+                >
+                  Min: ${filters.priceMin}
+                </motion.span>
+              )}
+              {filters.priceMax && (
+                <motion.span
+                  initial={{ scale: 0.9, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  className="inline-flex items-center px-4 py-2 rounded-full text-xs font-light bg-white/[0.06] text-white border border-white/[0.1]"
+                >
+                  Max: ${filters.priceMax}
+                </motion.span>
+              )}
+              {filters.rating && (
+                <motion.span
+                  initial={{ scale: 0.9, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  className="inline-flex items-center px-4 py-2 rounded-full text-xs font-light bg-white/[0.06] text-white border border-white/[0.1]"
+                >
+                  {filters.rating}+ Stars
+                </motion.span>
+              )}
+            </div>
+          </motion.div>
         </div>
       )}
     </div>
