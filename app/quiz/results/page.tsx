@@ -238,7 +238,7 @@ export default function QuizResultsPage() {
       {/* Main content */}
       <div className="relative z-10 min-h-screen">
         {/* Header */}
-        <div className="border-b border-white/[0.06]">
+        <div className="border-b border-white/[0.06] pt-24">
           <div className="max-w-6xl mx-auto px-6 sm:px-12 lg:px-20 py-8">
             {/* Back Link */}
             <Link
