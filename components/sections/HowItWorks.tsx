@@ -1,36 +1,29 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { Search, Star, CheckCircle, UserCheck } from 'lucide-react';
+import { Search, Star, UserCheck, CheckCircle } from 'lucide-react';
 
 const steps = [
   {
     icon: Search,
-    title: 'Browse & Search',
+    title: 'Browse',
     description:
-      'Explore student accommodations across 5 NSW universities. Filter by location, price, and amenities.',
-    color: 'from-purple-500 to-pink-500',
+      'Explore accommodations across 5 NSW universities. Filter by price, location, and amenities.',
   },
   {
     icon: Star,
-    title: 'Read Reviews',
-    description:
-      'Get honest insights from verified students who actually lived there. See ratings across 6 categories.',
-    color: 'from-pink-500 to-orange-500',
+    title: 'Compare',
+    description: 'Read verified reviews from students. See ratings across 6 key categories.',
   },
   {
     icon: UserCheck,
-    title: 'Verify & Sign Up',
-    description:
-      'Create an account with your .edu.au email to access full features and contribute your own reviews.',
-    color: 'from-orange-500 to-yellow-500',
+    title: 'Verify',
+    description: 'Sign up with your .edu.au email. Access full reviews and contribute your own.',
   },
   {
     icon: CheckCircle,
-    title: 'Make Your Choice',
-    description:
-      'Compare options, save favorites, and confidently choose the accommodation that fits your needs.',
-    color: 'from-yellow-500 to-green-500',
+    title: 'Decide',
+    description: 'Make confident housing decisions backed by real student experiences.',
   },
 ];
 
@@ -40,26 +33,26 @@ export default function HowItWorks() {
     visible: {
       opacity: 1,
       transition: {
-        staggerChildren: 0.15,
-        delayChildren: 0.2,
+        staggerChildren: 0.1,
+        delayChildren: 0.1,
       },
     },
   };
 
   const itemVariants = {
-    hidden: { y: 30, opacity: 0 },
+    hidden: { y: 20, opacity: 0 },
     visible: {
       y: 0,
       opacity: 1,
       transition: {
-        duration: 0.6,
-        ease: [0.22, 1, 0.36, 1] as const,
+        duration: 0.5,
+        ease: [0.25, 0.1, 0.25, 1] as const,
       },
     },
   };
 
   return (
-    <section className="py-24 bg-gradient-to-b from-gray-900 via-purple-900/20 to-gray-900">
+    <section className="py-24 sm:py-32 bg-black">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div
           initial="hidden"
@@ -68,26 +61,22 @@ export default function HowItWorks() {
           variants={containerVariants}
           className="text-center mb-16"
         >
-          <motion.div
+          <motion.p
             variants={itemVariants}
-            className="inline-flex items-center gap-2 px-4 py-2 mb-6 bg-purple-500/10 rounded-full border border-purple-500/20"
+            className="text-purple-400 text-sm font-medium tracking-wide uppercase mb-4"
           >
-            <span className="text-sm font-medium text-purple-300">Simple Process</span>
-          </motion.div>
+            How it works
+          </motion.p>
 
           <motion.h2
             variants={itemVariants}
-            className="text-4xl md:text-5xl font-bold text-white mb-6"
+            className="text-4xl sm:text-5xl font-semibold text-white mb-6 tracking-tight"
           >
-            How It Works
+            Four simple steps.
           </motion.h2>
 
-          <motion.p
-            variants={itemVariants}
-            className="text-lg text-purple-200/70 max-w-2xl mx-auto"
-          >
-            Finding your ideal student accommodation has never been easier. Follow these simple
-            steps to get started.
+          <motion.p variants={itemVariants} className="text-lg text-neutral-400 max-w-2xl mx-auto">
+            Finding your ideal student accommodation has never been easier.
           </motion.p>
         </motion.div>
 
@@ -96,31 +85,24 @@ export default function HowItWorks() {
           whileInView="visible"
           viewport={{ once: true, margin: '-50px' }}
           variants={containerVariants}
-          className="grid md:grid-cols-2 lg:grid-cols-4 gap-8"
+          className="grid md:grid-cols-2 lg:grid-cols-4 gap-6"
         >
           {steps.map((step, index) => (
-            <motion.div key={step.title} variants={itemVariants} className="relative group">
-              {/* Connector line */}
-              {index < steps.length - 1 && (
-                <div className="hidden lg:block absolute top-12 left-[60%] w-full h-0.5 bg-gradient-to-r from-purple-500/50 to-transparent" />
-              )}
-
-              <div className="relative bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-6 hover:bg-white/10 hover:border-purple-500/30 transition-all duration-300 h-full">
+            <motion.div key={step.title} variants={itemVariants} className="group relative">
+              <div className="relative bg-neutral-900/50 backdrop-blur-sm border border-neutral-800 rounded-2xl p-8 hover:border-neutral-700 hover:bg-neutral-900/80 transition-all duration-300 h-full">
                 {/* Step number */}
-                <div className="absolute -top-3 -left-3 w-8 h-8 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center text-white font-bold text-sm shadow-lg">
-                  {index + 1}
+                <div className="absolute -top-3 -left-3 w-7 h-7 bg-purple-500/20 border border-purple-500/30 rounded-full flex items-center justify-center">
+                  <span className="text-xs font-medium text-purple-400">{index + 1}</span>
                 </div>
 
                 {/* Icon */}
-                <div
-                  className={`w-14 h-14 rounded-xl bg-gradient-to-br ${step.color} flex items-center justify-center mb-5 group-hover:scale-110 transition-transform duration-300`}
-                >
-                  <step.icon className="w-7 h-7 text-white" />
+                <div className="w-12 h-12 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center mb-6 group-hover:bg-purple-500/10 group-hover:border-purple-500/20 transition-all duration-300">
+                  <step.icon className="w-6 h-6 text-neutral-400 group-hover:text-purple-400 transition-colors" />
                 </div>
 
                 {/* Content */}
                 <h3 className="text-xl font-semibold text-white mb-3">{step.title}</h3>
-                <p className="text-purple-200/60 leading-relaxed">{step.description}</p>
+                <p className="text-neutral-500 leading-relaxed text-sm">{step.description}</p>
               </div>
             </motion.div>
           ))}

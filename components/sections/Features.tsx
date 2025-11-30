@@ -7,51 +7,34 @@ import { MessageSquare, ShieldCheck, Filter, Image, Info, Scale } from 'lucide-r
 const features = [
   {
     icon: MessageSquare,
-    title: 'Real Student Reviews',
-    description:
-      'Read authentic experiences from students who have lived in the accommodation. No fake reviews, just honest feedback.',
-    gradient: 'from-purple-500 to-pink-500',
-    bgGlow: 'bg-purple-500/20',
+    title: 'Real Reviews',
+    description: 'Authentic experiences from students who have lived there. No fake reviews.',
   },
   {
     icon: ShieldCheck,
-    title: 'Verified Students Only',
-    description:
-      'All reviewers are verified with their university email addresses, ensuring genuine and trustworthy feedback.',
-    gradient: 'from-pink-500 to-purple-600',
-    bgGlow: 'bg-pink-500/20',
+    title: 'Verified Students',
+    description: 'All reviewers verified with university email addresses for trustworthy feedback.',
   },
   {
     icon: Filter,
-    title: 'Comprehensive Filters',
+    title: 'Smart Filters',
     description:
-      'Find exactly what you need with advanced filters for location, price range, ratings, amenities, and more.',
-    gradient: 'from-purple-600 to-indigo-500',
-    bgGlow: 'bg-indigo-500/20',
+      'Find exactly what you need with advanced filtering by location, price, and amenities.',
   },
   {
     icon: Image,
     title: 'Photo Galleries',
-    description:
-      'Browse through extensive photo galleries uploaded by students to see what accommodations really look like.',
-    gradient: 'from-indigo-500 to-blue-500',
-    bgGlow: 'bg-blue-500/20',
+    description: 'Browse student-uploaded photos to see what accommodations really look like.',
   },
   {
     icon: Info,
-    title: 'Detailed Information',
-    description:
-      'Access comprehensive details about each accommodation including amenities, facilities, transport links, and nearby services.',
-    gradient: 'from-blue-500 to-purple-500',
-    bgGlow: 'bg-purple-500/20',
+    title: 'Detailed Info',
+    description: 'Comprehensive details including amenities, transport links, and nearby services.',
   },
   {
     icon: Scale,
-    title: 'Compare Accommodations',
-    description:
-      'Side-by-side comparison tool to help you make the best decision based on price, location, ratings, and features.',
-    gradient: 'from-pink-600 to-purple-500',
-    bgGlow: 'bg-pink-600/20',
+    title: 'Easy Comparison',
+    description: 'Compare options side-by-side based on price, location, ratings, and features.',
   },
 ];
 
@@ -60,19 +43,19 @@ const containerVariants = {
   visible: {
     opacity: 1,
     transition: {
-      staggerChildren: 0.1,
+      staggerChildren: 0.08,
     },
   },
 };
 
 const itemVariants = {
-  hidden: { y: 50, opacity: 0 },
+  hidden: { y: 20, opacity: 0 },
   visible: {
     y: 0,
     opacity: 1,
     transition: {
-      duration: 0.6,
-      ease: [0.25, 0.46, 0.45, 0.94] as const,
+      duration: 0.5,
+      ease: [0.25, 0.1, 0.25, 1] as const,
     },
   },
 };
@@ -84,68 +67,33 @@ export default function Features() {
   return (
     <section
       ref={ref}
-      className="relative py-24 md:py-32 bg-gray-900 overflow-hidden"
+      className="relative py-24 sm:py-32 bg-neutral-950 overflow-hidden"
       aria-labelledby="features-heading"
     >
-      {/* Background Gradients */}
-      <div className="absolute inset-0">
-        <motion.div
-          className="absolute top-0 left-1/4 w-1/2 h-1/2 bg-purple-500/20 rounded-full blur-3xl"
-          animate={{
-            scale: [1, 1.2, 1],
-            opacity: [0.2, 0.3, 0.2],
-          }}
-          transition={{
-            duration: 8,
-            repeat: Infinity,
-            ease: 'easeInOut',
-          }}
-        />
-        <motion.div
-          className="absolute bottom-0 right-1/4 w-1/2 h-1/2 bg-pink-500/20 rounded-full blur-3xl"
-          animate={{
-            scale: [1.2, 1, 1.2],
-            opacity: [0.2, 0.3, 0.2],
-          }}
-          transition={{
-            duration: 8,
-            repeat: Infinity,
-            ease: 'easeInOut',
-            delay: 2,
-          }}
-        />
+      {/* Subtle gradient */}
+      <div className="absolute inset-0 overflow-hidden">
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-purple-500/5 rounded-full blur-[100px]" />
       </div>
 
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
+          initial={{ opacity: 0, y: 20 }}
+          animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
           transition={{ duration: 0.6 }}
           className="text-center mb-16"
         >
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={isInView ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.9 }}
-            transition={{ duration: 0.5 }}
-            className="inline-flex items-center gap-2 px-4 py-2 bg-purple-500/10 backdrop-blur-md rounded-full border border-purple-300/30 mb-6"
-          >
-            <span className="text-sm font-semibold text-purple-300 uppercase tracking-wide">
-              Features
-            </span>
-          </motion.div>
+          <p className="text-purple-400 text-sm font-medium tracking-wide uppercase mb-4">
+            Features
+          </p>
           <h2
             id="features-heading"
-            className="text-4xl sm:text-5xl md:text-6xl font-extrabold text-white mb-6"
+            className="text-4xl sm:text-5xl font-semibold text-white mb-6 tracking-tight"
           >
-            Everything You Need to{' '}
-            <span className="bg-gradient-to-r from-purple-400 via-pink-400 to-purple-400 bg-clip-text text-transparent">
-              Find Your Home
-            </span>
+            Everything you need.
           </h2>
-          <p className="text-lg sm:text-xl text-purple-100/80 max-w-3xl mx-auto">
-            Discover how Rate My Accom helps students make informed decisions about their
-            accommodation.
+          <p className="text-lg text-neutral-400 max-w-2xl mx-auto">
+            Powerful tools to help you find the perfect student accommodation.
           </p>
         </motion.div>
 
@@ -154,47 +102,23 @@ export default function Features() {
           variants={containerVariants}
           initial="hidden"
           animate={isInView ? 'visible' : 'hidden'}
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8"
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
         >
           {features.map((feature, index) => (
-            <motion.div
-              key={index}
-              variants={itemVariants}
-              whileHover={{ y: -8, scale: 1.02 }}
-              className="group relative"
-            >
-              {/* Glow effect on hover */}
-              <div
-                className={`absolute inset-0 ${feature.bgGlow} rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500`}
-                aria-hidden="true"
-              />
-
-              {/* Card */}
-              <div className="relative h-full bg-white/5 backdrop-blur-xl rounded-2xl p-8 border border-white/10 group-hover:border-white/20 transition-all duration-300">
+            <motion.div key={index} variants={itemVariants} className="group">
+              <div className="relative h-full bg-neutral-900/50 backdrop-blur-sm border border-neutral-800 rounded-2xl p-8 hover:border-neutral-700 hover:bg-neutral-900/80 transition-all duration-300">
                 {/* Icon */}
-                <div className="mb-6">
-                  <div
-                    className={`inline-flex p-4 rounded-2xl bg-gradient-to-br ${feature.gradient} shadow-lg`}
-                  >
-                    <feature.icon
-                      className="w-8 h-8 text-white"
-                      strokeWidth={2}
-                      aria-hidden="true"
-                    />
-                  </div>
+                <div className="w-12 h-12 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center mb-6 group-hover:bg-purple-500/10 group-hover:border-purple-500/20 transition-all duration-300">
+                  <feature.icon
+                    className="w-6 h-6 text-neutral-400 group-hover:text-purple-400 transition-colors"
+                    strokeWidth={1.5}
+                    aria-hidden="true"
+                  />
                 </div>
 
                 {/* Content */}
-                <div>
-                  <h3 className="text-2xl font-bold text-white mb-3">{feature.title}</h3>
-                  <p className="text-purple-100/70 leading-relaxed">{feature.description}</p>
-                </div>
-
-                {/* Decorative corner accent */}
-                <div
-                  className={`absolute top-0 right-0 w-20 h-20 bg-gradient-to-br ${feature.gradient} opacity-10 rounded-bl-full rounded-tr-2xl`}
-                  aria-hidden="true"
-                />
+                <h3 className="text-xl font-semibold text-white mb-3">{feature.title}</h3>
+                <p className="text-neutral-500 leading-relaxed text-sm">{feature.description}</p>
               </div>
             </motion.div>
           ))}
