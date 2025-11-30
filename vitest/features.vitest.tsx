@@ -55,7 +55,6 @@ describe('Features Component', () => {
 
     it('should display the main heading', () => {
       render(<Features />);
-      // Text is split across lines with br tag
       const heading = screen.getByRole('heading', { level: 2 });
       expect(heading).toBeInTheDocument();
       expect(heading.textContent).toContain('Everything');
@@ -65,9 +64,7 @@ describe('Features Component', () => {
     it('should display the subheading', () => {
       render(<Features />);
       expect(
-        screen.getByText(
-          /Powerful tools designed to help you find the perfect student accommodation/i
-        )
+        screen.getByText(/Powerful tools to help you find the perfect student accommodation/i)
       ).toBeInTheDocument();
     });
 
@@ -113,15 +110,6 @@ describe('Features Component', () => {
       const h3Headings = screen.getAllByRole('heading', { level: 3 });
       expect(h3Headings).toHaveLength(6);
     });
-
-    it('should display feature stats', () => {
-      render(<Features />);
-      expect(screen.getByText('100+')).toBeInTheDocument();
-      expect(screen.getByText('100%')).toBeInTheDocument();
-      expect(screen.getByText('20+')).toBeInTheDocument();
-      expect(screen.getByText('500+')).toBeInTheDocument();
-      expect(screen.getByText('50+')).toBeInTheDocument();
-    });
   });
 
   describe('Accessibility', () => {
@@ -141,7 +129,7 @@ describe('Features Component', () => {
 
     it('should have 6 feature cards', () => {
       render(<Features />);
-      const cards = document.querySelectorAll('.group.relative');
+      const cards = document.querySelectorAll('.group');
       expect(cards).toHaveLength(6);
     });
   });
@@ -150,17 +138,7 @@ describe('Features Component', () => {
     it('should have dark background on section', () => {
       render(<Features />);
       const section = document.querySelector('section');
-      expect(section).toHaveClass('bg-[#0a0a0a]');
-    });
-
-    it('should display trust indicator', () => {
-      render(<Features />);
-      expect(screen.getByText('Trusted by students across NSW')).toBeInTheDocument();
-    });
-
-    it('should display free for students message', () => {
-      render(<Features />);
-      expect(screen.getByText('All features free for students')).toBeInTheDocument();
+      expect(section).toHaveClass('bg-neutral-950');
     });
   });
 });
