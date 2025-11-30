@@ -93,12 +93,12 @@ export default function Header() {
 
     // Default theme for home and other pages
     return {
-      bg: scrolled ? 'bg-charcoal/80' : 'bg-transparent',
+      bg: scrolled ? 'bg-black/80 backdrop-blur-xl' : 'bg-transparent',
       border: scrolled ? 'border-white/10' : 'border-transparent',
-      accentGradient: 'from-purple-600 to-pink-600',
-      navBg: 'bg-white/5',
-      navBorder: 'border-white/10',
-      navHover: 'hover:bg-white/10',
+      accentGradient: 'from-purple-500 to-violet-500',
+      navBg: 'bg-white/[0.03]',
+      navBorder: 'border-white/[0.08]',
+      navHover: 'hover:bg-white/[0.06]',
       activeText: 'text-purple-400',
     };
   };
