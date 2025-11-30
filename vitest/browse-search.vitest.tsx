@@ -112,7 +112,7 @@ describe('BrowseSearch Component', () => {
     it('should have rounded styling', () => {
       render(<BrowseSearch {...defaultProps} />);
       const input = screen.getByLabelText('Search accommodations');
-      expect(input).toHaveClass('rounded-2xl');
+      expect(input).toHaveClass('rounded-3xl');
     });
   });
 });

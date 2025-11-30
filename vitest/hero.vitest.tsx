@@ -32,65 +32,96 @@ vi.mock('framer-motion', () => ({
 
 describe('Hero Component', () => {
   describe('Visual Appearance', () => {
-    it('should display the badge', () => {
+    it('should display the overline badge', () => {
       render(<Hero />);
-      expect(screen.getByText('Built for NSW Students')).toBeInTheDocument();
+      expect(screen.getByText('NSW Universities')).toBeInTheDocument();
     });
 
-    it('should display the main headline', () => {
+    it('should display the main headline words', () => {
       render(<Hero />);
-      expect(screen.getByText('Find Your Perfect')).toBeInTheDocument();
-      expect(screen.getByText('Student Accommodation')).toBeInTheDocument();
-      expect(screen.getByText('in NSW')).toBeInTheDocument();
+      expect(screen.getByText('Student')).toBeInTheDocument();
+      expect(screen.getByText('Housing')).toBeInTheDocument();
+      expect(screen.getByText('Reviews')).toBeInTheDocument();
     });
 
     it('should display the subtitle', () => {
       render(<Hero />);
-      expect(
-        screen.getByText(
-          /Real reviews from real students\. Make informed decisions about where you'll call home during your university years\./i
-        )
-      ).toBeInTheDocument();
+      expect(screen.getByText(/Discover verified reviews from real students/i)).toBeInTheDocument();
     });
 
     it('should display CTA buttons', () => {
       render(<Hero />);
-      expect(screen.getByText('Explore Accommodations')).toBeInTheDocument();
-      expect(screen.getByText('Learn More')).toBeInTheDocument();
+      expect(screen.getByText('Explore')).toBeInTheDocument();
+      expect(screen.getByText('Take Quiz')).toBeInTheDocument();
     });
 
-    it('should have the h1 heading', () => {
+    it('should have h1 headings for main text', () => {
       render(<Hero />);
-      const heading = screen.getByRole('heading', { level: 1 });
-      expect(heading).toBeInTheDocument();
+      const headings = screen.getAllByRole('heading', { level: 1 });
+      expect(headings.length).toBeGreaterThanOrEqual(3); // Student, Housing, Reviews
     });
   });
 
   describe('Links and Navigation', () => {
-    it('should have correct href for Explore Accommodations link', () => {
+    it('should have correct href for Explore link', () => {
       render(<Hero />);
-      const exploreLink = screen.getByRole('link', { name: /Explore Accommodations/i });
+      const exploreLink = screen.getByRole('link', { name: /Explore/i });
       expect(exploreLink).toHaveAttribute('href', '/browse');
     });
 
-    it('should have correct href for Learn More link', () => {
+    it('should have correct href for Take Quiz link', () => {
       render(<Hero />);
-      const learnMoreLink = screen.getByRole('link', { name: /Learn More/i });
-      expect(learnMoreLink).toHaveAttribute('href', '/about');
+      const quizLink = screen.getByRole('link', { name: /Take Quiz/i });
+      expect(quizLink).toHaveAttribute('href', '/quiz');
+    });
+  });
+
+  describe('Stats and Information', () => {
+    it('should display total reviews stat', () => {
+      render(<Hero />);
+      expect(screen.getByText('100+')).toBeInTheDocument();
+      expect(screen.getByText('Verified student reviews')).toBeInTheDocument();
+    });
+
+    it('should display universities count', () => {
+      render(<Hero />);
+      expect(screen.getByText('5')).toBeInTheDocument();
+      expect(screen.getByText('Universities')).toBeInTheDocument();
+    });
+
+    it('should display listings count', () => {
+      render(<Hero />);
+      expect(screen.getByText('50+')).toBeInTheDocument();
+      expect(screen.getByText('Listings')).toBeInTheDocument();
+    });
+
+    it('should display verified badge', () => {
+      render(<Hero />);
+      expect(screen.getByText('Verified Only')).toBeInTheDocument();
+      expect(screen.getByText('All reviews from real students')).toBeInTheDocument();
     });
   });
 
   describe('Styling and Structure', () => {
-    it('should have gradient background', () => {
+    it('should have dark background', () => {
       render(<Hero />);
-      const heroContainer = screen.getByText('Find Your Perfect').closest('.bg-gradient-to-br');
-      expect(heroContainer).toBeInTheDocument();
+      const container = document.querySelector('.bg-\\[\\#0a0a0a\\]');
+      expect(container).toBeInTheDocument();
     });
 
-    it('should have responsive container classes', () => {
+    it('should have responsive container', () => {
       render(<Hero />);
-      const heading = screen.getByRole('heading', { level: 1 });
-      expect(heading).toHaveClass('text-5xl');
+      const heading = screen.getAllByRole('heading', { level: 1 })[0];
+      expect(heading).toHaveClass('text-6xl');
+    });
+
+    it('should display university names in footer', () => {
+      render(<Hero />);
+      expect(screen.getByText('UNSW')).toBeInTheDocument();
+      expect(screen.getByText('Sydney')).toBeInTheDocument();
+      expect(screen.getByText('UTS')).toBeInTheDocument();
+      expect(screen.getByText('Macquarie')).toBeInTheDocument();
+      expect(screen.getByText('WSU')).toBeInTheDocument();
     });
   });
 });

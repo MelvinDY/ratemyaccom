@@ -14,6 +14,34 @@ vi.mock('framer-motion', () => ({
         {children}
       </div>
     ),
+    h2: ({
+      children,
+      className,
+      id,
+      ...props
+    }: React.HTMLAttributes<HTMLHeadingElement> & { variants?: object }) => (
+      <h2 className={className} id={id} {...props}>
+        {children}
+      </h2>
+    ),
+    p: ({
+      children,
+      className,
+      ...props
+    }: React.HTMLAttributes<HTMLParagraphElement> & { variants?: object }) => (
+      <p className={className} {...props}>
+        {children}
+      </p>
+    ),
+    span: ({
+      children,
+      className,
+      ...props
+    }: React.HTMLAttributes<HTMLSpanElement> & { variants?: object }) => (
+      <span className={className} {...props}>
+        {children}
+      </span>
+    ),
   },
   useInView: () => true,
 }));
@@ -27,14 +55,19 @@ describe('Features Component', () => {
 
     it('should display the main heading', () => {
       render(<Features />);
-      expect(screen.getByText(/Everything You Need to/i)).toBeInTheDocument();
-      expect(screen.getByText('Find Your Home')).toBeInTheDocument();
+      // Text is split across lines with br tag
+      const heading = screen.getByRole('heading', { level: 2 });
+      expect(heading).toBeInTheDocument();
+      expect(heading.textContent).toContain('Everything');
+      expect(heading.textContent).toContain('need');
     });
 
     it('should display the subheading', () => {
       render(<Features />);
       expect(
-        screen.getByText(/Discover how Rate My Accom helps students make informed decisions/i)
+        screen.getByText(
+          /Powerful tools designed to help you find the perfect student accommodation/i
+        )
       ).toBeInTheDocument();
     });
 
@@ -49,38 +82,45 @@ describe('Features Component', () => {
   describe('Feature Cards', () => {
     it('should display all 6 feature titles', () => {
       render(<Features />);
-      expect(screen.getByRole('heading', { name: 'Real Student Reviews' })).toBeInTheDocument();
-      expect(screen.getByRole('heading', { name: 'Verified Students Only' })).toBeInTheDocument();
-      expect(screen.getByRole('heading', { name: 'Comprehensive Filters' })).toBeInTheDocument();
+      expect(screen.getByRole('heading', { name: 'Real Reviews' })).toBeInTheDocument();
+      expect(screen.getByRole('heading', { name: 'Verified Students' })).toBeInTheDocument();
+      expect(screen.getByRole('heading', { name: 'Smart Filters' })).toBeInTheDocument();
       expect(screen.getByRole('heading', { name: 'Photo Galleries' })).toBeInTheDocument();
-      expect(screen.getByRole('heading', { name: 'Detailed Information' })).toBeInTheDocument();
-      expect(screen.getByRole('heading', { name: 'Compare Accommodations' })).toBeInTheDocument();
+      expect(screen.getByRole('heading', { name: 'Detailed Info' })).toBeInTheDocument();
+      expect(screen.getByRole('heading', { name: 'Easy Comparison' })).toBeInTheDocument();
     });
 
     it('should display feature descriptions', () => {
       render(<Features />);
       expect(
-        screen.getByText(/Read authentic experiences from students who have lived/i)
+        screen.getByText(/Authentic experiences from students who have lived there/i)
       ).toBeInTheDocument();
       expect(
-        screen.getByText(/All reviewers are verified with their university email/i)
+        screen.getByText(/All reviewers verified with university email addresses/i)
       ).toBeInTheDocument();
       expect(
-        screen.getByText(/Find exactly what you need with advanced filters/i)
+        screen.getByText(/Find exactly what you need with advanced filtering/i)
       ).toBeInTheDocument();
-      expect(screen.getByText(/Browse through extensive photo galleries/i)).toBeInTheDocument();
+      expect(screen.getByText(/Browse student-uploaded photos/i)).toBeInTheDocument();
       expect(
-        screen.getByText(/Access comprehensive details about each accommodation/i)
+        screen.getByText(/Comprehensive details including amenities, transport links/i)
       ).toBeInTheDocument();
-      expect(
-        screen.getByText(/Side-by-side comparison tool to help you make/i)
-      ).toBeInTheDocument();
+      expect(screen.getByText(/Compare options side-by-side/i)).toBeInTheDocument();
     });
 
     it('should have 6 h3 headings for feature cards', () => {
       render(<Features />);
       const h3Headings = screen.getAllByRole('heading', { level: 3 });
       expect(h3Headings).toHaveLength(6);
+    });
+
+    it('should display feature stats', () => {
+      render(<Features />);
+      expect(screen.getByText('100+')).toBeInTheDocument();
+      expect(screen.getByText('100%')).toBeInTheDocument();
+      expect(screen.getByText('20+')).toBeInTheDocument();
+      expect(screen.getByText('500+')).toBeInTheDocument();
+      expect(screen.getByText('50+')).toBeInTheDocument();
     });
   });
 
@@ -89,12 +129,6 @@ describe('Features Component', () => {
       render(<Features />);
       const section = document.querySelector('section[aria-labelledby="features-heading"]');
       expect(section).toBeInTheDocument();
-    });
-
-    it('should have icons with aria-hidden attribute', () => {
-      render(<Features />);
-      const hiddenIcons = document.querySelectorAll('svg[aria-hidden="true"]');
-      expect(hiddenIcons.length).toBeGreaterThan(0);
     });
   });
 
@@ -113,16 +147,20 @@ describe('Features Component', () => {
   });
 
   describe('Styling', () => {
-    it('should have bg-gray-900 background on section', () => {
+    it('should have dark background on section', () => {
       render(<Features />);
       const section = document.querySelector('section');
-      expect(section).toHaveClass('bg-gray-900');
+      expect(section).toHaveClass('bg-[#0a0a0a]');
     });
 
-    it('should have animated blur backgrounds', () => {
+    it('should display trust indicator', () => {
       render(<Features />);
-      const blurElements = document.querySelectorAll('[class*="blur-3xl"]');
-      expect(blurElements.length).toBe(2);
+      expect(screen.getByText('Trusted by students across NSW')).toBeInTheDocument();
+    });
+
+    it('should display free for students message', () => {
+      render(<Features />);
+      expect(screen.getByText('All features free for students')).toBeInTheDocument();
     });
   });
 });

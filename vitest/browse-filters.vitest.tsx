@@ -152,7 +152,7 @@ describe('BrowseFilters Component', () => {
 
     it('should display Active Filters section when filters exist', () => {
       render(<BrowseFilters {...defaultProps} filters={{ location: 'Test' }} />);
-      expect(screen.getByText('Active Filters:')).toBeInTheDocument();
+      expect(screen.getByText('Active Filters')).toBeInTheDocument();
     });
   });
 

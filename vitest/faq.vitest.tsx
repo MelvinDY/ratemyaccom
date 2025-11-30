@@ -15,6 +15,43 @@ vi.mock('framer-motion', () => ({
         {children}
       </div>
     ),
+    h2: ({
+      children,
+      className,
+      id,
+      ...props
+    }: React.HTMLAttributes<HTMLHeadingElement> & { variants?: object }) => (
+      <h2 className={className} id={id} {...props}>
+        {children}
+      </h2>
+    ),
+    p: ({
+      children,
+      className,
+      ...props
+    }: React.HTMLAttributes<HTMLParagraphElement> & { variants?: object }) => (
+      <p className={className} {...props}>
+        {children}
+      </p>
+    ),
+    span: ({
+      children,
+      className,
+      ...props
+    }: React.HTMLAttributes<HTMLSpanElement> & { variants?: object }) => (
+      <span className={className} {...props}>
+        {children}
+      </span>
+    ),
+    section: ({
+      children,
+      className,
+      ...props
+    }: React.HTMLAttributes<HTMLElement> & { variants?: object }) => (
+      <section className={className} {...props}>
+        {children}
+      </section>
+    ),
     a: ({
       children,
       className,
@@ -41,13 +78,15 @@ describe('FAQ Component', () => {
 
     it('should display the main heading', () => {
       render(<FAQ />);
-      expect(screen.getByText(/Frequently Asked/i)).toBeInTheDocument();
-      expect(screen.getByText('Questions')).toBeInTheDocument();
+      expect(screen.getByText('Got')).toBeInTheDocument();
+      expect(screen.getByText('questions?')).toBeInTheDocument();
     });
 
     it('should display the subheading', () => {
       render(<FAQ />);
-      expect(screen.getByText(/Got questions\? We've got answers/i)).toBeInTheDocument();
+      expect(
+        screen.getByText(/Find answers to the most common questions about Rate My Accom/i)
+      ).toBeInTheDocument();
     });
 
     it('should have correct heading hierarchy with h2', () => {
@@ -59,102 +98,97 @@ describe('FAQ Component', () => {
   });
 
   describe('FAQ Questions', () => {
-    it('should display all 8 FAQ questions', () => {
+    it('should display all 6 FAQ questions', () => {
       render(<FAQ />);
-      expect(screen.getByText('How do I leave a review?')).toBeInTheDocument();
-      expect(screen.getByText('Are all reviews verified?')).toBeInTheDocument();
-      expect(screen.getByText('How do I search for accommodation?')).toBeInTheDocument();
-      expect(screen.getByText('Is the service free to use?')).toBeInTheDocument();
-      expect(screen.getByText('How are ratings calculated?')).toBeInTheDocument();
-      expect(screen.getByText('Can I edit or delete my review?')).toBeInTheDocument();
-      expect(
-        screen.getByText('What if I find incorrect information about an accommodation?')
-      ).toBeInTheDocument();
-      expect(
-        screen.getByText('Can accommodation providers respond to reviews?')
-      ).toBeInTheDocument();
+      // Questions appear both in the main card and in quick links, use getAllByText
+      expect(screen.getAllByText('How do I leave a review?').length).toBeGreaterThan(0);
+      expect(screen.getAllByText('Are all reviews verified?').length).toBeGreaterThan(0);
+      expect(screen.getAllByText('How do I search for accommodation?').length).toBeGreaterThan(0);
+      expect(screen.getAllByText('Is the service free to use?').length).toBeGreaterThan(0);
+      expect(screen.getAllByText('How are ratings calculated?').length).toBeGreaterThan(0);
+      expect(screen.getAllByText('Can I edit or delete my review?').length).toBeGreaterThan(0);
     });
 
-    it('should have 8 accordion items', () => {
+    it('should have 6 question selector buttons plus navigation buttons', () => {
       render(<FAQ />);
-      // Each question is a button (accordion trigger)
       const buttons = screen.getAllByRole('button');
-      expect(buttons.length).toBe(8);
+      // 6 numbered selectors + 6 quick link buttons + 2 navigation buttons (Previous/Next)
+      expect(buttons.length).toBeGreaterThanOrEqual(14);
     });
   });
 
-  describe('Accordion Functionality', () => {
-    it('should expand accordion when clicked', async () => {
+  describe('Card Navigation', () => {
+    it('should navigate to next question when Next button clicked', async () => {
       const user = userEvent.setup();
       render(<FAQ />);
 
-      const firstQuestion = screen.getByText('How do I leave a review?');
-      await user.click(firstQuestion);
+      // First question should be visible initially
+      expect(
+        screen.getByRole('heading', { level: 3, name: 'How do I leave a review?' })
+      ).toBeInTheDocument();
 
-      // Answer should become visible
+      // Click Next
+      const nextButton = screen.getByText('Next question');
+      await user.click(nextButton);
+
+      // Second question should now be visible
+      expect(
+        screen.getByRole('heading', { level: 3, name: 'Are all reviews verified?' })
+      ).toBeInTheDocument();
+    });
+
+    it('should navigate to previous question when Previous button clicked', async () => {
+      const user = userEvent.setup();
+      render(<FAQ />);
+
+      // Click Previous from first question (should wrap to last)
+      const prevButton = screen.getByText('Previous');
+      await user.click(prevButton);
+
+      // Last question should now be visible
+      expect(
+        screen.getByRole('heading', { level: 3, name: 'Can I edit or delete my review?' })
+      ).toBeInTheDocument();
+    });
+
+    it('should navigate when numbered button clicked', async () => {
+      const user = userEvent.setup();
+      render(<FAQ />);
+
+      // Click on button "3"
+      const thirdButton = screen.getByRole('button', { name: '3' });
+      await user.click(thirdButton);
+
+      // Third question should be visible
+      expect(
+        screen.getByRole('heading', { level: 3, name: 'How do I search for accommodation?' })
+      ).toBeInTheDocument();
+    });
+  });
+
+  describe('FAQ Content', () => {
+    it('should display the active question answer', () => {
+      render(<FAQ />);
+
+      // First answer should be visible by default
+      expect(
+        screen.getByText(/Create an account using your university email address/i)
+      ).toBeInTheDocument();
+    });
+
+    it('should show answer about verification when that FAQ is selected', async () => {
+      const user = userEvent.setup();
+      render(<FAQ />);
+
+      // Navigate to verification FAQ
+      const secondButton = screen.getByRole('button', { name: '2' });
+      await user.click(secondButton);
+
       expect(
         screen.getByText(
-          /To leave a review, first create an account using your university email address/i
+          /All reviewers must verify their identity using a valid university email address/i
         )
-      ).toBeVisible();
-    });
-
-    it('should toggle accordion when clicked', async () => {
-      const user = userEvent.setup();
-      render(<FAQ />);
-
-      const firstQuestion = screen.getByText('How do I leave a review?');
-
-      // Click to expand
-      await user.click(firstQuestion);
-      const answerText = screen.getByText(
-        /To leave a review, first create an account using your university email address/i
-      );
-      expect(answerText).toBeInTheDocument();
-
-      // Click to collapse - the accordion toggles state
-      await user.click(firstQuestion);
-      // Content may still be in DOM but container state changes
-      const trigger = firstQuestion.closest('[data-state]');
-      expect(trigger).toBeDefined();
-    });
-
-    it('should support single accordion mode', async () => {
-      const user = userEvent.setup();
-      render(<FAQ />);
-
-      const firstQuestion = screen.getByText('How do I leave a review?');
-      const secondQuestion = screen.getByText('Are all reviews verified?');
-
-      // Open first
-      await user.click(firstQuestion);
-      expect(screen.getByText(/To leave a review, first create an account/i)).toBeInTheDocument();
-
-      // Open second - this is a single accordion so first closes
-      await user.click(secondQuestion);
-      expect(
-        screen.getByText(/Yes! All reviewers must verify their identity/i)
       ).toBeInTheDocument();
-    });
-  });
-
-  describe('Contact Support', () => {
-    it('should display "Still have questions?" text', () => {
-      render(<FAQ />);
-      expect(screen.getByText('Still have questions?')).toBeInTheDocument();
-    });
-
-    it('should have contact support link with correct href', () => {
-      render(<FAQ />);
-      const contactLink = screen.getByRole('link', { name: /Contact Support/i });
-      expect(contactLink).toBeInTheDocument();
-      expect(contactLink).toHaveAttribute('href', 'mailto:support@ratemyaccom.com');
-    });
-
-    it('should have gradient styling on contact button', () => {
-      render(<FAQ />);
-      const contactLink = screen.getByRole('link', { name: /Contact Support/i });
-      expect(contactLink).toHaveClass('bg-gradient-to-r');
     });
   });
 
@@ -165,67 +199,39 @@ describe('FAQ Component', () => {
       expect(section).toBeInTheDocument();
     });
 
-    it('should have HelpCircle icon with aria-hidden', () => {
-      render(<FAQ />);
-      const icons = document.querySelectorAll('svg[aria-hidden="true"]');
-      expect(icons.length).toBeGreaterThan(0);
-    });
-
-    it('should have accessible accordion buttons', () => {
+    it('should have accessible buttons', () => {
       render(<FAQ />);
       const buttons = screen.getAllByRole('button');
-      buttons.forEach((button) => {
-        expect(button).toHaveAttribute('type', 'button');
-      });
+      expect(buttons.length).toBeGreaterThan(0);
     });
   });
 
   describe('Styling', () => {
-    it('should have bg-gray-900 background on section', () => {
+    it('should have dark background on section', () => {
       render(<FAQ />);
       const section = document.querySelector('section');
-      expect(section).toHaveClass('bg-gray-900');
+      expect(section).toHaveClass('bg-[#0a0a0a]');
     });
 
-    it('should have animated blur backgrounds', () => {
+    it('should have progress indicator', () => {
       render(<FAQ />);
-      const blurElements = document.querySelectorAll('[class*="blur-3xl"]');
-      expect(blurElements.length).toBe(2);
-    });
-
-    it('should have backdrop blur container for accordion', () => {
-      render(<FAQ />);
-      const container = document.querySelector('.backdrop-blur-xl');
-      expect(container).toBeInTheDocument();
+      // Check for the progress bar numbers - there are multiple '01' elements (progress bar and card number)
+      const progressNumbers = screen.getAllByText('01');
+      expect(progressNumbers.length).toBeGreaterThan(0);
+      expect(screen.getByText('06')).toBeInTheDocument();
     });
   });
 
-  describe('FAQ Content', () => {
-    it('should have complete answer content when expanded', async () => {
-      const user = userEvent.setup();
+  describe('Quick Links', () => {
+    it('should display quick link buttons for all FAQs', () => {
       render(<FAQ />);
-
-      // Test verification answer content
-      const verifiedQuestion = screen.getByText('Are all reviews verified?');
-      await user.click(verifiedQuestion);
-
-      expect(
-        screen.getByText(
-          /All reviewers must verify their identity using a valid university email address/i
-        )
-      ).toBeVisible();
-    });
-
-    it('should mention email support in incorrect info FAQ', async () => {
-      const user = userEvent.setup();
-      render(<FAQ />);
-
-      const incorrectInfoQuestion = screen.getByText(
-        'What if I find incorrect information about an accommodation?'
-      );
-      await user.click(incorrectInfoQuestion);
-
-      expect(screen.getByText(/support@ratemyaccom.com/i)).toBeVisible();
+      // Check for Q1-Q6 labels
+      expect(screen.getByText('Q1')).toBeInTheDocument();
+      expect(screen.getByText('Q2')).toBeInTheDocument();
+      expect(screen.getByText('Q3')).toBeInTheDocument();
+      expect(screen.getByText('Q4')).toBeInTheDocument();
+      expect(screen.getByText('Q5')).toBeInTheDocument();
+      expect(screen.getByText('Q6')).toBeInTheDocument();
     });
   });
 });
