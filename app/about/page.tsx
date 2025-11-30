@@ -2,8 +2,6 @@
 
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
 import {
   Home,
   Users,
@@ -15,9 +13,8 @@ import {
   ExternalLink,
   Code,
   Heart,
-  Sparkles,
   CheckCircle2,
-  ChevronDown,
+  ArrowRight,
 } from 'lucide-react';
 
 export default function AboutPage() {
@@ -61,435 +58,392 @@ export default function AboutPage() {
     { title: 'Accountability', desc: 'High standards for respectful, genuine reviews' },
   ];
 
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1,
-        delayChildren: 0.2,
-      },
-    },
-  };
-
-  const itemVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: {
-        duration: 0.5,
-        ease: [0.22, 1, 0.36, 1] as const,
-      },
-    },
-  };
-
-  const fadeInUp = {
-    hidden: { opacity: 0, y: 40 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: {
-        duration: 0.6,
-        ease: [0.22, 1, 0.36, 1] as const,
-      },
-    },
-  };
-
-  const scaleIn = {
-    hidden: { opacity: 0, scale: 0.9 },
-    visible: {
-      opacity: 1,
-      scale: 1,
-      transition: {
-        duration: 0.5,
-        ease: [0.22, 1, 0.36, 1] as const,
-      },
-    },
-  };
+  const stats = [
+    { value: '5', label: 'Universities' },
+    { value: '50+', label: 'Accommodations' },
+    { value: '100+', label: 'Reviews' },
+    { value: '6', label: 'Rating Categories' },
+  ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white scroll-smooth snap-y snap-mandatory overflow-y-scroll">
+    <div className="min-h-screen bg-[#FAFAFA]">
       {/* Hero Section */}
-      <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-br from-blue-50 via-indigo-50/50 to-teal-50/30 snap-start">
-        <div className="absolute inset-0 bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] [background-size:16px_16px] [mask-image:radial-gradient(ellipse_50%_50%_at_50%_50%,#000_70%,transparent_100%)]" />
-        <div className="absolute top-0 right-0 -translate-y-12 translate-x-12 w-[600px] h-[600px] bg-gradient-to-br from-blue-400/20 to-indigo-400/20 rounded-full blur-3xl" />
-        <div className="absolute bottom-0 left-0 translate-y-12 -translate-x-12 w-[500px] h-[500px] bg-gradient-to-tr from-teal-400/20 to-cyan-400/20 rounded-full blur-3xl" />
+      <section className="relative pt-32 pb-24 overflow-hidden">
+        {/* Subtle gradient background */}
+        <div className="absolute inset-0 bg-gradient-to-b from-purple-50/80 to-transparent" />
 
-        <div className="relative max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 text-center">
-          <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, margin: '-100px' }}
-            variants={containerVariants}
-            className="max-w-4xl mx-auto"
-          >
-            <motion.div
-              variants={itemVariants}
-              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-gradient-to-r from-blue-100 to-indigo-100 text-blue-700 text-sm font-semibold mb-8 shadow-sm"
-            >
-              <Sparkles className="h-4 w-4" />
-              Empowering Student Decisions
-            </motion.div>
+        {/* Decorative elements */}
+        <div className="absolute top-20 right-0 w-[500px] h-[500px] bg-purple-100/50 rounded-full blur-[120px] -translate-y-1/2" />
+        <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-violet-100/40 rounded-full blur-[100px] translate-y-1/2" />
 
-            <motion.h1
-              variants={itemVariants}
-              className="text-6xl md:text-8xl font-extrabold text-gray-900 mb-8 tracking-tight leading-none"
-            >
-              About{' '}
-              <span className="bg-gradient-to-r from-blue-600 via-indigo-600 to-teal-600 bg-clip-text text-transparent">
-                RateMyAccom
-              </span>
-            </motion.h1>
-
-            <motion.p
-              variants={itemVariants}
-              className="text-xl md:text-2xl text-gray-700 leading-relaxed mb-16 font-medium max-w-3xl mx-auto"
-            >
-              The trusted platform helping NSW university students find their perfect accommodation
-              through honest, verified reviews.
-            </motion.p>
-
-            <motion.div
-              variants={itemVariants}
-              className="grid grid-cols-3 gap-8 max-w-3xl mx-auto"
-            >
-              {[
-                { label: 'Universities', value: '5' },
-                { label: 'Accommodations', value: '15+' },
-                { label: 'Rating Categories', value: '6' },
-              ].map((stat, index) => (
-                <motion.div
-                  key={index}
-                  whileHover={{ scale: 1.05, y: -5 }}
-                  className="p-8 rounded-3xl bg-white/90 backdrop-blur-sm shadow-2xl border border-blue-100/50"
-                >
-                  <div className="text-4xl md:text-5xl font-black bg-gradient-to-br from-blue-600 to-teal-600 bg-clip-text text-transparent mb-3">
-                    {stat.value}
-                  </div>
-                  <div className="text-gray-700 font-semibold text-base">{stat.label}</div>
-                </motion.div>
-              ))}
-            </motion.div>
-          </motion.div>
-
+        <div className="relative max-w-6xl mx-auto px-6 sm:px-8 lg:px-12">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 1, duration: 0.6, repeat: Infinity, repeatType: 'reverse' }}
-            className="absolute bottom-12 left-1/2 -translate-x-1/2"
+            transition={{ duration: 0.6 }}
+            className="max-w-3xl"
           >
-            <ChevronDown className="h-10 w-10 text-blue-500/60" />
+            {/* Overline */}
+            <div className="flex items-center gap-3 mb-6">
+              <div className="h-px w-12 bg-purple-600" />
+              <span className="text-sm text-purple-600 font-medium tracking-wide">
+                About RateMyAccom
+              </span>
+            </div>
+
+            <h1 className="text-5xl sm:text-6xl lg:text-7xl font-semibold text-gray-900 leading-[1.1] tracking-tight mb-6">
+              Helping students find their <span className="text-purple-600">perfect home</span>
+            </h1>
+
+            <p className="text-xl text-gray-600 leading-relaxed max-w-2xl">
+              The trusted platform for NSW university students to discover honest, verified
+              accommodation reviews from peers who&apos;ve actually lived there.
+            </p>
+          </motion.div>
+
+          {/* Stats Row */}
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+            className="mt-16 grid grid-cols-2 md:grid-cols-4 gap-6"
+          >
+            {stats.map((stat, index) => (
+              <div
+                key={index}
+                className="relative p-6 rounded-2xl bg-white border border-gray-100 shadow-sm"
+              >
+                <div className="absolute top-0 left-0 w-1 h-full bg-purple-600 rounded-l-2xl" />
+                <p className="text-4xl font-semibold text-gray-900 mb-1">{stat.value}</p>
+                <p className="text-sm text-gray-500 font-medium">{stat.label}</p>
+              </div>
+            ))}
           </motion.div>
         </div>
       </section>
 
-      {/* Mission & Features Section */}
-      <section className="relative min-h-screen flex items-center justify-center bg-gradient-to-br from-white via-slate-50/50 to-blue-50/30 snap-start py-24">
-        <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12">
+      {/* Mission Section */}
+      <section className="py-24 bg-white border-y border-gray-100">
+        <div className="max-w-6xl mx-auto px-6 sm:px-8 lg:px-12">
+          <div className="grid lg:grid-cols-2 gap-16 items-center">
+            <motion.div
+              initial={{ opacity: 0, x: -30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6 }}
+            >
+              <span className="text-sm text-purple-600 font-medium tracking-wide uppercase">
+                Our Mission
+              </span>
+              <h2 className="text-4xl sm:text-5xl font-semibold text-gray-900 leading-tight mt-4 mb-6">
+                Empowering informed decisions
+              </h2>
+              <p className="text-lg text-gray-600 leading-relaxed mb-6">
+                Finding the right accommodation shapes your entire university experience. We created
+                RateMyAccom because students deserve honest, comprehensive reviews from peers
+                who&apos;ve actually lived there.
+              </p>
+              <p className="text-lg text-gray-600 leading-relaxed">
+                No marketing fluff. No paid placements. Just genuine student experiences to help you
+                make confident housing decisions.
+              </p>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, x: 30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6 }}
+              className="relative"
+            >
+              {/* Decorative card stack */}
+              <div className="relative">
+                <div className="absolute -top-4 -left-4 w-full h-full bg-purple-100 rounded-3xl" />
+                <div className="absolute -top-2 -left-2 w-full h-full bg-purple-50 rounded-3xl" />
+                <div className="relative p-10 bg-white rounded-3xl border border-gray-100 shadow-lg">
+                  <div className="flex items-center gap-4 mb-8">
+                    <div className="w-14 h-14 rounded-2xl bg-purple-600 flex items-center justify-center">
+                      <Star className="w-7 h-7 text-white" />
+                    </div>
+                    <div>
+                      <p className="text-2xl font-semibold text-gray-900">4.8/5</p>
+                      <p className="text-sm text-gray-500">Average satisfaction</p>
+                    </div>
+                  </div>
+                  <div className="space-y-4">
+                    {['Verified reviews only', 'Multi-criteria ratings', 'Real student photos'].map(
+                      (item, i) => (
+                        <div key={i} className="flex items-center gap-3">
+                          <CheckCircle2 className="w-5 h-5 text-purple-600" />
+                          <span className="text-gray-700">{item}</span>
+                        </div>
+                      )
+                    )}
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
+      {/* Features Grid */}
+      <section className="py-24">
+        <div className="max-w-6xl mx-auto px-6 sm:px-8 lg:px-12">
           <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, margin: '-100px' }}
-            variants={fadeInUp}
-            className="max-w-4xl mx-auto text-center mb-20"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            className="text-center mb-16"
           >
-            <h2 className="text-5xl md:text-6xl font-extrabold text-gray-900 mb-8 leading-tight">
-              Our Mission
+            <span className="text-sm text-purple-600 font-medium tracking-wide uppercase">
+              Features
+            </span>
+            <h2 className="text-4xl sm:text-5xl font-semibold text-gray-900 leading-tight mt-4">
+              Everything you need
             </h2>
-            <p className="text-xl md:text-2xl text-gray-700 leading-relaxed font-medium">
-              Finding the right accommodation shapes your entire university experience. We created
-              RateMyAccom because students deserve honest, comprehensive reviews from peers
-              who&apos;ve actually lived there.
-            </p>
           </motion.div>
 
-          <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, margin: '-100px' }}
-            variants={containerVariants}
-            className="grid md:grid-cols-2 lg:grid-cols-3 gap-10"
-          >
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {features.map((feature, index) => (
               <motion.div
                 key={index}
-                variants={itemVariants}
-                whileHover={{ y: -12, transition: { duration: 0.3 } }}
-                className="group"
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: index * 0.1 }}
+                className="group p-8 rounded-2xl bg-white border border-gray-100 hover:border-purple-200 hover:shadow-lg transition-all duration-300"
               >
-                <div className="flex flex-col items-start p-8 rounded-3xl bg-white shadow-xl hover:shadow-2xl transition-all border border-gray-100">
-                  <motion.div
-                    whileHover={{ scale: 1.15, rotate: 5 }}
-                    className="mb-6 p-4 rounded-2xl bg-gradient-to-br from-blue-500 via-indigo-500 to-teal-500 text-white shadow-lg"
-                  >
-                    <feature.icon className="h-7 w-7" />
-                  </motion.div>
-                  <h3 className="text-2xl font-bold text-gray-900 mb-3">{feature.title}</h3>
-                  <p className="text-gray-600 text-base leading-relaxed">{feature.description}</p>
+                <div className="w-12 h-12 rounded-xl bg-purple-50 group-hover:bg-purple-100 flex items-center justify-center mb-5 transition-colors">
+                  <feature.icon className="w-6 h-6 text-purple-600" />
                 </div>
+                <h3 className="text-xl font-semibold text-gray-900 mb-2">{feature.title}</h3>
+                <p className="text-gray-600 leading-relaxed">{feature.description}</p>
               </motion.div>
             ))}
-          </motion.div>
+          </div>
         </div>
       </section>
 
       {/* Values Section */}
-      <section className="relative min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-50 via-blue-50/50 to-slate-50 snap-start py-24">
-        <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12">
+      <section className="py-24 bg-gradient-to-b from-purple-50/50 to-white">
+        <div className="max-w-6xl mx-auto px-6 sm:px-8 lg:px-12">
           <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, margin: '-100px' }}
-            variants={fadeInUp}
-            className="text-center mb-20"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            className="text-center mb-16"
           >
-            <h2 className="text-5xl md:text-6xl font-extrabold text-gray-900 mb-6 leading-tight">
+            <span className="text-sm text-purple-600 font-medium tracking-wide uppercase">
               Our Values
+            </span>
+            <h2 className="text-4xl sm:text-5xl font-semibold text-gray-900 leading-tight mt-4">
+              Principles we live by
             </h2>
-            <p className="text-xl md:text-2xl text-gray-700 font-medium">
-              Principles that guide everything we do
-            </p>
           </motion.div>
 
-          <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, margin: '-100px' }}
-            variants={containerVariants}
-            className="grid md:grid-cols-2 gap-10 max-w-5xl mx-auto"
-          >
+          <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
             {values.map((value, index) => (
               <motion.div
                 key={index}
-                variants={itemVariants}
-                whileHover={{ x: 10, scale: 1.02 }}
-                className="flex gap-6 p-8 rounded-3xl bg-white shadow-xl hover:shadow-2xl transition-all border border-gray-100"
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: index * 0.1 }}
+                className="flex gap-5 p-8 rounded-2xl bg-white border border-gray-100 shadow-sm"
               >
-                <div className="flex-shrink-0 mt-1">
-                  <CheckCircle2 className="h-8 w-8 text-blue-600" />
+                <div className="flex-shrink-0">
+                  <div className="w-10 h-10 rounded-full bg-purple-600 flex items-center justify-center">
+                    <CheckCircle2 className="w-5 h-5 text-white" />
+                  </div>
                 </div>
                 <div>
-                  <h3 className="text-2xl font-bold text-gray-900 mb-3">{value.title}</h3>
-                  <p className="text-gray-600 text-base leading-relaxed">{value.desc}</p>
+                  <h3 className="text-xl font-semibold text-gray-900 mb-2">{value.title}</h3>
+                  <p className="text-gray-600 leading-relaxed">{value.desc}</p>
                 </div>
               </motion.div>
             ))}
-          </motion.div>
+          </div>
         </div>
       </section>
 
       {/* Developer Section */}
-      <section className="relative min-h-screen flex items-center justify-center bg-gradient-to-br from-white to-slate-50 snap-start py-24">
-        <div className="max-w-5xl mx-auto px-6 sm:px-8 lg:px-12">
+      <section className="py-24 bg-white border-t border-gray-100">
+        <div className="max-w-4xl mx-auto px-6 sm:px-8 lg:px-12">
           <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, margin: '-100px' }}
-            variants={fadeInUp}
-            className="text-center mb-16"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            className="text-center mb-12"
           >
-            <h2 className="text-5xl md:text-6xl font-extrabold text-gray-900 mb-6 leading-tight">
-              Meet the Developer
+            <span className="text-sm text-purple-600 font-medium tracking-wide uppercase">
+              The Developer
+            </span>
+            <h2 className="text-4xl sm:text-5xl font-semibold text-gray-900 leading-tight mt-4">
+              Built with passion
             </h2>
-            <p className="text-xl md:text-2xl text-gray-700 font-medium">
-              Built with passion by a fellow student
-            </p>
           </motion.div>
 
           <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, margin: '-100px' }}
-            variants={scaleIn}
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            className="relative p-10 rounded-3xl bg-gradient-to-br from-purple-50 to-violet-50 border border-purple-100"
           >
-            <Card className="p-10 md:p-14 border-0 shadow-2xl bg-gradient-to-br from-white via-blue-50/30 to-indigo-50/30 rounded-3xl">
-              <div className="flex flex-col md:flex-row items-center gap-10">
-                <motion.div whileHover={{ scale: 1.1, rotate: 5 }} className="flex-shrink-0">
-                  <div className="w-40 h-40 rounded-full bg-gradient-to-br from-blue-500 via-indigo-500 to-teal-500 flex items-center justify-center text-white text-5xl font-black shadow-2xl">
-                    MD
-                  </div>
-                </motion.div>
-                <div className="flex-1 text-center md:text-left">
-                  <h3 className="text-4xl font-extrabold text-gray-900 mb-4">Melvin DY</h3>
-                  <p className="text-gray-700 mb-8 leading-relaxed text-xl font-medium">
-                    Full-stack developer and university student passionate about building tools that
-                    make student life better. RateMyAccom combines my technical skills with
-                    firsthand understanding of accommodation challenges students face.
-                  </p>
-                  <motion.a
-                    href="https://melvindy.vercel.app/"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    className="inline-flex items-center gap-3 px-10 py-5 rounded-2xl bg-gradient-to-r from-blue-600 via-indigo-600 to-teal-600 text-white font-bold shadow-xl hover:shadow-2xl transition-all text-lg"
-                  >
-                    View Portfolio
-                    <ExternalLink className="h-6 w-6" />
-                  </motion.a>
+            <div className="flex flex-col md:flex-row items-center gap-8">
+              <div className="flex-shrink-0">
+                <div className="w-28 h-28 rounded-full bg-gradient-to-br from-purple-600 to-violet-600 flex items-center justify-center text-white text-4xl font-bold shadow-xl">
+                  MD
                 </div>
               </div>
-            </Card>
+              <div className="flex-1 text-center md:text-left">
+                <h3 className="text-3xl font-semibold text-gray-900 mb-3">Melvin DY</h3>
+                <p className="text-gray-600 leading-relaxed mb-6">
+                  Full-stack developer and university student passionate about building tools that
+                  make student life better. RateMyAccom combines technical skills with firsthand
+                  understanding of accommodation challenges students face.
+                </p>
+                <a
+                  href="https://melvindy.vercel.app/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-purple-600 text-white font-medium hover:bg-purple-700 transition-colors"
+                >
+                  View Portfolio
+                  <ExternalLink className="w-4 h-4" />
+                </a>
+              </div>
+            </div>
           </motion.div>
         </div>
       </section>
 
       {/* Open Source Section */}
-      <section className="relative min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 via-indigo-900 to-blue-900 text-white snap-start py-24">
-        <div className="max-w-5xl mx-auto px-6 sm:px-8 lg:px-12">
-          <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, margin: '-100px' }}
-            variants={fadeInUp}
-            className="text-center mb-16"
-          >
-            <div className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-white/10 backdrop-blur-sm text-white text-sm font-semibold mb-8 shadow-lg">
-              <Code className="h-4 w-4" />
-              Open Source
-            </div>
-            <h2 className="text-5xl md:text-6xl font-extrabold mb-6 leading-tight">
-              Contribute to RateMyAccom
-            </h2>
-            <p className="text-xl md:text-2xl text-blue-100 font-medium">
-              Built in the open. Join us in making accommodation search better for students
-              everywhere.
-            </p>
-          </motion.div>
-
-          <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, margin: '-100px' }}
-            variants={containerVariants}
-            className="grid md:grid-cols-2 gap-10 mb-16"
-          >
-            <motion.div variants={itemVariants} whileHover={{ scale: 1.03, y: -5 }}>
-              <Card className="p-8 bg-white/5 backdrop-blur-md border-white/10 h-full rounded-3xl shadow-2xl">
-                <Github className="h-10 w-10 mb-5 text-blue-300" />
-                <h3 className="text-2xl font-bold mb-4">Open Source Project</h3>
-                <p className="text-blue-100 mb-6 leading-relaxed text-base">
-                  RateMyAccom is open source and welcomes contributions. Whether you&apos;re fixing
-                  bugs, adding features, or improving documentation—every contribution helps.
-                </p>
-                <div className="flex flex-wrap gap-3">
-                  {['Next.js', 'TypeScript', 'Prisma', 'PostgreSQL'].map((tech) => (
-                    <motion.span
-                      key={tech}
-                      whileHover={{ scale: 1.1 }}
-                      className="px-4 py-2 rounded-full bg-blue-500/20 backdrop-blur-sm text-blue-100 text-sm font-semibold"
-                    >
-                      {tech}
-                    </motion.span>
-                  ))}
-                </div>
-              </Card>
+      <section className="py-24 bg-gray-900">
+        <div className="max-w-6xl mx-auto px-6 sm:px-8 lg:px-12">
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
+            <motion.div
+              initial={{ opacity: 0, x: -30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6 }}
+            >
+              <div className="flex items-center gap-3 mb-6">
+                <Code className="w-5 h-5 text-purple-400" />
+                <span className="text-sm text-purple-400 font-medium tracking-wide uppercase">
+                  Open Source
+                </span>
+              </div>
+              <h2 className="text-4xl sm:text-5xl font-semibold text-white leading-tight mb-6">
+                Contribute to RateMyAccom
+              </h2>
+              <p className="text-lg text-gray-400 leading-relaxed mb-8">
+                Built in the open. Join us in making accommodation search better for students
+                everywhere.
+              </p>
+              <div className="flex flex-wrap gap-3 mb-8">
+                {['Next.js', 'TypeScript', 'Prisma', 'PostgreSQL'].map((tech) => (
+                  <span
+                    key={tech}
+                    className="px-4 py-2 rounded-full bg-white/10 text-white text-sm font-medium"
+                  >
+                    {tech}
+                  </span>
+                ))}
+              </div>
+              <a
+                href="https://github.com/MelvinDY/ratemyaccom"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-white text-gray-900 font-medium hover:bg-gray-100 transition-colors"
+              >
+                <Github className="w-5 h-5" />
+                View on GitHub
+              </a>
             </motion.div>
 
-            <motion.div variants={itemVariants} whileHover={{ scale: 1.03, y: -5 }}>
-              <Card className="p-8 bg-white/5 backdrop-blur-md border-white/10 h-full rounded-3xl shadow-2xl">
-                <Heart className="h-10 w-10 mb-5 text-pink-300" />
-                <h3 className="text-2xl font-bold mb-4">Ways to Contribute</h3>
-                <ul className="space-y-3 text-blue-100">
+            <motion.div
+              initial={{ opacity: 0, x: 30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6 }}
+              className="space-y-4"
+            >
+              <div className="p-6 rounded-2xl bg-white/5 border border-white/10">
+                <Heart className="w-8 h-8 text-pink-400 mb-4" />
+                <h3 className="text-xl font-semibold text-white mb-3">Ways to Contribute</h3>
+                <ul className="space-y-3 text-gray-400">
                   {[
                     'Report bugs and suggest features',
                     'Submit pull requests with improvements',
                     'Improve documentation',
                     'Share feedback and ideas',
                   ].map((item) => (
-                    <li key={item} className="flex items-center gap-3 text-base">
-                      <CheckCircle2 className="h-6 w-6 text-green-400 flex-shrink-0" />
+                    <li key={item} className="flex items-center gap-3">
+                      <CheckCircle2 className="w-5 h-5 text-green-400 flex-shrink-0" />
                       {item}
                     </li>
                   ))}
                 </ul>
-              </Card>
+              </div>
             </motion.div>
-          </motion.div>
-
-          <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, margin: '-100px' }}
-            variants={scaleIn}
-            className="text-center"
-          >
-            <motion.a
-              href="https://github.com/MelvinDY/ratemyaccom"
-              target="_blank"
-              rel="noopener noreferrer"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className="inline-flex items-center gap-3 px-10 py-5 rounded-2xl bg-white text-gray-900 font-bold shadow-2xl hover:shadow-3xl transition-all text-lg"
-            >
-              <Github className="h-6 w-6" />
-              View on GitHub
-            </motion.a>
-          </motion.div>
+          </div>
         </div>
       </section>
 
       {/* CTA Section */}
-      <section className="relative min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/30 snap-start py-24">
-        <div className="max-w-5xl mx-auto px-6 sm:px-8 lg:px-12 text-center">
+      <section className="py-24 bg-white">
+        <div className="max-w-4xl mx-auto px-6 sm:px-8 lg:px-12 text-center">
           <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, margin: '-100px' }}
-            variants={containerVariants}
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
           >
-            <motion.h2
-              variants={itemVariants}
-              className="text-5xl md:text-6xl font-extrabold text-gray-900 mb-6 leading-tight"
-            >
-              Ready to Find Your Perfect Home?
-            </motion.h2>
-            <motion.p
-              variants={itemVariants}
-              className="text-xl md:text-2xl text-gray-700 mb-12 font-medium"
-            >
-              Join NSW students making informed accommodation decisions.
-            </motion.p>
-            <motion.div
-              variants={itemVariants}
-              className="flex flex-col sm:flex-row gap-6 justify-center"
-            >
+            <h2 className="text-4xl sm:text-5xl font-semibold text-gray-900 leading-tight mb-6">
+              Ready to find your perfect home?
+            </h2>
+            <p className="text-xl text-gray-600 mb-10 max-w-2xl mx-auto">
+              Join thousands of NSW students making informed accommodation decisions.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Link href="/browse">
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  className="inline-flex items-center gap-2 px-8 py-4 rounded-full bg-purple-600 text-white font-medium hover:bg-purple-700 transition-colors"
+                >
+                  Browse Accommodations
+                  <ArrowRight className="w-5 h-5" />
+                </motion.button>
+              </Link>
               <Link href="/register">
-                <motion.div whileHover={{ scale: 1.05, y: -3 }} whileTap={{ scale: 0.95 }}>
-                  <Button
-                    size="lg"
-                    className="bg-gradient-to-r from-blue-600 via-indigo-600 to-teal-600 hover:opacity-90 text-white px-12 py-7 text-xl font-bold shadow-2xl hover:shadow-3xl rounded-2xl"
-                  >
-                    Get Started
-                  </Button>
-                </motion.div>
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  className="inline-flex items-center gap-2 px-8 py-4 rounded-full bg-white text-gray-900 font-medium border-2 border-gray-200 hover:border-purple-200 hover:bg-purple-50 transition-all"
+                >
+                  Create Account
+                </motion.button>
               </Link>
-              <Link href="/">
-                <motion.div whileHover={{ scale: 1.05, y: -3 }} whileTap={{ scale: 0.95 }}>
-                  <Button
-                    size="lg"
-                    variant="outline"
-                    className="border-2 border-blue-600 text-blue-600 hover:bg-blue-50 px-12 py-7 text-xl font-bold shadow-xl hover:shadow-2xl rounded-2xl"
-                  >
-                    Browse Reviews
-                  </Button>
-                </motion.div>
-              </Link>
-            </motion.div>
+            </div>
           </motion.div>
 
           <motion.div
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
-            transition={{ delay: 0.5 }}
-            className="mt-20 pt-16 border-t border-gray-200"
+            transition={{ delay: 0.3 }}
+            className="mt-16 pt-12 border-t border-gray-100"
           >
-            <p className="text-gray-700 mb-3 text-lg font-medium">Have questions or feedback?</p>
+            <p className="text-gray-500 mb-2">Have questions?</p>
             <a
               href="mailto:support@ratemyaccom.com.au"
-              className="text-blue-600 hover:text-indigo-700 font-bold transition-colors text-lg"
+              className="text-purple-600 hover:text-purple-700 font-medium transition-colors"
             >
               support@ratemyaccom.com.au
             </a>
