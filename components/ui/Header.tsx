@@ -26,6 +26,10 @@ export default function Header() {
   const lastScrollY = useRef(0);
   const { user, isAuthenticated, logout } = useAuth();
 
+  // Pages where header should always be visible (not hide on scroll)
+  const alwaysVisiblePages = ['/about', '/support'];
+  const shouldHideOnScroll = !alwaysVisiblePages.some((page) => pathname?.startsWith(page));
+
   // Hide header on scroll down, show on scroll up, track scrolled state
   useEffect(() => {
     const handleScroll = () => {
@@ -34,8 +38,13 @@ export default function Header() {
       // Track if scrolled past threshold for background
       setScrolled(currentScrollY > 20);
 
-      if (currentScrollY > lastScrollY.current && currentScrollY > 80) {
-        setHidden(true);
+      // Only hide on scroll for certain pages
+      if (shouldHideOnScroll) {
+        if (currentScrollY > lastScrollY.current && currentScrollY > 80) {
+          setHidden(true);
+        } else {
+          setHidden(false);
+        }
       } else {
         setHidden(false);
       }
@@ -44,7 +53,7 @@ export default function Header() {
     };
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  }, [shouldHideOnScroll]);
 
   // Handle click outside to close user menu
   useEffect(() => {
