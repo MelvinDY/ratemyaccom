@@ -6,8 +6,6 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Separator } from '@/components/ui/separator';
 import { QuizPreferences, RecommendationScore } from '@/types';
 import api from '@/lib/api/client';
 import {
@@ -28,6 +26,7 @@ import {
   Target,
   TrendingUp,
   Clock,
+  ArrowUpRight,
 } from 'lucide-react';
 
 interface RecommendationResponse {
@@ -93,31 +92,39 @@ export default function QuizResultsPage() {
     router.push('/quiz');
   };
 
-  const getRankIcon = (index: number) => {
+  const getRankBadge = (index: number) => {
     switch (index) {
       case 0:
-        return <Star className="w-5 h-5 text-purple-400 fill-purple-400" />;
-      case 1:
-        return <Star className="w-5 h-5 text-purple-300" />;
-      case 2:
-        return <Star className="w-5 h-5 text-purple-200" />;
-      default:
         return (
-          <span className="w-5 h-5 flex items-center justify-center text-zinc-500 font-medium text-sm">
-            #{index + 1}
+          <span className="px-4 py-2 rounded-full bg-gradient-to-r from-purple-500 to-violet-500 text-white text-[10px] font-medium uppercase tracking-[0.15em] shadow-lg shadow-purple-500/30">
+            Top Pick
           </span>
         );
+      case 1:
+        return (
+          <span className="px-4 py-2 rounded-full bg-white/10 backdrop-blur-md text-white text-[10px] font-medium uppercase tracking-[0.15em] border border-white/20">
+            Runner Up
+          </span>
+        );
+      case 2:
+        return (
+          <span className="px-4 py-2 rounded-full bg-white/10 backdrop-blur-md text-white text-[10px] font-medium uppercase tracking-[0.15em] border border-white/20">
+            3rd Place
+          </span>
+        );
+      default:
+        return null;
     }
   };
 
   const getScoreColor = (score: number) => {
     if (score >= 80) {
-      return 'bg-purple-500';
+      return 'from-purple-500 to-violet-500';
     }
     if (score >= 60) {
-      return 'bg-purple-600';
+      return 'from-purple-600 to-purple-500';
     }
-    return 'bg-purple-700';
+    return 'from-purple-700 to-purple-600';
   };
 
   const getScoreLabel = (score: number) => {
@@ -141,19 +148,34 @@ export default function QuizResultsPage() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-black flex items-center justify-center">
-        <div className="text-center">
-          <div className="relative w-20 h-20 mx-auto mb-6">
-            <div
-              className="absolute inset-0 rounded-full border-2 border-purple-500/30 animate-spin"
-              style={{ animationDuration: '3s' }}
+      <div className="relative min-h-screen bg-[#0a0a0a] overflow-hidden flex items-center justify-center">
+        {/* Background elements */}
+        <div className="absolute top-0 right-0 w-1/2 h-full bg-gradient-to-l from-purple-500/[0.07] to-transparent" />
+        <div className="absolute bottom-0 left-0 w-full h-1/2 bg-gradient-to-t from-purple-900/10 to-transparent" />
+
+        <motion.div
+          className="absolute top-20 right-20 w-72 h-72 rounded-full bg-purple-500/20 blur-[100px]"
+          animate={{ y: [0, -30, 0], scale: [1, 1.1, 1] }}
+          transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' }}
+        />
+
+        <div className="relative z-10 text-center">
+          <motion.div
+            initial={{ scale: 0.8, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            className="relative w-24 h-24 mx-auto mb-8"
+          >
+            <motion.div
+              className="absolute inset-0 rounded-full border-2 border-purple-500/30"
+              animate={{ rotate: 360 }}
+              transition={{ duration: 3, repeat: Infinity, ease: 'linear' }}
             >
               <div className="absolute top-0 left-1/2 -translate-x-1/2 w-2 h-2 rounded-full bg-purple-500" />
-            </div>
-            <Sparkles className="absolute inset-0 m-auto w-8 h-8 text-purple-500 animate-pulse" />
-          </div>
-          <h2 className="text-xl font-medium text-white mb-2">Finding Your Perfect Match</h2>
-          <p className="text-zinc-500 text-sm">
+            </motion.div>
+            <Sparkles className="absolute inset-0 m-auto w-10 h-10 text-purple-400 animate-pulse" />
+          </motion.div>
+          <h2 className="text-2xl font-extralight text-white mb-3">Finding Your Perfect Match</h2>
+          <p className="text-neutral-500 text-sm font-light">
             Analyzing accommodations based on your preferences...
           </p>
         </div>
@@ -163,16 +185,22 @@ export default function QuizResultsPage() {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-black flex items-center justify-center">
-        <div className="text-center max-w-md mx-auto px-4">
-          <div className="w-14 h-14 rounded-full bg-zinc-900 border border-zinc-800 flex items-center justify-center mx-auto mb-4">
-            <AlertTriangle className="w-6 h-6 text-purple-400" />
-          </div>
-          <h2 className="text-xl font-medium text-white mb-2">Something went wrong</h2>
-          <p className="text-zinc-500 text-sm mb-6">{error}</p>
+      <div className="relative min-h-screen bg-[#0a0a0a] overflow-hidden flex items-center justify-center">
+        <div className="absolute top-0 right-0 w-1/2 h-full bg-gradient-to-l from-purple-500/[0.07] to-transparent" />
+
+        <div className="relative z-10 text-center max-w-md mx-auto px-4">
+          <motion.div
+            initial={{ scale: 0.8, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            className="w-20 h-20 rounded-3xl bg-gradient-to-br from-white/[0.06] to-white/[0.02] border border-white/[0.08] flex items-center justify-center mx-auto mb-6"
+          >
+            <AlertTriangle className="w-8 h-8 text-purple-400" />
+          </motion.div>
+          <h2 className="text-2xl font-extralight text-white mb-3">Something went wrong</h2>
+          <p className="text-neutral-500 text-sm font-light mb-8">{error}</p>
           <Button
             onClick={handleRetakeQuiz}
-            className="bg-purple-600 hover:bg-purple-700 text-white"
+            className="px-8 py-3 rounded-full bg-gradient-to-r from-purple-500 to-violet-500 text-white hover:opacity-90 transition-all duration-300 font-light"
           >
             <RefreshCw className="w-4 h-4 mr-2" />
             Try Again
@@ -190,379 +218,488 @@ export default function QuizResultsPage() {
       : 0;
 
   return (
-    <div className="min-h-screen bg-black">
-      {/* Header */}
-      <div className="border-b border-zinc-800">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          {/* Back Link */}
-          <Link
-            href="/quiz"
-            className="inline-flex items-center text-zinc-500 hover:text-zinc-300 transition-colors mb-8 text-sm"
-          >
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            Back to Quiz
-          </Link>
+    <div className="relative min-h-screen bg-[#0a0a0a] overflow-hidden">
+      {/* Decorative background elements */}
+      <div className="absolute top-0 right-0 w-1/2 h-full bg-gradient-to-l from-purple-500/[0.07] to-transparent" />
+      <div className="absolute bottom-0 left-0 w-full h-1/2 bg-gradient-to-t from-purple-900/10 to-transparent" />
 
-          {/* Hero Section */}
-          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6 mb-10">
-            <div>
-              <div className="flex items-center gap-3 mb-2">
-                <div className="p-2 rounded-lg bg-purple-500/10 border border-purple-500/20">
-                  <Sparkles className="w-5 h-5 text-purple-400" />
-                </div>
-                <h1 className="text-2xl font-semibold text-white">Your Perfect Matches</h1>
-              </div>
-              <p className="text-zinc-500 text-sm">
-                Personalized recommendations based on your preferences
-              </p>
-            </div>
+      {/* Floating orbs */}
+      <motion.div
+        className="absolute top-20 right-20 w-72 h-72 rounded-full bg-purple-500/20 blur-[100px]"
+        animate={{ y: [0, -30, 0], scale: [1, 1.1, 1] }}
+        transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' }}
+      />
+      <motion.div
+        className="absolute bottom-40 left-20 w-96 h-96 rounded-full bg-violet-600/10 blur-[120px]"
+        animate={{ y: [0, 20, 0], scale: [1.1, 1, 1.1] }}
+        transition={{ duration: 10, repeat: Infinity, ease: 'easeInOut' }}
+      />
 
-            <Button
-              onClick={handleRetakeQuiz}
-              variant="outline"
-              className="bg-transparent border-zinc-800 text-zinc-400 hover:bg-zinc-900 hover:text-white hover:border-zinc-700"
+      {/* Main content */}
+      <div className="relative z-10 min-h-screen">
+        {/* Header */}
+        <div className="border-b border-white/[0.06]">
+          <div className="max-w-6xl mx-auto px-6 sm:px-12 lg:px-20 py-8">
+            {/* Back Link */}
+            <Link
+              href="/quiz"
+              className="inline-flex items-center gap-2 text-neutral-500 hover:text-white transition-colors mb-10"
             >
-              <RefreshCw className="w-4 h-4 mr-2" />
-              Retake Quiz
-            </Button>
-          </div>
+              <ArrowLeft className="w-4 h-4" />
+              <span className="text-xs uppercase tracking-widest">Back to Quiz</span>
+            </Link>
 
-          {/* Statistics */}
-          <div className="grid grid-cols-3 gap-4 mb-10">
-            <div className="bg-zinc-900/50 border border-zinc-800 rounded-xl p-4">
-              <div className="flex items-center gap-3">
-                <div className="p-2 rounded-lg bg-purple-500/10">
-                  <Home className="w-4 h-4 text-purple-400" />
+            {/* Hero Section */}
+            <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-8 mb-12">
+              <div>
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="h-px w-8 bg-purple-500" />
+                  <span className="text-xs text-purple-400 uppercase tracking-[0.3em]">
+                    Results
+                  </span>
                 </div>
-                <div>
-                  <p className="text-2xl font-semibold text-white">{totalMatches}</p>
-                  <p className="text-zinc-500 text-xs">Total Matches</p>
-                </div>
+                <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extralight text-white mb-4">
+                  Your{' '}
+                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-violet-400">
+                    Perfect
+                  </span>{' '}
+                  Matches
+                </h1>
+                <p className="text-neutral-400 font-light max-w-md">
+                  Personalized recommendations based on your preferences
+                </p>
               </div>
+
+              <Button
+                onClick={handleRetakeQuiz}
+                variant="outline"
+                className="px-6 py-3 rounded-full bg-transparent border border-neutral-700 text-white hover:border-neutral-500 hover:bg-white/5 transition-all duration-300 font-light self-start lg:self-auto"
+              >
+                <RefreshCw className="w-4 h-4 mr-2" />
+                Retake Quiz
+              </Button>
             </div>
 
-            <div className="bg-zinc-900/50 border border-zinc-800 rounded-xl p-4">
-              <div className="flex items-center gap-3">
-                <div className="p-2 rounded-lg bg-purple-500/10">
-                  <TrendingUp className="w-4 h-4 text-purple-400" />
-                </div>
-                <div>
-                  <p className="text-2xl font-semibold text-white">{excellentMatches}</p>
-                  <p className="text-zinc-500 text-xs">Excellent Matches</p>
-                </div>
-              </div>
-            </div>
-
-            <div className="bg-zinc-900/50 border border-zinc-800 rounded-xl p-4">
-              <div className="flex items-center gap-3">
-                <div className="p-2 rounded-lg bg-purple-500/10">
-                  <Star className="w-4 h-4 text-purple-400" />
-                </div>
-                <div>
-                  <p className="text-2xl font-semibold text-white">{averageScore}%</p>
-                  <p className="text-zinc-500 text-xs">Avg. Score</p>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Preference Summary */}
-          {preferences && (
-            <div className="bg-zinc-900/30 border border-zinc-800 rounded-xl p-6">
-              <div className="flex items-center gap-2 mb-4">
-                <Target className="w-4 h-4 text-purple-400" />
-                <h3 className="text-sm font-medium text-white">Your Preferences</h3>
-              </div>
-              <Separator className="mb-4 bg-zinc-800" />
-
-              <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-                {/* University */}
-                <div>
-                  <p className="text-zinc-600 text-xs uppercase tracking-wider mb-2">University</p>
-                  <Badge className="bg-purple-500/10 text-purple-400 border border-purple-500/20 hover:bg-purple-500/20">
-                    <Building2 className="w-3 h-3 mr-1.5" />
-                    {preferences.university}
-                  </Badge>
-                </div>
-
-                {/* Budget */}
-                <div>
-                  <p className="text-zinc-600 text-xs uppercase tracking-wider mb-2">Budget</p>
-                  <Badge className="bg-purple-500/10 text-purple-400 border border-purple-500/20 hover:bg-purple-500/20">
-                    <Wallet className="w-3 h-3 mr-1.5" />${preferences.budgetMin}-$
-                    {preferences.budgetMax}
-                  </Badge>
-                </div>
-
-                {/* Accommodation Types */}
-                {preferences.accommodationType.length > 0 && (
-                  <div>
-                    <p className="text-zinc-600 text-xs uppercase tracking-wider mb-2">Type</p>
-                    <div className="flex flex-wrap gap-1">
-                      {preferences.accommodationType.map((type) => (
-                        <Badge
-                          key={type}
-                          className="bg-purple-500/10 text-purple-400 border border-purple-500/20 hover:bg-purple-500/20 text-xs"
-                        >
-                          {type}
-                        </Badge>
-                      ))}
-                    </div>
+            {/* Statistics */}
+            <div className="grid grid-cols-3 gap-4 mb-12">
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.1 }}
+                className="p-6 rounded-3xl bg-gradient-to-br from-white/[0.06] to-white/[0.02] border border-white/[0.08]"
+              >
+                <div className="flex items-center gap-3">
+                  <div className="w-12 h-12 rounded-2xl bg-purple-500/20 flex items-center justify-center">
+                    <Home className="w-5 h-5 text-purple-400" />
                   </div>
-                )}
-
-                {/* Room Type */}
-                {preferences.roomType && (
                   <div>
-                    <p className="text-zinc-600 text-xs uppercase tracking-wider mb-2">Room</p>
-                    <Badge className="bg-purple-500/10 text-purple-400 border border-purple-500/20 hover:bg-purple-500/20">
-                      <Bed className="w-3 h-3 mr-1.5" />
-                      {preferences.roomType}
-                    </Badge>
+                    <p className="text-3xl font-extralight text-white">{totalMatches}</p>
+                    <p className="text-neutral-500 text-xs uppercase tracking-widest">
+                      Total Matches
+                    </p>
                   </div>
-                )}
+                </div>
+              </motion.div>
 
-                {/* Priority Factors */}
-                {preferences.priorityFactors &&
-                  Object.keys(preferences.priorityFactors).length > 0 && (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.2 }}
+                className="p-6 rounded-3xl bg-gradient-to-br from-white/[0.06] to-white/[0.02] border border-white/[0.08]"
+              >
+                <div className="flex items-center gap-3">
+                  <div className="w-12 h-12 rounded-2xl bg-purple-500/20 flex items-center justify-center">
+                    <TrendingUp className="w-5 h-5 text-purple-400" />
+                  </div>
+                  <div>
+                    <p className="text-3xl font-extralight text-white">{excellentMatches}</p>
+                    <p className="text-neutral-500 text-xs uppercase tracking-widest">
+                      Excellent Matches
+                    </p>
+                  </div>
+                </div>
+              </motion.div>
+
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.3 }}
+                className="p-6 rounded-3xl bg-gradient-to-br from-purple-500/20 to-purple-500/5 border border-purple-500/20"
+              >
+                <div className="flex items-center gap-3">
+                  <div className="w-12 h-12 rounded-2xl bg-purple-500/30 flex items-center justify-center">
+                    <Star className="w-5 h-5 text-purple-400" />
+                  </div>
+                  <div>
+                    <p className="text-3xl font-extralight text-white">{averageScore}%</p>
+                    <p className="text-neutral-500 text-xs uppercase tracking-widest">Avg. Score</p>
+                  </div>
+                </div>
+              </motion.div>
+            </div>
+
+            {/* Preference Summary */}
+            {preferences && (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.4 }}
+                className="p-6 rounded-3xl bg-gradient-to-br from-white/[0.04] to-white/[0.01] border border-white/[0.06]"
+              >
+                <div className="flex items-center gap-3 mb-5">
+                  <Target className="w-4 h-4 text-purple-400" />
+                  <span className="text-xs text-neutral-400 uppercase tracking-widest">
+                    Your Preferences
+                  </span>
+                </div>
+
+                <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+                  {/* University */}
+                  <div>
+                    <p className="text-neutral-600 text-[10px] uppercase tracking-widest mb-2">
+                      University
+                    </p>
+                    <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-purple-500/10 text-purple-400 text-xs border border-purple-500/20">
+                      <Building2 className="w-3 h-3" />
+                      {preferences.university}
+                    </span>
+                  </div>
+
+                  {/* Budget */}
+                  <div>
+                    <p className="text-neutral-600 text-[10px] uppercase tracking-widest mb-2">
+                      Budget
+                    </p>
+                    <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-purple-500/10 text-purple-400 text-xs border border-purple-500/20">
+                      <Wallet className="w-3 h-3" />${preferences.budgetMin}-$
+                      {preferences.budgetMax}
+                    </span>
+                  </div>
+
+                  {/* Accommodation Types */}
+                  {preferences.accommodationType.length > 0 && (
                     <div>
-                      <p className="text-zinc-600 text-xs uppercase tracking-wider mb-2">
-                        Priorities
+                      <p className="text-neutral-600 text-[10px] uppercase tracking-widest mb-2">
+                        Type
                       </p>
                       <div className="flex flex-wrap gap-1">
-                        {Object.entries(preferences.priorityFactors)
-                          .filter(([, value]) => value >= 4)
-                          .slice(0, 3)
-                          .map(([factor]) => (
-                            <Badge
-                              key={factor}
-                              className="bg-purple-500/10 text-purple-400 border border-purple-500/20 hover:bg-purple-500/20 text-xs"
-                            >
-                              {factor}
-                            </Badge>
-                          ))}
+                        {preferences.accommodationType.slice(0, 2).map((type) => (
+                          <span
+                            key={type}
+                            className="px-3 py-1.5 rounded-full bg-white/[0.04] text-neutral-400 text-[10px] border border-white/[0.06]"
+                          >
+                            {type}
+                          </span>
+                        ))}
                       </div>
                     </div>
                   )}
-              </div>
-            </div>
-          )}
-        </div>
-      </div>
 
-      {/* Results */}
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {recommendations.length === 0 ? (
-          <div className="bg-zinc-900/30 border border-zinc-800 rounded-xl text-center py-16">
-            <div className="w-16 h-16 rounded-full bg-zinc-900 border border-zinc-800 flex items-center justify-center mx-auto mb-4">
-              <Home className="w-8 h-8 text-zinc-600" />
-            </div>
-            <h2 className="text-xl font-medium text-white mb-2">No Matches Found</h2>
-            <p className="text-zinc-500 text-sm mb-6 max-w-md mx-auto">
-              We couldn&apos;t find accommodations matching your criteria. Try adjusting your
-              preferences.
-            </p>
-            <Button
-              onClick={handleRetakeQuiz}
-              className="bg-purple-600 hover:bg-purple-700 text-white"
-            >
-              <RefreshCw className="w-4 h-4 mr-2" />
-              Adjust Preferences
-            </Button>
+                  {/* Room Type */}
+                  {preferences.roomType && (
+                    <div>
+                      <p className="text-neutral-600 text-[10px] uppercase tracking-widest mb-2">
+                        Room
+                      </p>
+                      <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/[0.04] text-neutral-400 text-xs border border-white/[0.06]">
+                        <Bed className="w-3 h-3" />
+                        {preferences.roomType}
+                      </span>
+                    </div>
+                  )}
+
+                  {/* Priority Factors */}
+                  {preferences.priorityFactors &&
+                    Object.keys(preferences.priorityFactors).length > 0 && (
+                      <div>
+                        <p className="text-neutral-600 text-[10px] uppercase tracking-widest mb-2">
+                          Priorities
+                        </p>
+                        <div className="flex flex-wrap gap-1">
+                          {Object.entries(preferences.priorityFactors)
+                            .filter(([, value]) => value >= 4)
+                            .slice(0, 2)
+                            .map(([factor]) => (
+                              <span
+                                key={factor}
+                                className="px-3 py-1.5 rounded-full bg-white/[0.04] text-neutral-400 text-[10px] border border-white/[0.06]"
+                              >
+                                {factor}
+                              </span>
+                            ))}
+                        </div>
+                      </div>
+                    )}
+                </div>
+              </motion.div>
+            )}
           </div>
-        ) : (
-          <>
-            {/* Results Header */}
-            <div className="flex items-center justify-between mb-6">
-              <div>
-                <h2 className="text-lg font-medium text-white mb-1">Top Recommendations</h2>
-                <p className="text-zinc-500 text-sm">Sorted by best match score</p>
+        </div>
+
+        {/* Results */}
+        <div className="max-w-6xl mx-auto px-6 sm:px-12 lg:px-20 py-12">
+          {recommendations.length === 0 ? (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="text-center py-20"
+            >
+              <div className="w-24 h-24 rounded-3xl bg-gradient-to-br from-white/[0.06] to-white/[0.02] border border-white/[0.08] flex items-center justify-center mx-auto mb-8">
+                <Home className="w-10 h-10 text-neutral-600" />
               </div>
-              <Badge variant="outline" className="border-zinc-800 text-zinc-500 bg-transparent">
-                <Clock className="w-3 h-3 mr-1.5" />
-                {recommendations.length} Results
-              </Badge>
-            </div>
+              <h2 className="text-3xl font-extralight text-white mb-4">No Matches Found</h2>
+              <p className="text-neutral-500 text-sm font-light mb-8 max-w-md mx-auto">
+                We couldn&apos;t find accommodations matching your criteria. Try adjusting your
+                preferences.
+              </p>
+              <Button
+                onClick={handleRetakeQuiz}
+                className="px-8 py-3 rounded-full bg-gradient-to-r from-purple-500 to-violet-500 text-white hover:opacity-90 transition-all duration-300 font-light"
+              >
+                <RefreshCw className="w-4 h-4 mr-2" />
+                Adjust Preferences
+              </Button>
+            </motion.div>
+          ) : (
+            <>
+              {/* Results Header */}
+              <div className="flex items-end justify-between mb-8 pb-6 border-b border-white/[0.06]">
+                <div>
+                  <span className="text-xs text-purple-400 uppercase tracking-[0.2em] font-light mb-2 block">
+                    Recommendations
+                  </span>
+                  <h2 className="text-2xl sm:text-3xl font-extralight text-white">
+                    Top Picks For You
+                  </h2>
+                </div>
+                <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-white/[0.04] border border-white/[0.06]">
+                  <Clock className="w-3.5 h-3.5 text-neutral-500" />
+                  <span className="text-xs text-neutral-500 uppercase tracking-widest">
+                    {recommendations.length} Results
+                  </span>
+                </div>
+              </div>
 
-            {/* Recommendation Cards */}
-            <div className="space-y-4">
-              {recommendations.map((result, index) => (
-                <motion.div
-                  key={result.accommodation.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.3, delay: index * 0.05 }}
-                  className={`bg-zinc-900/30 border rounded-xl overflow-hidden hover:border-zinc-700 transition-all duration-200 ${
-                    index === 0 ? 'border-purple-500/50' : 'border-zinc-800'
-                  }`}
-                >
-                  <div className="flex flex-col lg:flex-row">
-                    {/* Image */}
-                    <div className="relative lg:w-72 h-44 lg:h-auto flex-shrink-0">
-                      {result.accommodation.images &&
-                      result.accommodation.images.length > 0 &&
-                      result.accommodation.images[0] ? (
-                        <Image
-                          src={result.accommodation.images[0]}
-                          alt={result.accommodation.name}
-                          fill
-                          className="object-cover"
-                        />
-                      ) : (
-                        <div className="w-full h-full bg-zinc-900 flex items-center justify-center">
-                          <Home className="w-10 h-10 text-zinc-700" />
-                        </div>
-                      )}
-
-                      {/* Rank Badge */}
-                      <div className="absolute top-3 left-3 flex items-center gap-2 px-3 py-1.5 rounded-full bg-black/80 backdrop-blur-sm border border-zinc-800">
-                        {getRankIcon(index)}
-                        {index < 3 && (
-                          <span className="text-zinc-300 text-xs font-medium">
-                            {index === 0 ? 'Top Pick' : index === 1 ? 'Runner Up' : '3rd Place'}
-                          </span>
+              {/* Recommendation Cards */}
+              <div className="space-y-6">
+                {recommendations.map((result, index) => (
+                  <motion.div
+                    key={result.accommodation.id}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.4, delay: index * 0.1 }}
+                    className={`group rounded-3xl bg-gradient-to-br from-white/[0.06] to-white/[0.02] border overflow-hidden hover:border-purple-500/30 transition-all duration-300 ${
+                      index === 0 ? 'border-purple-500/40' : 'border-white/[0.08]'
+                    }`}
+                  >
+                    <div className="flex flex-col lg:flex-row">
+                      {/* Image */}
+                      <div className="relative lg:w-80 h-52 lg:h-auto flex-shrink-0">
+                        {result.accommodation.images &&
+                        result.accommodation.images.length > 0 &&
+                        result.accommodation.images[0] ? (
+                          <Image
+                            src={result.accommodation.images[0]}
+                            alt={result.accommodation.name}
+                            fill
+                            className="object-cover transition-transform duration-700 group-hover:scale-105"
+                          />
+                        ) : (
+                          <div className="w-full h-full bg-gradient-to-br from-purple-900/40 via-purple-800/30 to-violet-900/40 flex items-center justify-center">
+                            <Home className="w-12 h-12 text-neutral-700" />
+                          </div>
                         )}
-                      </div>
 
-                      {/* Match Score */}
-                      <div className="absolute top-3 right-3">
-                        <div
-                          className={`px-3 py-1.5 rounded-full ${getScoreColor(result.score)} text-white font-medium text-xs`}
-                        >
-                          {result.score}% Match
-                        </div>
-                      </div>
-                    </div>
+                        {/* Gradient overlay */}
+                        <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-transparent to-transparent lg:bg-gradient-to-r lg:from-transparent lg:via-transparent lg:to-[#0a0a0a]/80" />
 
-                    {/* Content */}
-                    <div className="flex-1 p-5">
-                      <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 mb-3">
-                        <div>
-                          <h3 className="text-lg font-medium text-white mb-1">
-                            {result.accommodation.name}
-                          </h3>
-                          <div className="flex items-center gap-1.5 text-zinc-500 text-sm">
-                            <MapPin className="w-3.5 h-3.5" />
-                            <span>
-                              {result.accommodation.location.suburb},{' '}
-                              {result.accommodation.location.state}
-                            </span>
-                          </div>
-                        </div>
+                        {/* Rank Badge */}
+                        <div className="absolute top-4 left-4">{getRankBadge(index)}</div>
 
-                        <div className="flex items-center gap-4">
-                          {/* Rating */}
-                          <div className="flex items-center gap-1">
-                            <Star className="w-4 h-4 text-purple-400 fill-purple-400" />
-                            <span className="text-white font-medium text-sm">
-                              {result.accommodation.ratings.overall.toFixed(1)}
-                            </span>
-                            <span className="text-zinc-600 text-xs">
-                              ({result.accommodation.ratings.totalReviews})
-                            </span>
-                          </div>
-
-                          {/* Price */}
-                          <div className="flex items-center gap-1 text-zinc-400">
-                            <DollarSign className="w-3.5 h-3.5" />
-                            <span className="font-medium text-sm">
-                              {result.accommodation.pricing.min}-{result.accommodation.pricing.max}
-                            </span>
-                            <span className="text-zinc-600 text-xs">/week</span>
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Match Label */}
-                      <div className="mb-3">
-                        <Badge
-                          className={`${getScoreColor(result.score)} text-white border-0 text-xs`}
-                        >
-                          {getScoreLabel(result.score)}
-                        </Badge>
-                      </div>
-
-                      {/* Match Reasons */}
-                      {result.matchReasons.length > 0 && (
-                        <div className="mb-3">
-                          <div className="flex flex-wrap gap-1.5">
-                            {result.matchReasons.map((reason, i) => (
-                              <Badge
-                                key={i}
-                                className="bg-purple-500/10 text-purple-400 border border-purple-500/20 text-xs"
-                              >
-                                <CheckCircle2 className="w-3 h-3 mr-1" />
-                                {reason}
-                              </Badge>
-                            ))}
-                          </div>
-                        </div>
-                      )}
-
-                      {/* Warnings */}
-                      {result.warnings.length > 0 && (
-                        <div className="mb-3">
-                          <div className="flex flex-wrap gap-1.5">
-                            {result.warnings.map((warning, i) => (
-                              <Badge
-                                key={i}
-                                className="bg-zinc-800 text-zinc-400 border border-zinc-700 text-xs"
-                              >
-                                <AlertTriangle className="w-3 h-3 mr-1" />
-                                {warning}
-                              </Badge>
-                            ))}
-                          </div>
-                        </div>
-                      )}
-
-                      {/* Actions */}
-                      <div className="flex gap-2 mt-4">
-                        <Link
-                          href={`/accommodation/${result.accommodation.slug}`}
-                          className="flex-1 sm:flex-none"
-                        >
-                          <Button className="w-full sm:w-auto bg-purple-600 hover:bg-purple-700 text-white text-sm">
-                            View Details
-                            <ArrowRight className="w-3.5 h-3.5 ml-2" />
-                          </Button>
-                        </Link>
-                        {result.accommodation.contactInfo.website && (
-                          <a
-                            href={result.accommodation.contactInfo.website}
-                            target="_blank"
-                            rel="noopener noreferrer"
+                        {/* Match Score */}
+                        <div className="absolute top-4 right-4">
+                          <span
+                            className={`px-4 py-2 rounded-full bg-gradient-to-r ${getScoreColor(result.score)} text-white text-xs font-medium`}
                           >
-                            <Button
-                              variant="outline"
-                              className="bg-transparent border-zinc-800 text-zinc-400 hover:bg-zinc-900 hover:text-white"
-                            >
-                              <ExternalLink className="w-3.5 h-3.5" />
-                            </Button>
-                          </a>
+                            {result.score}% Match
+                          </span>
+                        </div>
+                      </div>
+
+                      {/* Content */}
+                      <div className="flex-1 p-6 lg:p-8">
+                        <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-4">
+                          <div>
+                            {/* University tag */}
+                            <div className="flex items-center gap-2 mb-2">
+                              <div className="h-px w-4 bg-purple-500" />
+                              <p className="text-[10px] text-purple-400 uppercase tracking-[0.2em] font-light">
+                                {result.accommodation.university}
+                              </p>
+                            </div>
+                            <h3 className="text-xl lg:text-2xl font-light text-white mb-2 group-hover:text-purple-200 transition-colors">
+                              {result.accommodation.name}
+                            </h3>
+                            <div className="flex items-center gap-2 text-neutral-500 text-sm">
+                              <MapPin className="w-3.5 h-3.5 text-purple-400/70" />
+                              <span className="font-light">
+                                {result.accommodation.location.suburb},{' '}
+                                {result.accommodation.location.state}
+                              </span>
+                            </div>
+                          </div>
+
+                          <div className="flex items-center gap-6">
+                            {/* Rating */}
+                            <div className="flex items-center gap-2">
+                              <Star className="w-4 h-4 text-yellow-400 fill-yellow-400" />
+                              <span className="text-white font-light">
+                                {result.accommodation.ratings.overall.toFixed(1)}
+                              </span>
+                              <span className="text-neutral-600 text-xs">
+                                ({result.accommodation.ratings.totalReviews})
+                              </span>
+                            </div>
+
+                            {/* Price */}
+                            <div className="flex items-center gap-1 text-neutral-400">
+                              <DollarSign className="w-3.5 h-3.5" />
+                              <span className="font-light">
+                                {result.accommodation.pricing.min}-
+                                {result.accommodation.pricing.max}
+                              </span>
+                              <span className="text-neutral-600 text-xs">/week</span>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Match Label */}
+                        <div className="mb-4">
+                          <span
+                            className={`inline-block px-4 py-1.5 rounded-full bg-gradient-to-r ${getScoreColor(result.score)} text-white text-xs font-light`}
+                          >
+                            {getScoreLabel(result.score)}
+                          </span>
+                        </div>
+
+                        {/* Match Reasons */}
+                        {result.matchReasons.length > 0 && (
+                          <div className="mb-4">
+                            <div className="flex flex-wrap gap-2">
+                              {result.matchReasons.map((reason, i) => (
+                                <span
+                                  key={i}
+                                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-purple-500/10 text-purple-400 text-xs border border-purple-500/20"
+                                >
+                                  <CheckCircle2 className="w-3 h-3" />
+                                  {reason}
+                                </span>
+                              ))}
+                            </div>
+                          </div>
                         )}
+
+                        {/* Warnings */}
+                        {result.warnings.length > 0 && (
+                          <div className="mb-4">
+                            <div className="flex flex-wrap gap-2">
+                              {result.warnings.map((warning, i) => (
+                                <span
+                                  key={i}
+                                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/[0.04] text-neutral-400 text-xs border border-white/[0.08]"
+                                >
+                                  <AlertTriangle className="w-3 h-3" />
+                                  {warning}
+                                </span>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+
+                        {/* Actions */}
+                        <div className="flex gap-3 mt-6 pt-6 border-t border-white/[0.06]">
+                          <Link
+                            href={`/accommodation/${result.accommodation.slug}`}
+                            className="flex-1 sm:flex-none"
+                          >
+                            <Button className="w-full sm:w-auto px-6 py-3 rounded-full bg-gradient-to-r from-purple-500 to-violet-500 text-white hover:opacity-90 transition-all duration-300 font-light">
+                              View Details
+                              <ArrowRight className="w-4 h-4 ml-2" />
+                            </Button>
+                          </Link>
+                          {result.accommodation.contactInfo.website && (
+                            <a
+                              href={result.accommodation.contactInfo.website}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                            >
+                              <Button
+                                variant="outline"
+                                className="px-4 py-3 rounded-full bg-transparent border border-neutral-700 text-white hover:border-neutral-500 hover:bg-white/5 transition-all duration-300"
+                              >
+                                <ExternalLink className="w-4 h-4" />
+                              </Button>
+                            </a>
+                          )}
+                        </div>
                       </div>
                     </div>
-                  </div>
-                </motion.div>
+                  </motion.div>
+                ))}
+              </div>
+            </>
+          )}
+
+          {/* Browse All CTA */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.6 }}
+            className="mt-16 p-10 rounded-3xl bg-gradient-to-br from-white/[0.06] to-white/[0.02] border border-white/[0.08] text-center"
+          >
+            <div className="flex items-center justify-center gap-3 mb-4">
+              <div className="h-px w-8 bg-purple-500" />
+              <span className="text-xs text-purple-400 uppercase tracking-[0.3em]">Explore</span>
+              <div className="h-px w-8 bg-purple-500" />
+            </div>
+            <h3 className="text-2xl font-extralight text-white mb-3">
+              Want to explore more options?
+            </h3>
+            <p className="text-neutral-500 text-sm font-light mb-8 max-w-md mx-auto">
+              Browse through all available accommodations in our database
+            </p>
+            <Link href="/browse">
+              <Button className="px-8 py-3 rounded-full bg-gradient-to-r from-purple-500 to-violet-500 text-white hover:opacity-90 transition-all duration-300 font-light">
+                Browse All Accommodations
+                <ArrowUpRight className="w-4 h-4 ml-2" />
+              </Button>
+            </Link>
+          </motion.div>
+        </div>
+
+        {/* Bottom bar */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.6, delay: 0.8 }}
+          className="px-6 sm:px-12 lg:px-20 py-8 border-t border-white/5"
+        >
+          <div className="max-w-6xl mx-auto flex justify-between items-center">
+            <div className="flex items-center gap-8">
+              {['UNSW', 'Sydney', 'UTS', 'Macquarie', 'WSU'].map((uni) => (
+                <span
+                  key={uni}
+                  className="text-xs text-neutral-600 uppercase tracking-widest hover:text-neutral-400 transition-colors cursor-default hidden sm:block"
+                >
+                  {uni}
+                </span>
               ))}
             </div>
-          </>
-        )}
-
-        {/* Browse All CTA */}
-        <div className="mt-12 bg-zinc-900/30 border border-zinc-800 rounded-xl p-8 text-center">
-          <h3 className="text-lg font-medium text-white mb-2">Want to explore more options?</h3>
-          <p className="text-zinc-500 text-sm mb-4">
-            Browse through all available accommodations in our database
-          </p>
-          <Link href="/browse">
-            <Button className="bg-purple-600 hover:bg-purple-700 text-white">
-              Browse All Accommodations
-              <ArrowRight className="w-4 h-4 ml-2" />
-            </Button>
-          </Link>
-        </div>
+            <div className="text-xs text-neutral-600 uppercase tracking-widest">
+              {totalMatches} Matches Found
+            </div>
+          </div>
+        </motion.div>
       </div>
     </div>
   );
