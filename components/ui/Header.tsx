@@ -18,18 +18,29 @@ const navLinks = [
 
 export default function Header() {
   const pathname = usePathname();
-  const [scrolled, setScrolled] = useState(false);
+  const [hidden, setHidden] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const userMenuRef = useRef<HTMLDivElement>(null);
+  const lastScrollY = useRef(0);
   const { user, isAuthenticated, logout } = useAuth();
 
-  // Track scroll position for glassmorphism effect
+  // Hide header on scroll down, show on scroll up
   useEffect(() => {
     const handleScroll = () => {
-      setScrolled(window.scrollY > 20);
+      const currentScrollY = window.scrollY;
+
+      if (currentScrollY > lastScrollY.current && currentScrollY > 80) {
+        // Scrolling down & past threshold - hide header
+        setHidden(true);
+      } else {
+        // Scrolling up - show header
+        setHidden(false);
+      }
+
+      lastScrollY.current = currentScrollY;
     };
-    window.addEventListener('scroll', handleScroll);
+    window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
@@ -49,65 +60,18 @@ export default function Header() {
     setUserMenuOpen(false);
   };
 
-  // Page-specific theme configuration
-  const getPageTheme = () => {
-    if (pathname === '/about' || pathname?.startsWith('/about')) {
-      return {
-        bg: scrolled
-          ? 'bg-gradient-to-r from-slate-900 via-indigo-900 to-blue-900/95 backdrop-blur-xl'
-          : 'bg-gradient-to-r from-slate-900 via-indigo-900 to-blue-900',
-        border: scrolled ? 'border-blue-500/20' : 'border-transparent',
-        accentGradient: 'from-blue-600 via-indigo-600 to-teal-600',
-        navBg: 'bg-blue-500/10',
-        navBorder: 'border-blue-500/20',
-        navHover: 'hover:bg-blue-500/20',
-        activeText: 'text-blue-400',
-      };
-    }
-
-    if (pathname === '/support' || pathname?.startsWith('/support')) {
-      return {
-        bg: scrolled
-          ? 'bg-gradient-to-r from-slate-900 via-indigo-900 to-blue-900/95 backdrop-blur-xl'
-          : 'bg-gradient-to-r from-slate-900 via-indigo-900 to-blue-900',
-        border: scrolled ? 'border-blue-500/20' : 'border-transparent',
-        accentGradient: 'from-blue-600 via-indigo-600 to-teal-600',
-        navBg: 'bg-blue-500/10',
-        navBorder: 'border-blue-500/20',
-        navHover: 'hover:bg-blue-500/20',
-        activeText: 'text-blue-400',
-      };
-    }
-
-    if (pathname === '/browse' || pathname?.startsWith('/browse')) {
-      return {
-        bg: scrolled ? 'bg-charcoal/80' : 'bg-charcoal/40',
-        border: 'border-white/10',
-        accentGradient: 'from-lyra-purple-start to-lyra-purple-end',
-        navBg: 'bg-white/5',
-        navBorder: 'border-white/10',
-        navHover: 'hover:bg-white/10',
-        activeText: 'text-lyra-purple-start',
-      };
-    }
-
-    // Default theme for home and other pages
-    return {
-      bg: scrolled ? 'bg-black/80 backdrop-blur-xl' : 'bg-transparent',
-      border: scrolled ? 'border-white/10' : 'border-transparent',
-      accentGradient: 'from-purple-500 to-violet-500',
-      navBg: 'bg-white/[0.03]',
-      navBorder: 'border-white/[0.08]',
-      navHover: 'hover:bg-white/[0.06]',
-      activeText: 'text-purple-400',
-    };
+  // Simple transparent theme for all pages
+  const theme = {
+    accentGradient: 'from-purple-500 to-violet-500',
+    navBg: 'bg-white/[0.05]',
+    navBorder: 'border-white/[0.1]',
+    navHover: 'hover:bg-white/[0.08]',
+    activeText: 'text-purple-400',
   };
-
-  const theme = getPageTheme();
 
   return (
     <header
-      className={`${theme.bg} ${scrolled ? 'shadow-xl' : ''} sticky top-0 z-50 border-b ${theme.border} transition-all duration-300`}
+      className={`fixed top-0 left-0 right-0 z-50 bg-transparent transition-transform duration-300 ${hidden ? '-translate-y-full' : 'translate-y-0'}`}
     >
       <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
@@ -133,7 +97,7 @@ export default function Header() {
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center">
             <div
-              className={`inline-flex rounded-xl border ${theme.navBorder} ${theme.navBg} backdrop-blur-sm p-1 shadow-lg`}
+              className={`inline-flex rounded-xl border ${theme.navBorder} ${theme.navBg} backdrop-blur-md p-1`}
             >
               {navLinks.map((link) => {
                 const isActive =
