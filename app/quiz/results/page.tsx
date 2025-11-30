@@ -494,7 +494,7 @@ export default function QuizResultsPage() {
                   >
                     <div className="flex flex-col lg:flex-row">
                       {/* Image */}
-                      <div className="relative lg:w-80 h-52 lg:h-auto flex-shrink-0">
+                      <div className="relative lg:w-80 h-52 lg:h-auto flex-shrink-0 overflow-hidden">
                         {result.accommodation.images &&
                         result.accommodation.images.length > 0 &&
                         result.accommodation.images[0] ? (
