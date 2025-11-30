@@ -5,6 +5,7 @@ export interface User {
   university?: string;
   studentId?: string;
   verified: boolean;
+  role: 'USER' | 'ADMIN' | 'MODERATOR';
   createdAt: Date;
 }
 
