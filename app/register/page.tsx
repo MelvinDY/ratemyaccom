@@ -3,27 +3,9 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { motion } from 'framer-motion';
 import { useAuth } from '@/hooks/useAuth';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { Info } from 'lucide-react';
+import { ArrowUpRight, Info, Check, X, Eye, EyeOff, ChevronDown } from 'lucide-react';
 import type { University } from '@/lib/validation/schemas';
 
 const universities: { value: University; label: string }[] = [
@@ -47,6 +29,9 @@ export default function RegisterPage() {
   });
   const [validationErrors, setValidationErrors] = useState<Record<string, string>>({});
   const [showPasswordHints, setShowPasswordHints] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [universityDropdownOpen, setUniversityDropdownOpen] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -65,6 +50,7 @@ export default function RegisterPage() {
 
   const handleUniversityChange = (value: University) => {
     setFormData((prev) => ({ ...prev, university: value }));
+    setUniversityDropdownOpen(false);
     if (validationErrors.university) {
       setValidationErrors((prev) => {
         const newErrors = { ...prev };
@@ -161,251 +147,458 @@ export default function RegisterPage() {
     }
   };
 
+  // Password strength indicators
+  const passwordChecks = [
+    { label: 'At least 8 characters', valid: formData.password.length >= 8 },
+    {
+      label: 'Uppercase & lowercase',
+      valid: /[A-Z]/.test(formData.password) && /[a-z]/.test(formData.password),
+    },
+    { label: 'Contains a number', valid: /[0-9]/.test(formData.password) },
+    { label: 'Special character', valid: /[^a-zA-Z0-9]/.test(formData.password) },
+  ];
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-charcoal via-charcoal-light to-charcoal-dark py-12 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
-      {/* Background Pattern */}
-      <div className="absolute inset-0 opacity-10">
-        <div
-          className="absolute inset-0"
-          style={{
-            backgroundImage: `radial-gradient(circle at 2px 2px, white 1px, transparent 0)`,
-            backgroundSize: '40px 40px',
-          }}
-        />
-      </div>
-      <div className="absolute top-0 left-0 w-96 h-96 bg-lyra-purple-start/20 rounded-full blur-3xl" />
-      <div className="absolute bottom-0 right-0 w-96 h-96 bg-lyra-purple-end/20 rounded-full blur-3xl" />
+    <div className="relative min-h-screen bg-[#0a0a0a] overflow-hidden">
+      {/* Decorative elements */}
+      <div className="absolute top-0 right-0 w-1/2 h-full bg-gradient-to-l from-purple-500/[0.07] to-transparent" />
+      <div className="absolute bottom-0 left-0 w-full h-1/2 bg-gradient-to-t from-purple-900/10 to-transparent" />
 
-      <Card className="w-full max-w-2xl bg-white/95 backdrop-blur-xl border-white/20 shadow-2xl relative z-10">
-        <CardHeader className="space-y-1">
-          <CardTitle className="text-2xl font-bold text-center bg-gradient-to-r from-lyra-purple-start to-lyra-purple-end bg-clip-text text-transparent">
-            Create an Account
-          </CardTitle>
-          <CardDescription className="text-center text-gray-600">
-            Join the NSW student accommodation community
-          </CardDescription>
-        </CardHeader>
+      {/* Floating orbs */}
+      <motion.div
+        className="absolute top-20 right-20 w-72 h-72 rounded-full bg-purple-500/20 blur-[100px]"
+        animate={{
+          y: [0, -30, 0],
+          scale: [1, 1.1, 1],
+        }}
+        transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' }}
+      />
+      <motion.div
+        className="absolute bottom-40 left-20 w-96 h-96 rounded-full bg-violet-600/10 blur-[120px]"
+        animate={{
+          y: [0, 20, 0],
+          scale: [1.1, 1, 1.1],
+        }}
+        transition={{ duration: 10, repeat: Infinity, ease: 'easeInOut' }}
+      />
 
-        <form onSubmit={handleSubmit}>
-          <CardContent className="space-y-4">
-            {error && (
-              <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm">
-                {error}
-              </div>
-            )}
+      {/* Main content */}
+      <div className="relative z-10 min-h-screen flex flex-col">
+        {/* Top bar */}
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          className="flex justify-between items-center px-6 sm:px-12 lg:px-20 py-8"
+        >
+          <Link href="/" className="flex items-center gap-2 group">
+            <div className="w-2 h-2 rounded-full bg-purple-400 group-hover:bg-purple-300 transition-colors" />
+            <span className="text-xs text-neutral-500 uppercase tracking-widest group-hover:text-neutral-400 transition-colors">
+              Rate My Accom
+            </span>
+          </Link>
+          <div className="text-xs text-neutral-500 uppercase tracking-widest">
+            Join the Community
+          </div>
+        </motion.div>
 
-            <div className="grid md:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="name" className="text-gray-700">
-                  Full Name
-                </Label>
-                <Input
-                  id="name"
-                  name="name"
-                  type="text"
-                  placeholder="John Doe"
-                  value={formData.name}
-                  onChange={handleChange}
-                  className={`${validationErrors.name ? 'border-red-500' : ''}`}
-                  disabled={isLoading}
-                  required
-                />
-                {validationErrors.name && (
-                  <p className="text-red-500 text-sm mt-1">{validationErrors.name}</p>
-                )}
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="email" className="text-gray-700">
-                  University Email
-                </Label>
-                <Input
-                  id="email"
-                  name="email"
-                  type="email"
-                  placeholder="yourname@university.edu.au"
-                  value={formData.email}
-                  onChange={handleChange}
-                  className={`${validationErrors.email ? 'border-red-500' : ''}`}
-                  disabled={isLoading}
-                  required
-                />
-                {validationErrors.email && (
-                  <p className="text-red-500 text-sm mt-1">{validationErrors.email}</p>
-                )}
-              </div>
-            </div>
-
-            <div className="grid md:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="university" className="text-gray-700">
-                  University
-                </Label>
-                <Select
-                  value={formData.university}
-                  onValueChange={handleUniversityChange}
-                  disabled={isLoading}
-                >
-                  <SelectTrigger
-                    id="university"
-                    className={`${validationErrors.university ? 'border-red-500' : ''}`}
-                  >
-                    <SelectValue placeholder="Select your university" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {universities.map((uni) => (
-                      <SelectItem key={uni.value} value={uni.value}>
-                        {uni.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                {validationErrors.university && (
-                  <p className="text-red-500 text-sm mt-1">{validationErrors.university}</p>
-                )}
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="studentId" className="text-gray-700">
-                  Student ID
-                </Label>
-                <Input
-                  id="studentId"
-                  name="studentId"
-                  type="text"
-                  placeholder="z5123456"
-                  value={formData.studentId}
-                  onChange={handleChange}
-                  className={`${validationErrors.studentId ? 'border-red-500' : ''}`}
-                  disabled={isLoading}
-                  required
-                />
-                {validationErrors.studentId && (
-                  <p className="text-red-500 text-sm mt-1">{validationErrors.studentId}</p>
-                )}
-              </div>
-            </div>
-
-            <div className="grid md:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <div className="flex items-center gap-2">
-                  <Label htmlFor="password" className="text-gray-700">
-                    Password
-                  </Label>
-                  <Popover open={showPasswordHints} onOpenChange={setShowPasswordHints}>
-                    <PopoverTrigger asChild>
-                      <button
-                        type="button"
-                        className="text-gray-400 hover:text-gray-600 transition-colors"
-                        onMouseEnter={() => setShowPasswordHints(true)}
-                        onMouseLeave={() => setShowPasswordHints(false)}
-                        onFocus={() => setShowPasswordHints(true)}
-                        onBlur={() => setShowPasswordHints(false)}
-                      >
-                        <Info className="h-4 w-4" />
-                      </button>
-                    </PopoverTrigger>
-                    <PopoverContent
-                      className="w-80 p-4 bg-white shadow-lg border border-gray-200"
-                      side="top"
-                    >
-                      <div className="space-y-2">
-                        <p className="font-semibold text-sm text-gray-900">
-                          Password Requirements:
-                        </p>
-                        <ul className="space-y-1.5 text-xs text-gray-600">
-                          <li className="flex items-center gap-2">
-                            <span
-                              className={`w-1.5 h-1.5 rounded-full ${formData.password.length >= 8 ? 'bg-green-500' : 'bg-gray-300'}`}
-                            />
-                            At least 8 characters long
-                          </li>
-                          <li className="flex items-center gap-2">
-                            <span
-                              className={`w-1.5 h-1.5 rounded-full ${/[A-Z]/.test(formData.password) && /[a-z]/.test(formData.password) ? 'bg-green-500' : 'bg-gray-300'}`}
-                            />
-                            Contains uppercase and lowercase letters
-                          </li>
-                          <li className="flex items-center gap-2">
-                            <span
-                              className={`w-1.5 h-1.5 rounded-full ${/[0-9]/.test(formData.password) ? 'bg-green-500' : 'bg-gray-300'}`}
-                            />
-                            Contains at least one number
-                          </li>
-                          <li className="flex items-center gap-2">
-                            <span
-                              className={`w-1.5 h-1.5 rounded-full ${/[^a-zA-Z0-9]/.test(formData.password) ? 'bg-green-500' : 'bg-gray-300'}`}
-                            />
-                            Contains at least one special character
-                          </li>
-                        </ul>
-                      </div>
-                    </PopoverContent>
-                  </Popover>
-                </div>
-                <Input
-                  id="password"
-                  name="password"
-                  type="password"
-                  autoComplete="new-password"
-                  placeholder="Create a strong password"
-                  value={formData.password}
-                  onChange={handleChange}
-                  onFocus={() => setShowPasswordHints(true)}
-                  onBlur={() => setShowPasswordHints(false)}
-                  className={`${validationErrors.password ? 'border-red-500' : ''}`}
-                  disabled={isLoading}
-                  required
-                />
-                {validationErrors.password && (
-                  <p className="text-red-500 text-sm mt-1">{validationErrors.password}</p>
-                )}
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="confirmPassword" className="text-gray-700">
-                  Confirm Password
-                </Label>
-                <Input
-                  id="confirmPassword"
-                  name="confirmPassword"
-                  type="password"
-                  autoComplete="new-password"
-                  placeholder="Re-enter your password"
-                  value={formData.confirmPassword}
-                  onChange={handleChange}
-                  className={`${validationErrors.confirmPassword ? 'border-red-500' : ''}`}
-                  disabled={isLoading}
-                  required
-                />
-                {validationErrors.confirmPassword && (
-                  <p className="text-red-500 text-sm mt-1">{validationErrors.confirmPassword}</p>
-                )}
-              </div>
-            </div>
-          </CardContent>
-
-          <CardFooter className="flex flex-col space-y-4">
-            <Button
-              type="submit"
-              className="w-full bg-gradient-to-r from-lyra-purple-start to-lyra-purple-end hover:opacity-90 transition-opacity text-white font-semibold py-2"
-              loading={isLoading}
-            >
-              {isLoading ? 'Creating account...' : 'Create Account'}
-            </Button>
-
-            <div className="text-center text-sm text-gray-600">
-              Already have an account?{' '}
-              <Link
-                href="/login"
-                className="text-lyra-purple-start hover:text-lyra-purple-end font-semibold transition-colors"
+        {/* Content */}
+        <div className="flex-1 flex items-center justify-center px-6 sm:px-12 lg:px-20 py-8">
+          <div className="w-full max-w-5xl">
+            <div className="grid lg:grid-cols-5 gap-12 lg:gap-16 items-start">
+              {/* Left column - Typography */}
+              <motion.div
+                initial={{ opacity: 0, x: -40 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.8, delay: 0.2 }}
+                className="lg:col-span-2 lg:sticky lg:top-32"
               >
-                Sign in
-              </Link>
+                {/* Overline */}
+                <div className="flex items-center gap-4 mb-6">
+                  <div className="h-px w-12 bg-purple-500" />
+                  <span className="text-sm text-purple-400 uppercase tracking-[0.3em] font-light">
+                    Get Started
+                  </span>
+                </div>
+
+                {/* Main headline */}
+                <div className="space-y-2 mb-6">
+                  <h1 className="text-5xl sm:text-6xl font-extralight text-white leading-[0.9] tracking-[-0.03em]">
+                    Create
+                  </h1>
+                  <h1 className="text-5xl sm:text-6xl font-extralight leading-[0.9] tracking-[-0.03em]">
+                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-violet-300 to-purple-400">
+                      Account
+                    </span>
+                  </h1>
+                </div>
+
+                {/* Description */}
+                <p className="text-base text-neutral-400 leading-relaxed font-light mb-8">
+                  Join our community of NSW university students and share your accommodation
+                  experiences.
+                </p>
+
+                {/* Sign in link */}
+                <div className="flex items-center gap-4">
+                  <span className="text-sm text-neutral-500">Already have an account?</span>
+                  <Link href="/login">
+                    <motion.span
+                      whileHover={{ x: 4 }}
+                      className="inline-flex items-center gap-2 text-sm text-purple-400 hover:text-purple-300 transition-colors"
+                    >
+                      Sign in
+                      <ArrowUpRight className="w-4 h-4" />
+                    </motion.span>
+                  </Link>
+                </div>
+              </motion.div>
+
+              {/* Right column - Form */}
+              <motion.div
+                initial={{ opacity: 0, x: 40 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.8, delay: 0.4 }}
+                className="lg:col-span-3"
+              >
+                <div className="p-8 sm:p-10 rounded-3xl bg-gradient-to-br from-white/[0.08] to-white/[0.02] border border-white/10 backdrop-blur-sm">
+                  <form onSubmit={handleSubmit} className="space-y-6">
+                    {error && (
+                      <motion.div
+                        initial={{ opacity: 0, y: -10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="p-4 rounded-xl bg-red-500/10 border border-red-500/20"
+                      >
+                        <p className="text-red-400 text-sm">{error}</p>
+                      </motion.div>
+                    )}
+
+                    {/* Row 1: Name & Email */}
+                    <div className="grid sm:grid-cols-2 gap-4">
+                      {/* Name */}
+                      <div className="space-y-2">
+                        <label
+                          htmlFor="register-name"
+                          className="text-xs text-neutral-400 uppercase tracking-wider"
+                        >
+                          Full Name
+                        </label>
+                        <input
+                          id="register-name"
+                          type="text"
+                          name="name"
+                          value={formData.name}
+                          onChange={handleChange}
+                          placeholder="John Doe"
+                          disabled={isLoading}
+                          className={`w-full px-4 py-3.5 rounded-xl bg-white/[0.03] border ${
+                            validationErrors.name ? 'border-red-500/50' : 'border-white/[0.08]'
+                          } text-white placeholder:text-neutral-600 focus:outline-none focus:border-purple-500/50 focus:bg-white/[0.05] transition-all duration-300`}
+                        />
+                        {validationErrors.name && (
+                          <p className="text-red-400 text-xs">{validationErrors.name}</p>
+                        )}
+                      </div>
+
+                      {/* Email */}
+                      <div className="space-y-2">
+                        <label
+                          htmlFor="register-email"
+                          className="text-xs text-neutral-400 uppercase tracking-wider"
+                        >
+                          University Email
+                        </label>
+                        <input
+                          id="register-email"
+                          type="email"
+                          name="email"
+                          value={formData.email}
+                          onChange={handleChange}
+                          placeholder="name@university.edu.au"
+                          disabled={isLoading}
+                          className={`w-full px-4 py-3.5 rounded-xl bg-white/[0.03] border ${
+                            validationErrors.email ? 'border-red-500/50' : 'border-white/[0.08]'
+                          } text-white placeholder:text-neutral-600 focus:outline-none focus:border-purple-500/50 focus:bg-white/[0.05] transition-all duration-300`}
+                        />
+                        {validationErrors.email && (
+                          <p className="text-red-400 text-xs">{validationErrors.email}</p>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Row 2: University & Student ID */}
+                    <div className="grid sm:grid-cols-2 gap-4">
+                      {/* University Dropdown */}
+                      <div className="space-y-2">
+                        <span className="text-xs text-neutral-400 uppercase tracking-wider block">
+                          University
+                        </span>
+                        <div className="relative">
+                          <button
+                            type="button"
+                            onClick={() => setUniversityDropdownOpen(!universityDropdownOpen)}
+                            disabled={isLoading}
+                            className={`w-full px-4 py-3.5 rounded-xl bg-white/[0.03] border ${
+                              validationErrors.university
+                                ? 'border-red-500/50'
+                                : 'border-white/[0.08]'
+                            } text-left focus:outline-none focus:border-purple-500/50 focus:bg-white/[0.05] transition-all duration-300 flex items-center justify-between`}
+                          >
+                            <span
+                              className={formData.university ? 'text-white' : 'text-neutral-600'}
+                            >
+                              {formData.university
+                                ? universities.find((u) => u.value === formData.university)?.label
+                                : 'Select university'}
+                            </span>
+                            <ChevronDown
+                              className={`w-4 h-4 text-neutral-400 transition-transform duration-300 ${
+                                universityDropdownOpen ? 'rotate-180' : ''
+                              }`}
+                            />
+                          </button>
+                          {universityDropdownOpen && (
+                            <motion.div
+                              initial={{ opacity: 0, y: -10 }}
+                              animate={{ opacity: 1, y: 0 }}
+                              className="absolute z-50 w-full mt-2 py-2 rounded-xl bg-[#151515] border border-white/[0.1] shadow-2xl shadow-black/50"
+                            >
+                              {universities.map((uni) => (
+                                <button
+                                  key={uni.value}
+                                  type="button"
+                                  onClick={() => handleUniversityChange(uni.value)}
+                                  className="w-full px-4 py-3 text-left text-sm text-neutral-300 hover:bg-white/[0.05] hover:text-white transition-colors"
+                                >
+                                  {uni.label}
+                                </button>
+                              ))}
+                            </motion.div>
+                          )}
+                        </div>
+                        {validationErrors.university && (
+                          <p className="text-red-400 text-xs">{validationErrors.university}</p>
+                        )}
+                      </div>
+
+                      {/* Student ID */}
+                      <div className="space-y-2">
+                        <label
+                          htmlFor="register-studentId"
+                          className="text-xs text-neutral-400 uppercase tracking-wider"
+                        >
+                          Student ID
+                        </label>
+                        <input
+                          id="register-studentId"
+                          type="text"
+                          name="studentId"
+                          value={formData.studentId}
+                          onChange={handleChange}
+                          placeholder="z5123456"
+                          disabled={isLoading}
+                          className={`w-full px-4 py-3.5 rounded-xl bg-white/[0.03] border ${
+                            validationErrors.studentId ? 'border-red-500/50' : 'border-white/[0.08]'
+                          } text-white placeholder:text-neutral-600 focus:outline-none focus:border-purple-500/50 focus:bg-white/[0.05] transition-all duration-300`}
+                        />
+                        {validationErrors.studentId && (
+                          <p className="text-red-400 text-xs">{validationErrors.studentId}</p>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Row 3: Password & Confirm Password */}
+                    <div className="grid sm:grid-cols-2 gap-4">
+                      {/* Password */}
+                      <div className="space-y-2">
+                        <div className="flex items-center gap-2">
+                          <label
+                            htmlFor="register-password"
+                            className="text-xs text-neutral-400 uppercase tracking-wider"
+                          >
+                            Password
+                          </label>
+                          <button
+                            type="button"
+                            onMouseEnter={() => setShowPasswordHints(true)}
+                            onMouseLeave={() => setShowPasswordHints(false)}
+                            className="text-neutral-500 hover:text-neutral-300 transition-colors"
+                          >
+                            <Info className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
+                        <div className="relative">
+                          <input
+                            id="register-password"
+                            type={showPassword ? 'text' : 'password'}
+                            name="password"
+                            value={formData.password}
+                            onChange={handleChange}
+                            onFocus={() => setShowPasswordHints(true)}
+                            onBlur={() => setShowPasswordHints(false)}
+                            placeholder="Create password"
+                            autoComplete="new-password"
+                            disabled={isLoading}
+                            className={`w-full px-4 py-3.5 pr-12 rounded-xl bg-white/[0.03] border ${
+                              validationErrors.password
+                                ? 'border-red-500/50'
+                                : 'border-white/[0.08]'
+                            } text-white placeholder:text-neutral-600 focus:outline-none focus:border-purple-500/50 focus:bg-white/[0.05] transition-all duration-300`}
+                          />
+                          <button
+                            type="button"
+                            onClick={() => setShowPassword(!showPassword)}
+                            className="absolute right-4 top-1/2 -translate-y-1/2 text-neutral-500 hover:text-neutral-300 transition-colors"
+                          >
+                            {showPassword ? (
+                              <EyeOff className="w-4 h-4" />
+                            ) : (
+                              <Eye className="w-4 h-4" />
+                            )}
+                          </button>
+                        </div>
+                        {validationErrors.password && (
+                          <p className="text-red-400 text-xs">{validationErrors.password}</p>
+                        )}
+                      </div>
+
+                      {/* Confirm Password */}
+                      <div className="space-y-2">
+                        <label
+                          htmlFor="register-confirmPassword"
+                          className="text-xs text-neutral-400 uppercase tracking-wider"
+                        >
+                          Confirm Password
+                        </label>
+                        <div className="relative">
+                          <input
+                            id="register-confirmPassword"
+                            type={showConfirmPassword ? 'text' : 'password'}
+                            name="confirmPassword"
+                            value={formData.confirmPassword}
+                            onChange={handleChange}
+                            placeholder="Confirm password"
+                            autoComplete="new-password"
+                            disabled={isLoading}
+                            className={`w-full px-4 py-3.5 pr-12 rounded-xl bg-white/[0.03] border ${
+                              validationErrors.confirmPassword
+                                ? 'border-red-500/50'
+                                : 'border-white/[0.08]'
+                            } text-white placeholder:text-neutral-600 focus:outline-none focus:border-purple-500/50 focus:bg-white/[0.05] transition-all duration-300`}
+                          />
+                          <button
+                            type="button"
+                            onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                            className="absolute right-4 top-1/2 -translate-y-1/2 text-neutral-500 hover:text-neutral-300 transition-colors"
+                          >
+                            {showConfirmPassword ? (
+                              <EyeOff className="w-4 h-4" />
+                            ) : (
+                              <Eye className="w-4 h-4" />
+                            )}
+                          </button>
+                        </div>
+                        {validationErrors.confirmPassword && (
+                          <p className="text-red-400 text-xs">{validationErrors.confirmPassword}</p>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Password hints */}
+                    {showPasswordHints && formData.password && (
+                      <motion.div
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: 'auto' }}
+                        exit={{ opacity: 0, height: 0 }}
+                        className="grid grid-cols-2 gap-2"
+                      >
+                        {passwordChecks.map((check, index) => (
+                          <div
+                            key={index}
+                            className={`flex items-center gap-2 text-xs ${
+                              check.valid ? 'text-green-400' : 'text-neutral-500'
+                            }`}
+                          >
+                            {check.valid ? (
+                              <Check className="w-3 h-3" />
+                            ) : (
+                              <X className="w-3 h-3" />
+                            )}
+                            {check.label}
+                          </div>
+                        ))}
+                      </motion.div>
+                    )}
+
+                    {/* Submit */}
+                    <motion.button
+                      type="submit"
+                      disabled={isLoading}
+                      whileHover={{ scale: 1.01 }}
+                      whileTap={{ scale: 0.99 }}
+                      className="w-full flex items-center justify-center gap-3 px-8 py-4 bg-white text-black rounded-full font-medium text-sm uppercase tracking-wider hover:bg-purple-100 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      {isLoading ? (
+                        <>
+                          <div className="w-4 h-4 border-2 border-black/20 border-t-black rounded-full animate-spin" />
+                          Creating account...
+                        </>
+                      ) : (
+                        <>
+                          Create Account
+                          <ArrowUpRight className="w-4 h-4" />
+                        </>
+                      )}
+                    </motion.button>
+
+                    {/* Terms */}
+                    <p className="text-xs text-neutral-500 text-center">
+                      By creating an account, you agree to our{' '}
+                      <Link
+                        href="/terms"
+                        className="text-purple-400 hover:text-purple-300 transition-colors"
+                      >
+                        Terms of Service
+                      </Link>{' '}
+                      and{' '}
+                      <Link
+                        href="/privacy"
+                        className="text-purple-400 hover:text-purple-300 transition-colors"
+                      >
+                        Privacy Policy
+                      </Link>
+                    </p>
+                  </form>
+                </div>
+              </motion.div>
             </div>
-          </CardFooter>
-        </form>
-      </Card>
+          </div>
+        </div>
+
+        {/* Bottom bar */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.6, delay: 0.8 }}
+          className="px-6 sm:px-12 lg:px-20 py-8 border-t border-white/5"
+        >
+          <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
+            <div className="flex items-center gap-8">
+              {['UNSW', 'Sydney', 'UTS', 'Macquarie', 'WSU'].map((uni) => (
+                <span
+                  key={uni}
+                  className="text-xs text-neutral-600 uppercase tracking-widest hover:text-neutral-400 transition-colors cursor-default"
+                >
+                  {uni}
+                </span>
+              ))}
+            </div>
+            <div className="text-xs text-neutral-600 uppercase tracking-widest">
+              Verified Students Only
+            </div>
+          </div>
+        </motion.div>
+      </div>
     </div>
   );
 }
