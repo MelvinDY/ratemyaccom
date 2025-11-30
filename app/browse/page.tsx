@@ -8,6 +8,7 @@ import BrowseFilters from '@/components/browse/BrowseFilters';
 import AccommodationCard from '@/components/accommodations/AccommodationCard';
 import AccommodationCardSkeleton from '@/components/browse/AccommodationCardSkeleton';
 import EmptyState from '@/components/browse/EmptyState';
+import { ErrorDisplay } from '@/components/ui/ErrorBoundary';
 import { Button } from '@/components/ui/button';
 import { ChevronLeft, ChevronRight, Loader2 } from 'lucide-react';
 
@@ -46,6 +47,7 @@ function BrowsePageContent() {
   }, [universityParam]);
   const [accommodations, setAccommodations] = useState<Accommodation[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [total, setTotal] = useState(0);
@@ -65,6 +67,7 @@ function BrowsePageContent() {
   // Fetch accommodations
   const fetchAccommodations = useCallback(async () => {
     setLoading(true);
+    setError(null);
     try {
       const params = new URLSearchParams({
         page: currentPage.toString(),
@@ -109,8 +112,9 @@ function BrowsePageContent() {
         setTotalPages(data.pagination.totalPages);
         setTotal(data.pagination.total);
       }
-    } catch (error) {
-      console.error('Error fetching accommodations:', error);
+    } catch (err) {
+      console.error('Error fetching accommodations:', err);
+      setError('Failed to load accommodations. Please try again.');
       setAccommodations([]);
     } finally {
       setLoading(false);
@@ -194,7 +198,13 @@ function BrowsePageContent() {
             </div>
 
             {/* Results Grid */}
-            {loading ? (
+            {error ? (
+              <ErrorDisplay
+                title="Unable to Load Accommodations"
+                message={error}
+                onRetry={fetchAccommodations}
+              />
+            ) : loading ? (
               <div
                 className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6"
                 role="status"

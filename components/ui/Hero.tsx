@@ -1,7 +1,7 @@
 'use client';
 
 import { motion, useScroll, useTransform } from 'framer-motion';
-import { ArrowRight, Sparkles } from 'lucide-react';
+import { ArrowRight, Sparkles, Shield, Star, Users, GraduationCap } from 'lucide-react';
 import Link from 'next/link';
 
 export default function Hero() {
@@ -134,15 +134,46 @@ export default function Hero() {
                 <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
               </motion.button>
             </Link>
-            <Link href="/about">
+            <Link href="/quiz">
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 className="px-8 py-4 bg-white/10 backdrop-blur-md text-white font-semibold rounded-full border-2 border-white/20 hover:bg-white/20 hover:border-white/30 transition-all duration-300"
               >
-                Learn More
+                Find My Perfect Match
               </motion.button>
             </Link>
+          </motion.div>
+
+          {/* Trust Badges */}
+          <motion.div
+            variants={itemVariants}
+            className="mt-16 flex flex-wrap justify-center gap-6 md:gap-10"
+          >
+            <div className="flex items-center gap-2 text-purple-200/80">
+              <div className="p-2 bg-purple-500/20 rounded-lg">
+                <Shield className="w-5 h-5 text-purple-300" />
+              </div>
+              <span className="text-sm font-medium">Verified Reviews Only</span>
+            </div>
+            <div className="flex items-center gap-2 text-purple-200/80">
+              <div className="p-2 bg-purple-500/20 rounded-lg">
+                <GraduationCap className="w-5 h-5 text-purple-300" />
+              </div>
+              <span className="text-sm font-medium">5 NSW Universities</span>
+            </div>
+            <div className="flex items-center gap-2 text-purple-200/80">
+              <div className="p-2 bg-purple-500/20 rounded-lg">
+                <Star className="w-5 h-5 text-purple-300" />
+              </div>
+              <span className="text-sm font-medium">6 Rating Categories</span>
+            </div>
+            <div className="flex items-center gap-2 text-purple-200/80">
+              <div className="p-2 bg-purple-500/20 rounded-lg">
+                <Users className="w-5 h-5 text-purple-300" />
+              </div>
+              <span className="text-sm font-medium">By Students, For Students</span>
+            </div>
           </motion.div>
         </motion.div>
       </motion.div>
