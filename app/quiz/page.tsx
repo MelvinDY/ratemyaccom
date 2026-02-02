@@ -203,681 +203,661 @@ export default function QuizPage() {
   const progressPercentage = (currentStep / TOTAL_STEPS) * 100;
 
   return (
-    <div className="relative min-h-screen bg-[#0a0a0a] overflow-hidden">
-      {/* Decorative background elements - matching Hero.tsx */}
-      <div className="absolute top-0 right-0 w-1/2 h-full bg-gradient-to-l from-purple-500/[0.07] to-transparent" />
-      <div className="absolute bottom-0 left-0 w-full h-1/2 bg-gradient-to-t from-purple-900/10 to-transparent" />
-
-      {/* Floating orbs - matching Hero.tsx */}
-      <motion.div
-        className="absolute top-20 right-20 w-72 h-72 rounded-full bg-purple-500/20 blur-[100px]"
-        animate={{
-          y: [0, -30, 0],
-          scale: [1, 1.1, 1],
-        }}
-        transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' }}
-      />
-      <motion.div
-        className="absolute bottom-40 left-20 w-96 h-96 rounded-full bg-violet-600/10 blur-[120px]"
-        animate={{
-          y: [0, 20, 0],
-          scale: [1.1, 1, 1.1],
-        }}
-        transition={{ duration: 10, repeat: Infinity, ease: 'easeInOut' }}
-      />
-
+    <div className="min-h-screen bg-[#e0e5ec] pt-24">
       {/* Main content */}
-      <div className="relative z-10 min-h-screen flex flex-col">
-        {/* Top bar - matching Hero.tsx */}
+      <div className="max-w-4xl mx-auto px-6 sm:px-12 py-8">
+        {/* Top bar */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          className="flex justify-between items-center px-6 sm:px-12 lg:px-20 py-8"
+          className="flex justify-between items-center mb-8"
         >
           <Link
             href="/"
-            className="flex items-center gap-2 text-neutral-500 hover:text-white transition-colors"
+            className="flex items-center gap-2 text-slate-500 hover:text-slate-700 transition-colors"
           >
             <ArrowLeft className="w-4 h-4" />
-            <span className="text-xs uppercase tracking-widest">Back to Home</span>
+            <span className="text-sm font-medium">Back to Home</span>
           </Link>
           <div className="flex items-center gap-2">
-            <div className="w-2 h-2 rounded-full bg-purple-400 animate-pulse" />
-            <span className="text-xs text-neutral-500 uppercase tracking-widest">
+            <div className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
+            <span className="text-sm text-slate-500 font-medium">
               Step {currentStep} of {TOTAL_STEPS}
             </span>
           </div>
         </motion.div>
 
         {/* Progress Bar */}
-        <div className="px-6 sm:px-12 lg:px-20">
-          <div className="max-w-4xl mx-auto">
-            <div className="h-1 bg-white/[0.06] rounded-full overflow-hidden">
-              <motion.div
-                className="h-full bg-gradient-to-r from-purple-500 to-violet-500"
-                initial={{ width: 0 }}
-                animate={{ width: `${progressPercentage}%` }}
-                transition={{ duration: 0.4, ease: 'easeOut' }}
-              />
-            </div>
-          </div>
+        <div
+          className="h-2 rounded-full mb-8 bg-[#e0e5ec]
+          shadow-[inset_4px_4px_8px_rgba(163,177,198,0.5),inset_-4px_-4px_8px_rgba(255,255,255,0.8)]"
+        >
+          <motion.div
+            className="h-full rounded-full bg-gradient-to-r from-blue-500 to-indigo-600"
+            initial={{ width: 0 }}
+            animate={{ width: `${progressPercentage}%` }}
+            transition={{ duration: 0.4, ease: 'easeOut' }}
+          />
         </div>
 
         {/* Quiz Content */}
-        <div className="flex-1 flex items-center px-6 sm:px-12 lg:px-20 py-12">
-          <div className="w-full max-w-4xl mx-auto">
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={currentStep}
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -20 }}
-                transition={{ duration: 0.3 }}
-                className="rounded-3xl bg-gradient-to-br from-white/[0.06] to-white/[0.02] border border-white/[0.08] p-8 sm:p-10 backdrop-blur-sm"
-              >
-                {/* Step 1: University */}
-                {currentStep === 1 && (
-                  <div className="space-y-8">
-                    <div className="text-center mb-10">
-                      <motion.div
-                        initial={{ scale: 0.8, opacity: 0 }}
-                        animate={{ scale: 1, opacity: 1 }}
-                        className="inline-flex items-center justify-center w-20 h-20 rounded-3xl bg-gradient-to-br from-purple-500/20 to-violet-500/10 border border-purple-500/20 mb-6"
-                      >
-                        <GraduationCap className="w-10 h-10 text-purple-400" />
-                      </motion.div>
-                      <div className="flex items-center justify-center gap-3 mb-4">
-                        <div className="h-px w-8 bg-purple-500" />
-                        <span className="text-xs text-purple-400 uppercase tracking-[0.3em]">
-                          University
-                        </span>
-                        <div className="h-px w-8 bg-purple-500" />
-                      </div>
-                      <h2 className="text-3xl sm:text-4xl font-extralight text-white mb-3">
-                        Which university are you attending?
-                      </h2>
-                      <p className="text-neutral-400 font-light">
-                        We&apos;ll find accommodations close to your campus
-                      </p>
-                    </div>
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={currentStep}
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -20 }}
+            transition={{ duration: 0.3 }}
+            className="rounded-2xl bg-[#e0e5ec] p-8 sm:p-10
+              shadow-[6px_6px_12px_rgba(163,177,198,0.5),-6px_-6px_12px_rgba(255,255,255,0.8)]"
+          >
+            {/* Step 1: University */}
+            {currentStep === 1 && (
+              <div className="space-y-8">
+                <div className="text-center mb-10">
+                  <motion.div
+                    initial={{ scale: 0.8, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    className="inline-flex items-center justify-center w-20 h-20 rounded-2xl mb-6
+                      bg-gradient-to-br from-blue-500 to-indigo-600
+                      shadow-[4px_4px_8px_rgba(163,177,198,0.5),-4px_-4px_8px_rgba(255,255,255,0.8)]"
+                  >
+                    <GraduationCap className="w-10 h-10 text-white" />
+                  </motion.div>
+                  <span className="text-sm text-blue-600 font-medium uppercase tracking-wider block mb-2">
+                    University
+                  </span>
+                  <h2 className="text-2xl sm:text-3xl font-bold text-slate-800 mb-3">
+                    Which university are you attending?
+                  </h2>
+                  <p className="text-slate-500">
+                    We&apos;ll find accommodations close to your campus
+                  </p>
+                </div>
 
-                    <div className="grid gap-3">
-                      {UNIVERSITIES.map((uni) => {
-                        const Icon = uni.icon;
-                        return (
-                          <motion.button
-                            key={uni.value}
-                            whileHover={{ x: 4 }}
-                            whileTap={{ scale: 0.99 }}
-                            onClick={() => updatePreference('university', uni.value)}
-                            className={`w-full p-5 rounded-2xl border transition-all duration-300 text-left flex items-center gap-4 ${
-                              preferences.university === uni.value
-                                ? 'border-purple-500/50 bg-purple-500/10'
-                                : 'border-white/[0.08] hover:border-white/[0.15] bg-white/[0.02] hover:bg-white/[0.04]'
-                            }`}
-                          >
-                            <div
-                              className={`w-12 h-12 rounded-xl flex items-center justify-center ${
-                                preferences.university === uni.value
-                                  ? 'bg-purple-500/20'
-                                  : 'bg-white/[0.05]'
-                              }`}
-                            >
-                              <Icon
-                                className={`w-6 h-6 ${preferences.university === uni.value ? 'text-purple-400' : 'text-neutral-500'}`}
-                              />
-                            </div>
-                            <span className="text-white font-light flex-1">{uni.label}</span>
-                            {preferences.university === uni.value && (
-                              <CheckCircle2 className="w-5 h-5 text-purple-400" />
-                            )}
-                          </motion.button>
-                        );
-                      })}
-                    </div>
-                  </div>
-                )}
-
-                {/* Step 2: Budget */}
-                {currentStep === 2 && (
-                  <div className="space-y-8">
-                    <div className="text-center mb-10">
-                      <motion.div
-                        initial={{ scale: 0.8, opacity: 0 }}
-                        animate={{ scale: 1, opacity: 1 }}
-                        className="inline-flex items-center justify-center w-20 h-20 rounded-3xl bg-gradient-to-br from-emerald-500/20 to-green-500/10 border border-emerald-500/20 mb-6"
-                      >
-                        <DollarSign className="w-10 h-10 text-emerald-400" />
-                      </motion.div>
-                      <div className="flex items-center justify-center gap-3 mb-4">
-                        <div className="h-px w-8 bg-emerald-500" />
-                        <span className="text-xs text-emerald-400 uppercase tracking-[0.3em]">
-                          Budget
-                        </span>
-                        <div className="h-px w-8 bg-emerald-500" />
-                      </div>
-                      <h2 className="text-3xl sm:text-4xl font-extralight text-white mb-3">
-                        What&apos;s your weekly budget?
-                      </h2>
-                      <p className="text-neutral-400 font-light">
-                        Set your comfortable price range per week
-                      </p>
-                    </div>
-
-                    <div className="space-y-10">
-                      <div className="text-center">
-                        <div className="text-5xl sm:text-6xl font-extralight text-white mb-2">
-                          <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-green-400">
-                            ${preferences.budgetMin}
-                          </span>
-                          <span className="text-neutral-600 mx-4">—</span>
-                          <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-green-400">
-                            ${preferences.budgetMax}
-                          </span>
-                        </div>
-                        <p className="text-neutral-500 text-sm uppercase tracking-widest">
-                          per week
-                        </p>
-                      </div>
-
-                      <div className="space-y-8 px-4">
-                        <div>
-                          <label
-                            htmlFor="budget-min"
-                            className="text-neutral-400 text-xs uppercase tracking-widest mb-4 block"
-                          >
-                            Minimum Budget
-                          </label>
-                          <input
-                            id="budget-min"
-                            type="range"
-                            min="100"
-                            max="800"
-                            step="25"
-                            value={preferences.budgetMin}
-                            onChange={(e) => {
-                              const value = parseInt(e.target.value);
-                              if (value < preferences.budgetMax) {
-                                updatePreference('budgetMin', value);
-                              }
-                            }}
-                            className="w-full h-2 bg-white/[0.06] rounded-full appearance-none cursor-pointer accent-emerald-500"
-                          />
-                          <div className="flex justify-between text-neutral-600 text-xs mt-2">
-                            <span>$100</span>
-                            <span>$800</span>
-                          </div>
-                        </div>
-
-                        <div>
-                          <label
-                            htmlFor="budget-max"
-                            className="text-neutral-400 text-xs uppercase tracking-widest mb-4 block"
-                          >
-                            Maximum Budget
-                          </label>
-                          <input
-                            id="budget-max"
-                            type="range"
-                            min="100"
-                            max="1000"
-                            step="25"
-                            value={preferences.budgetMax}
-                            onChange={(e) => {
-                              const value = parseInt(e.target.value);
-                              if (value > preferences.budgetMin) {
-                                updatePreference('budgetMax', value);
-                              }
-                            }}
-                            className="w-full h-2 bg-white/[0.06] rounded-full appearance-none cursor-pointer accent-emerald-500"
-                          />
-                          <div className="flex justify-between text-neutral-600 text-xs mt-2">
-                            <span>$100</span>
-                            <span>$1000</span>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                )}
-
-                {/* Step 3: Accommodation Type */}
-                {currentStep === 3 && (
-                  <div className="space-y-8">
-                    <div className="text-center mb-10">
-                      <motion.div
-                        initial={{ scale: 0.8, opacity: 0 }}
-                        animate={{ scale: 1, opacity: 1 }}
-                        className="inline-flex items-center justify-center w-20 h-20 rounded-3xl bg-gradient-to-br from-blue-500/20 to-cyan-500/10 border border-blue-500/20 mb-6"
-                      >
-                        <Home className="w-10 h-10 text-blue-400" />
-                      </motion.div>
-                      <div className="flex items-center justify-center gap-3 mb-4">
-                        <div className="h-px w-8 bg-blue-500" />
-                        <span className="text-xs text-blue-400 uppercase tracking-[0.3em]">
-                          Accommodation
-                        </span>
-                        <div className="h-px w-8 bg-blue-500" />
-                      </div>
-                      <h2 className="text-3xl sm:text-4xl font-extralight text-white mb-3">
-                        What type of accommodation interests you?
-                      </h2>
-                      <p className="text-neutral-400 font-light">Select all that apply</p>
-                    </div>
-
-                    <div className="grid sm:grid-cols-2 gap-4">
-                      {ACCOMMODATION_TYPES.map((type) => {
-                        const Icon = type.icon;
-                        const isSelected = preferences.accommodationType.includes(type.value);
-                        return (
-                          <motion.button
-                            key={type.value}
-                            whileHover={{ y: -2 }}
-                            whileTap={{ scale: 0.98 }}
-                            onClick={() => toggleAccommodationType(type.value)}
-                            className={`relative p-6 rounded-2xl border transition-all duration-300 text-left ${
-                              isSelected
-                                ? 'border-blue-500/50 bg-blue-500/10'
-                                : 'border-white/[0.08] hover:border-white/[0.15] bg-white/[0.02] hover:bg-white/[0.04]'
-                            }`}
-                          >
-                            <div
-                              className={`w-14 h-14 rounded-2xl flex items-center justify-center mb-4 ${
-                                isSelected ? 'bg-blue-500/20' : 'bg-white/[0.05]'
-                              }`}
-                            >
-                              <Icon
-                                className={`w-7 h-7 ${isSelected ? 'text-blue-400' : 'text-neutral-500'}`}
-                              />
-                            </div>
-                            <h3 className="text-white font-light text-lg mb-1">{type.label}</h3>
-                            <p className="text-neutral-500 text-sm font-light">
-                              {type.description}
-                            </p>
-                            {isSelected && (
-                              <CheckCircle2 className="w-5 h-5 text-blue-400 absolute top-4 right-4" />
-                            )}
-                          </motion.button>
-                        );
-                      })}
-                    </div>
-                  </div>
-                )}
-
-                {/* Step 4: Room Type */}
-                {currentStep === 4 && (
-                  <div className="space-y-8">
-                    <div className="text-center mb-10">
-                      <motion.div
-                        initial={{ scale: 0.8, opacity: 0 }}
-                        animate={{ scale: 1, opacity: 1 }}
-                        className="inline-flex items-center justify-center w-20 h-20 rounded-3xl bg-gradient-to-br from-violet-500/20 to-purple-500/10 border border-violet-500/20 mb-6"
-                      >
-                        <Home className="w-10 h-10 text-violet-400" />
-                      </motion.div>
-                      <div className="flex items-center justify-center gap-3 mb-4">
-                        <div className="h-px w-8 bg-violet-500" />
-                        <span className="text-xs text-violet-400 uppercase tracking-[0.3em]">
-                          Room Type
-                        </span>
-                        <div className="h-px w-8 bg-violet-500" />
-                      </div>
-                      <h2 className="text-3xl sm:text-4xl font-extralight text-white mb-3">
-                        What room type do you prefer?
-                      </h2>
-                      <p className="text-neutral-400 font-light">
-                        Choose your ideal living arrangement
-                      </p>
-                    </div>
-
-                    <div className="grid gap-3">
-                      {ROOM_TYPES.map((room) => (
-                        <motion.button
-                          key={room.value}
-                          whileHover={{ x: 4 }}
-                          whileTap={{ scale: 0.99 }}
-                          onClick={() => updatePreference('roomType', room.value)}
-                          className={`w-full p-5 rounded-2xl border transition-all duration-300 text-left flex items-center justify-between ${
-                            preferences.roomType === room.value
-                              ? 'border-violet-500/50 bg-violet-500/10'
-                              : 'border-white/[0.08] hover:border-white/[0.15] bg-white/[0.02] hover:bg-white/[0.04]'
+                <div className="grid gap-3">
+                  {UNIVERSITIES.map((uni) => {
+                    const Icon = uni.icon;
+                    return (
+                      <motion.button
+                        key={uni.value}
+                        whileHover={{ scale: 1.01 }}
+                        whileTap={{ scale: 0.99 }}
+                        onClick={() => updatePreference('university', uni.value)}
+                        className={`w-full p-5 rounded-xl text-left flex items-center gap-4 transition-all duration-300
+                          ${
+                            preferences.university === uni.value
+                              ? 'bg-gradient-to-br from-blue-500 to-indigo-600 shadow-[4px_4px_8px_rgba(163,177,198,0.5),-4px_-4px_8px_rgba(255,255,255,0.8)]'
+                              : 'bg-[#e0e5ec] shadow-[4px_4px_8px_rgba(163,177,198,0.5),-4px_-4px_8px_rgba(255,255,255,0.8)] hover:shadow-[6px_6px_12px_rgba(163,177,198,0.4),-6px_-6px_12px_rgba(255,255,255,0.9)]'
                           }`}
-                        >
-                          <div>
-                            <h3 className="text-white font-light text-lg">{room.label}</h3>
-                            <p className="text-neutral-500 text-sm font-light">
-                              {room.description}
-                            </p>
-                          </div>
-                          {preferences.roomType === room.value && (
-                            <CheckCircle2 className="w-5 h-5 text-violet-400" />
-                          )}
-                        </motion.button>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                {/* Step 5: Priority Factors */}
-                {currentStep === 5 && (
-                  <div className="space-y-8">
-                    <div className="text-center mb-10">
-                      <motion.div
-                        initial={{ scale: 0.8, opacity: 0 }}
-                        animate={{ scale: 1, opacity: 1 }}
-                        className="inline-flex items-center justify-center w-20 h-20 rounded-3xl bg-gradient-to-br from-amber-500/20 to-yellow-500/10 border border-amber-500/20 mb-6"
                       >
-                        <Star className="w-10 h-10 text-amber-400" />
-                      </motion.div>
-                      <div className="flex items-center justify-center gap-3 mb-4">
-                        <div className="h-px w-8 bg-amber-500" />
-                        <span className="text-xs text-amber-400 uppercase tracking-[0.3em]">
-                          Priorities
-                        </span>
-                        <div className="h-px w-8 bg-amber-500" />
-                      </div>
-                      <h2 className="text-3xl sm:text-4xl font-extralight text-white mb-3">
-                        What matters most to you?
-                      </h2>
-                      <p className="text-neutral-400 font-light">
-                        Rate each factor from 1 (not important) to 5 (very important)
-                      </p>
-                    </div>
-
-                    <div className="space-y-6">
-                      {PRIORITY_FACTORS.map((factor) => (
                         <div
-                          key={factor.key}
-                          className="p-5 rounded-2xl bg-white/[0.02] border border-white/[0.06]"
-                        >
-                          <div className="flex justify-between items-center mb-4">
-                            <div>
-                              <span className="text-white font-light">{factor.label}</span>
-                              <p className="text-neutral-600 text-xs">{factor.description}</p>
-                            </div>
-                            <span className="text-amber-400 font-light text-2xl">
-                              {
-                                preferences.priorityFactors[
-                                  factor.key as keyof typeof preferences.priorityFactors
-                                ]
-                              }
-                            </span>
-                          </div>
-                          <div className="flex gap-2">
-                            {[1, 2, 3, 4, 5].map((value) => (
-                              <button
-                                key={value}
-                                onClick={() => updatePriorityFactor(factor.key, value)}
-                                className={`flex-1 py-3 rounded-xl transition-all duration-300 text-sm font-light ${
-                                  preferences.priorityFactors[
-                                    factor.key as keyof typeof preferences.priorityFactors
-                                  ] >= value
-                                    ? 'bg-gradient-to-r from-amber-500 to-yellow-500 text-white'
-                                    : 'bg-white/[0.04] text-neutral-500 hover:bg-white/[0.08]'
-                                }`}
-                              >
-                                {value}
-                              </button>
-                            ))}
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                {/* Step 6: Must-Have Amenities */}
-                {currentStep === 6 && (
-                  <div className="space-y-8">
-                    <div className="text-center mb-10">
-                      <motion.div
-                        initial={{ scale: 0.8, opacity: 0 }}
-                        animate={{ scale: 1, opacity: 1 }}
-                        className="inline-flex items-center justify-center w-20 h-20 rounded-3xl bg-gradient-to-br from-teal-500/20 to-cyan-500/10 border border-teal-500/20 mb-6"
-                      >
-                        <Sparkles className="w-10 h-10 text-teal-400" />
-                      </motion.div>
-                      <div className="flex items-center justify-center gap-3 mb-4">
-                        <div className="h-px w-8 bg-teal-500" />
-                        <span className="text-xs text-teal-400 uppercase tracking-[0.3em]">
-                          Amenities
-                        </span>
-                        <div className="h-px w-8 bg-teal-500" />
-                      </div>
-                      <h2 className="text-3xl sm:text-4xl font-extralight text-white mb-3">
-                        Any must-have amenities?
-                      </h2>
-                      <p className="text-neutral-400 font-light">
-                        Select amenities that are essential for you (optional)
-                      </p>
-                    </div>
-
-                    <div className="grid sm:grid-cols-2 gap-3">
-                      {AMENITIES.map((amenity) => {
-                        const Icon = amenity.icon;
-                        const isSelected = preferences.mustHaveAmenities.includes(amenity.value);
-                        return (
-                          <motion.button
-                            key={amenity.value}
-                            whileHover={{ y: -2 }}
-                            whileTap={{ scale: 0.98 }}
-                            onClick={() => toggleAmenity(amenity.value)}
-                            className={`p-5 rounded-2xl border transition-all duration-300 flex items-center gap-4 ${
-                              isSelected
-                                ? 'border-teal-500/50 bg-teal-500/10'
-                                : 'border-white/[0.08] hover:border-white/[0.15] bg-white/[0.02] hover:bg-white/[0.04]'
+                          className={`w-12 h-12 rounded-xl flex items-center justify-center
+                            ${
+                              preferences.university === uni.value
+                                ? 'bg-white/20'
+                                : 'bg-[#e0e5ec] shadow-[inset_2px_2px_4px_rgba(163,177,198,0.4),inset_-2px_-2px_4px_rgba(255,255,255,0.6)]'
                             }`}
-                          >
-                            <div
-                              className={`w-10 h-10 rounded-xl flex items-center justify-center ${
-                                isSelected ? 'bg-teal-500/20' : 'bg-white/[0.05]'
-                              }`}
-                            >
-                              <Icon
-                                className={`w-5 h-5 ${isSelected ? 'text-teal-400' : 'text-neutral-500'}`}
-                              />
-                            </div>
-                            <span className="text-white font-light flex-1 text-left">
-                              {amenity.label}
-                            </span>
-                            {isSelected && <CheckCircle2 className="w-5 h-5 text-teal-400" />}
-                          </motion.button>
-                        );
-                      })}
-                    </div>
-
-                    <div className="mt-8 p-5 rounded-2xl bg-white/[0.02] border border-white/[0.06]">
-                      <label className="flex items-center gap-3 text-neutral-400 text-sm mb-4">
-                        <MapPin className="w-4 h-4 text-teal-400" />
-                        <span className="uppercase tracking-widest text-xs">
-                          Maximum distance to campus: {preferences.maxDistanceToCampus} km
+                        >
+                          <Icon
+                            className={`w-6 h-6 ${preferences.university === uni.value ? 'text-white' : 'text-blue-600'}`}
+                          />
+                        </div>
+                        <span
+                          className={`font-medium flex-1 ${preferences.university === uni.value ? 'text-white' : 'text-slate-700'}`}
+                        >
+                          {uni.label}
                         </span>
+                        {preferences.university === uni.value && (
+                          <CheckCircle2 className="w-5 h-5 text-white" />
+                        )}
+                      </motion.button>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
+            {/* Step 2: Budget */}
+            {currentStep === 2 && (
+              <div className="space-y-8">
+                <div className="text-center mb-10">
+                  <motion.div
+                    initial={{ scale: 0.8, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    className="inline-flex items-center justify-center w-20 h-20 rounded-2xl mb-6
+                      bg-gradient-to-br from-emerald-500 to-green-600
+                      shadow-[4px_4px_8px_rgba(163,177,198,0.5),-4px_-4px_8px_rgba(255,255,255,0.8)]"
+                  >
+                    <DollarSign className="w-10 h-10 text-white" />
+                  </motion.div>
+                  <span className="text-sm text-emerald-600 font-medium uppercase tracking-wider block mb-2">
+                    Budget
+                  </span>
+                  <h2 className="text-2xl sm:text-3xl font-bold text-slate-800 mb-3">
+                    What&apos;s your weekly budget?
+                  </h2>
+                  <p className="text-slate-500">Set your comfortable price range per week</p>
+                </div>
+
+                <div className="space-y-10">
+                  <div className="text-center">
+                    <div className="text-4xl sm:text-5xl font-bold text-slate-800 mb-2">
+                      <span className="text-emerald-600">${preferences.budgetMin}</span>
+                      <span className="text-slate-300 mx-4">—</span>
+                      <span className="text-emerald-600">${preferences.budgetMax}</span>
+                    </div>
+                    <p className="text-slate-500 text-sm uppercase tracking-wider">per week</p>
+                  </div>
+
+                  <div className="space-y-8 px-4">
+                    <div>
+                      <label
+                        htmlFor="budget-min"
+                        className="text-slate-600 text-sm font-medium mb-4 block"
+                      >
+                        Minimum Budget
                       </label>
                       <input
+                        id="budget-min"
                         type="range"
-                        min="1"
-                        max="15"
-                        step="1"
-                        value={preferences.maxDistanceToCampus}
-                        onChange={(e) =>
-                          updatePreference('maxDistanceToCampus', parseInt(e.target.value))
-                        }
-                        className="w-full h-2 bg-white/[0.06] rounded-full appearance-none cursor-pointer accent-teal-500"
+                        min="100"
+                        max="800"
+                        step="25"
+                        value={preferences.budgetMin}
+                        onChange={(e) => {
+                          const value = parseInt(e.target.value);
+                          if (value < preferences.budgetMax) {
+                            updatePreference('budgetMin', value);
+                          }
+                        }}
+                        className="w-full h-2 rounded-full appearance-none cursor-pointer accent-emerald-500 bg-[#e0e5ec]
+                          shadow-[inset_2px_2px_4px_rgba(163,177,198,0.5),inset_-2px_-2px_4px_rgba(255,255,255,0.8)]"
                       />
-                      <div className="flex justify-between text-neutral-600 text-xs mt-2">
-                        <span>1 km</span>
-                        <span>15 km</span>
+                      <div className="flex justify-between text-slate-400 text-xs mt-2">
+                        <span>$100</span>
+                        <span>$800</span>
                       </div>
                     </div>
-                  </div>
-                )}
 
-                {/* Step 7: Social Preference */}
-                {currentStep === 7 && (
-                  <div className="space-y-8">
-                    <div className="text-center mb-10">
-                      <motion.div
-                        initial={{ scale: 0.8, opacity: 0 }}
-                        animate={{ scale: 1, opacity: 1 }}
-                        className="inline-flex items-center justify-center w-20 h-20 rounded-3xl bg-gradient-to-br from-pink-500/20 to-rose-500/10 border border-pink-500/20 mb-6"
+                    <div>
+                      <label
+                        htmlFor="budget-max"
+                        className="text-slate-600 text-sm font-medium mb-4 block"
                       >
-                        <Users className="w-10 h-10 text-pink-400" />
-                      </motion.div>
-                      <div className="flex items-center justify-center gap-3 mb-4">
-                        <div className="h-px w-8 bg-pink-500" />
-                        <span className="text-xs text-pink-400 uppercase tracking-[0.3em]">
-                          Social
-                        </span>
-                        <div className="h-px w-8 bg-pink-500" />
+                        Maximum Budget
+                      </label>
+                      <input
+                        id="budget-max"
+                        type="range"
+                        min="100"
+                        max="1000"
+                        step="25"
+                        value={preferences.budgetMax}
+                        onChange={(e) => {
+                          const value = parseInt(e.target.value);
+                          if (value > preferences.budgetMin) {
+                            updatePreference('budgetMax', value);
+                          }
+                        }}
+                        className="w-full h-2 rounded-full appearance-none cursor-pointer accent-emerald-500 bg-[#e0e5ec]
+                          shadow-[inset_2px_2px_4px_rgba(163,177,198,0.5),inset_-2px_-2px_4px_rgba(255,255,255,0.8)]"
+                      />
+                      <div className="flex justify-between text-slate-400 text-xs mt-2">
+                        <span>$100</span>
+                        <span>$1000</span>
                       </div>
-                      <h2 className="text-3xl sm:text-4xl font-extralight text-white mb-3">
-                        What&apos;s your social preference?
-                      </h2>
-                      <p className="text-neutral-400 font-light">
-                        This helps us match you with the right environment
-                      </p>
-                    </div>
-
-                    <div className="grid gap-4">
-                      {[
-                        {
-                          value: 'quiet',
-                          label: 'Quiet & Peaceful',
-                          description: 'I prefer a calm environment focused on studies',
-                          icon: BookMarked,
-                        },
-                        {
-                          value: 'balanced',
-                          label: 'Balanced',
-                          description: 'A mix of social activities and quiet time',
-                          icon: Scale,
-                        },
-                        {
-                          value: 'social',
-                          label: 'Social & Active',
-                          description: 'I love meeting people and community events',
-                          icon: PartyPopper,
-                        },
-                      ].map((option) => {
-                        const Icon = option.icon;
-                        return (
-                          <motion.button
-                            key={option.value}
-                            whileHover={{ x: 4 }}
-                            whileTap={{ scale: 0.99 }}
-                            onClick={() =>
-                              updatePreference(
-                                'socialPreference',
-                                option.value as 'quiet' | 'social' | 'balanced'
-                              )
-                            }
-                            className={`w-full p-6 rounded-2xl border transition-all duration-300 text-left flex items-center gap-5 ${
-                              preferences.socialPreference === option.value
-                                ? 'border-pink-500/50 bg-pink-500/10'
-                                : 'border-white/[0.08] hover:border-white/[0.15] bg-white/[0.02] hover:bg-white/[0.04]'
-                            }`}
-                          >
-                            <div
-                              className={`w-14 h-14 rounded-2xl flex items-center justify-center ${
-                                preferences.socialPreference === option.value
-                                  ? 'bg-pink-500/20'
-                                  : 'bg-white/[0.05]'
-                              }`}
-                            >
-                              <Icon
-                                className={`w-7 h-7 ${preferences.socialPreference === option.value ? 'text-pink-400' : 'text-neutral-500'}`}
-                              />
-                            </div>
-                            <div className="flex-1">
-                              <h3 className="text-white font-light text-lg mb-1">{option.label}</h3>
-                              <p className="text-neutral-500 text-sm font-light">
-                                {option.description}
-                              </p>
-                            </div>
-                            {preferences.socialPreference === option.value && (
-                              <CheckCircle2 className="w-6 h-6 text-pink-400" />
-                            )}
-                          </motion.button>
-                        );
-                      })}
                     </div>
                   </div>
-                )}
-              </motion.div>
-            </AnimatePresence>
+                </div>
+              </div>
+            )}
 
-            {/* Navigation Buttons */}
-            <div className="flex justify-between mt-8">
-              <Button
-                variant="outline"
-                onClick={handleBack}
-                disabled={currentStep === 1}
-                className="px-6 py-3 rounded-full bg-transparent border border-neutral-700 text-white hover:border-neutral-500 hover:bg-white/5 disabled:opacity-30 disabled:border-neutral-800 transition-all duration-300 font-light"
-              >
-                <ArrowLeft className="w-4 h-4 mr-2" />
-                Back
-              </Button>
+            {/* Step 3: Accommodation Type */}
+            {currentStep === 3 && (
+              <div className="space-y-8">
+                <div className="text-center mb-10">
+                  <motion.div
+                    initial={{ scale: 0.8, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    className="inline-flex items-center justify-center w-20 h-20 rounded-2xl mb-6
+                      bg-gradient-to-br from-cyan-500 to-blue-600
+                      shadow-[4px_4px_8px_rgba(163,177,198,0.5),-4px_-4px_8px_rgba(255,255,255,0.8)]"
+                  >
+                    <Home className="w-10 h-10 text-white" />
+                  </motion.div>
+                  <span className="text-sm text-cyan-600 font-medium uppercase tracking-wider block mb-2">
+                    Accommodation
+                  </span>
+                  <h2 className="text-2xl sm:text-3xl font-bold text-slate-800 mb-3">
+                    What type of accommodation interests you?
+                  </h2>
+                  <p className="text-slate-500">Select all that apply</p>
+                </div>
 
-              {currentStep < TOTAL_STEPS ? (
-                <Button
-                  onClick={handleNext}
-                  disabled={!canProceed()}
-                  className="px-8 py-3 rounded-full bg-gradient-to-r from-purple-500 to-violet-500 text-white hover:opacity-90 disabled:opacity-30 transition-all duration-300 font-light"
+                <div className="grid sm:grid-cols-2 gap-4">
+                  {ACCOMMODATION_TYPES.map((type) => {
+                    const Icon = type.icon;
+                    const isSelected = preferences.accommodationType.includes(type.value);
+                    return (
+                      <motion.button
+                        key={type.value}
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                        onClick={() => toggleAccommodationType(type.value)}
+                        className={`relative p-6 rounded-xl text-left transition-all duration-300
+                          ${
+                            isSelected
+                              ? 'bg-gradient-to-br from-cyan-500 to-blue-600 shadow-[4px_4px_8px_rgba(163,177,198,0.5),-4px_-4px_8px_rgba(255,255,255,0.8)]'
+                              : 'bg-[#e0e5ec] shadow-[4px_4px_8px_rgba(163,177,198,0.5),-4px_-4px_8px_rgba(255,255,255,0.8)] hover:shadow-[6px_6px_12px_rgba(163,177,198,0.4),-6px_-6px_12px_rgba(255,255,255,0.9)]'
+                          }`}
+                      >
+                        <div
+                          className={`w-14 h-14 rounded-xl flex items-center justify-center mb-4
+                            ${
+                              isSelected
+                                ? 'bg-white/20'
+                                : 'bg-[#e0e5ec] shadow-[inset_2px_2px_4px_rgba(163,177,198,0.4),inset_-2px_-2px_4px_rgba(255,255,255,0.6)]'
+                            }`}
+                        >
+                          <Icon
+                            className={`w-7 h-7 ${isSelected ? 'text-white' : 'text-cyan-600'}`}
+                          />
+                        </div>
+                        <h3
+                          className={`font-semibold text-lg mb-1 ${isSelected ? 'text-white' : 'text-slate-800'}`}
+                        >
+                          {type.label}
+                        </h3>
+                        <p className={`text-sm ${isSelected ? 'text-white/80' : 'text-slate-500'}`}>
+                          {type.description}
+                        </p>
+                        {isSelected && (
+                          <CheckCircle2 className="w-5 h-5 text-white absolute top-4 right-4" />
+                        )}
+                      </motion.button>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
+            {/* Step 4: Room Type */}
+            {currentStep === 4 && (
+              <div className="space-y-8">
+                <div className="text-center mb-10">
+                  <motion.div
+                    initial={{ scale: 0.8, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    className="inline-flex items-center justify-center w-20 h-20 rounded-2xl mb-6
+                      bg-gradient-to-br from-violet-500 to-purple-600
+                      shadow-[4px_4px_8px_rgba(163,177,198,0.5),-4px_-4px_8px_rgba(255,255,255,0.8)]"
+                  >
+                    <Home className="w-10 h-10 text-white" />
+                  </motion.div>
+                  <span className="text-sm text-violet-600 font-medium uppercase tracking-wider block mb-2">
+                    Room Type
+                  </span>
+                  <h2 className="text-2xl sm:text-3xl font-bold text-slate-800 mb-3">
+                    What room type do you prefer?
+                  </h2>
+                  <p className="text-slate-500">Choose your ideal living arrangement</p>
+                </div>
+
+                <div className="grid gap-3">
+                  {ROOM_TYPES.map((room) => (
+                    <motion.button
+                      key={room.value}
+                      whileHover={{ scale: 1.01 }}
+                      whileTap={{ scale: 0.99 }}
+                      onClick={() => updatePreference('roomType', room.value)}
+                      className={`w-full p-5 rounded-xl text-left flex items-center justify-between transition-all duration-300
+                        ${
+                          preferences.roomType === room.value
+                            ? 'bg-gradient-to-br from-violet-500 to-purple-600 shadow-[4px_4px_8px_rgba(163,177,198,0.5),-4px_-4px_8px_rgba(255,255,255,0.8)]'
+                            : 'bg-[#e0e5ec] shadow-[4px_4px_8px_rgba(163,177,198,0.5),-4px_-4px_8px_rgba(255,255,255,0.8)] hover:shadow-[6px_6px_12px_rgba(163,177,198,0.4),-6px_-6px_12px_rgba(255,255,255,0.9)]'
+                        }`}
+                    >
+                      <div>
+                        <h3
+                          className={`font-semibold text-lg ${preferences.roomType === room.value ? 'text-white' : 'text-slate-800'}`}
+                        >
+                          {room.label}
+                        </h3>
+                        <p
+                          className={`text-sm ${preferences.roomType === room.value ? 'text-white/80' : 'text-slate-500'}`}
+                        >
+                          {room.description}
+                        </p>
+                      </div>
+                      {preferences.roomType === room.value && (
+                        <CheckCircle2 className="w-5 h-5 text-white" />
+                      )}
+                    </motion.button>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Step 5: Priority Factors */}
+            {currentStep === 5 && (
+              <div className="space-y-8">
+                <div className="text-center mb-10">
+                  <motion.div
+                    initial={{ scale: 0.8, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    className="inline-flex items-center justify-center w-20 h-20 rounded-2xl mb-6
+                      bg-gradient-to-br from-amber-500 to-orange-600
+                      shadow-[4px_4px_8px_rgba(163,177,198,0.5),-4px_-4px_8px_rgba(255,255,255,0.8)]"
+                  >
+                    <Star className="w-10 h-10 text-white" />
+                  </motion.div>
+                  <span className="text-sm text-amber-600 font-medium uppercase tracking-wider block mb-2">
+                    Priorities
+                  </span>
+                  <h2 className="text-2xl sm:text-3xl font-bold text-slate-800 mb-3">
+                    What matters most to you?
+                  </h2>
+                  <p className="text-slate-500">
+                    Rate each factor from 1 (not important) to 5 (very important)
+                  </p>
+                </div>
+
+                <div className="space-y-4">
+                  {PRIORITY_FACTORS.map((factor) => (
+                    <div
+                      key={factor.key}
+                      className="p-5 rounded-xl bg-[#e0e5ec]
+                        shadow-[4px_4px_8px_rgba(163,177,198,0.5),-4px_-4px_8px_rgba(255,255,255,0.8)]"
+                    >
+                      <div className="flex justify-between items-center mb-4">
+                        <div>
+                          <span className="text-slate-800 font-medium">{factor.label}</span>
+                          <p className="text-slate-400 text-xs">{factor.description}</p>
+                        </div>
+                        <span className="text-amber-600 font-bold text-2xl">
+                          {
+                            preferences.priorityFactors[
+                              factor.key as keyof typeof preferences.priorityFactors
+                            ]
+                          }
+                        </span>
+                      </div>
+                      <div className="flex gap-2">
+                        {[1, 2, 3, 4, 5].map((value) => (
+                          <button
+                            key={value}
+                            onClick={() => updatePriorityFactor(factor.key, value)}
+                            className={`flex-1 py-3 rounded-xl transition-all duration-300 text-sm font-medium
+                              ${
+                                preferences.priorityFactors[
+                                  factor.key as keyof typeof preferences.priorityFactors
+                                ] >= value
+                                  ? 'bg-gradient-to-r from-amber-500 to-orange-500 text-white shadow-[2px_2px_4px_rgba(163,177,198,0.4),-2px_-2px_4px_rgba(255,255,255,0.6)]'
+                                  : 'bg-[#e0e5ec] text-slate-500 shadow-[inset_2px_2px_4px_rgba(163,177,198,0.4),inset_-2px_-2px_4px_rgba(255,255,255,0.6)] hover:shadow-[2px_2px_4px_rgba(163,177,198,0.4),-2px_-2px_4px_rgba(255,255,255,0.6)]'
+                              }`}
+                          >
+                            {value}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Step 6: Must-Have Amenities */}
+            {currentStep === 6 && (
+              <div className="space-y-8">
+                <div className="text-center mb-10">
+                  <motion.div
+                    initial={{ scale: 0.8, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    className="inline-flex items-center justify-center w-20 h-20 rounded-2xl mb-6
+                      bg-gradient-to-br from-teal-500 to-cyan-600
+                      shadow-[4px_4px_8px_rgba(163,177,198,0.5),-4px_-4px_8px_rgba(255,255,255,0.8)]"
+                  >
+                    <Sparkles className="w-10 h-10 text-white" />
+                  </motion.div>
+                  <span className="text-sm text-teal-600 font-medium uppercase tracking-wider block mb-2">
+                    Amenities
+                  </span>
+                  <h2 className="text-2xl sm:text-3xl font-bold text-slate-800 mb-3">
+                    Any must-have amenities?
+                  </h2>
+                  <p className="text-slate-500">
+                    Select amenities that are essential for you (optional)
+                  </p>
+                </div>
+
+                <div className="grid sm:grid-cols-2 gap-3">
+                  {AMENITIES.map((amenity) => {
+                    const Icon = amenity.icon;
+                    const isSelected = preferences.mustHaveAmenities.includes(amenity.value);
+                    return (
+                      <motion.button
+                        key={amenity.value}
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                        onClick={() => toggleAmenity(amenity.value)}
+                        className={`p-5 rounded-xl flex items-center gap-4 transition-all duration-300
+                          ${
+                            isSelected
+                              ? 'bg-gradient-to-br from-teal-500 to-cyan-600 shadow-[4px_4px_8px_rgba(163,177,198,0.5),-4px_-4px_8px_rgba(255,255,255,0.8)]'
+                              : 'bg-[#e0e5ec] shadow-[4px_4px_8px_rgba(163,177,198,0.5),-4px_-4px_8px_rgba(255,255,255,0.8)] hover:shadow-[6px_6px_12px_rgba(163,177,198,0.4),-6px_-6px_12px_rgba(255,255,255,0.9)]'
+                          }`}
+                      >
+                        <div
+                          className={`w-10 h-10 rounded-xl flex items-center justify-center
+                            ${
+                              isSelected
+                                ? 'bg-white/20'
+                                : 'bg-[#e0e5ec] shadow-[inset_2px_2px_4px_rgba(163,177,198,0.4),inset_-2px_-2px_4px_rgba(255,255,255,0.6)]'
+                            }`}
+                        >
+                          <Icon
+                            className={`w-5 h-5 ${isSelected ? 'text-white' : 'text-teal-600'}`}
+                          />
+                        </div>
+                        <span
+                          className={`font-medium flex-1 text-left ${isSelected ? 'text-white' : 'text-slate-700'}`}
+                        >
+                          {amenity.label}
+                        </span>
+                        {isSelected && <CheckCircle2 className="w-5 h-5 text-white" />}
+                      </motion.button>
+                    );
+                  })}
+                </div>
+
+                <div
+                  className="mt-8 p-5 rounded-xl bg-[#e0e5ec]
+                  shadow-[4px_4px_8px_rgba(163,177,198,0.5),-4px_-4px_8px_rgba(255,255,255,0.8)]"
                 >
-                  Next
-                  <ArrowRight className="w-4 h-4 ml-2" />
-                </Button>
+                  <label className="flex items-center gap-3 text-slate-600 text-sm mb-4">
+                    <MapPin className="w-4 h-4 text-teal-600" />
+                    <span className="font-medium">
+                      Maximum distance to campus: {preferences.maxDistanceToCampus} km
+                    </span>
+                  </label>
+                  <input
+                    type="range"
+                    min="1"
+                    max="15"
+                    step="1"
+                    value={preferences.maxDistanceToCampus}
+                    onChange={(e) =>
+                      updatePreference('maxDistanceToCampus', parseInt(e.target.value))
+                    }
+                    className="w-full h-2 rounded-full appearance-none cursor-pointer accent-teal-500 bg-[#e0e5ec]
+                      shadow-[inset_2px_2px_4px_rgba(163,177,198,0.5),inset_-2px_-2px_4px_rgba(255,255,255,0.8)]"
+                  />
+                  <div className="flex justify-between text-slate-400 text-xs mt-2">
+                    <span>1 km</span>
+                    <span>15 km</span>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Step 7: Social Preference */}
+            {currentStep === 7 && (
+              <div className="space-y-8">
+                <div className="text-center mb-10">
+                  <motion.div
+                    initial={{ scale: 0.8, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    className="inline-flex items-center justify-center w-20 h-20 rounded-2xl mb-6
+                      bg-gradient-to-br from-pink-500 to-rose-600
+                      shadow-[4px_4px_8px_rgba(163,177,198,0.5),-4px_-4px_8px_rgba(255,255,255,0.8)]"
+                  >
+                    <Users className="w-10 h-10 text-white" />
+                  </motion.div>
+                  <span className="text-sm text-pink-600 font-medium uppercase tracking-wider block mb-2">
+                    Social
+                  </span>
+                  <h2 className="text-2xl sm:text-3xl font-bold text-slate-800 mb-3">
+                    What&apos;s your social preference?
+                  </h2>
+                  <p className="text-slate-500">
+                    This helps us match you with the right environment
+                  </p>
+                </div>
+
+                <div className="grid gap-4">
+                  {[
+                    {
+                      value: 'quiet',
+                      label: 'Quiet & Peaceful',
+                      description: 'I prefer a calm environment focused on studies',
+                      icon: BookMarked,
+                    },
+                    {
+                      value: 'balanced',
+                      label: 'Balanced',
+                      description: 'A mix of social activities and quiet time',
+                      icon: Scale,
+                    },
+                    {
+                      value: 'social',
+                      label: 'Social & Active',
+                      description: 'I love meeting people and community events',
+                      icon: PartyPopper,
+                    },
+                  ].map((option) => {
+                    const Icon = option.icon;
+                    return (
+                      <motion.button
+                        key={option.value}
+                        whileHover={{ scale: 1.01 }}
+                        whileTap={{ scale: 0.99 }}
+                        onClick={() =>
+                          updatePreference(
+                            'socialPreference',
+                            option.value as 'quiet' | 'social' | 'balanced'
+                          )
+                        }
+                        className={`w-full p-6 rounded-xl text-left flex items-center gap-5 transition-all duration-300
+                          ${
+                            preferences.socialPreference === option.value
+                              ? 'bg-gradient-to-br from-pink-500 to-rose-600 shadow-[4px_4px_8px_rgba(163,177,198,0.5),-4px_-4px_8px_rgba(255,255,255,0.8)]'
+                              : 'bg-[#e0e5ec] shadow-[4px_4px_8px_rgba(163,177,198,0.5),-4px_-4px_8px_rgba(255,255,255,0.8)] hover:shadow-[6px_6px_12px_rgba(163,177,198,0.4),-6px_-6px_12px_rgba(255,255,255,0.9)]'
+                          }`}
+                      >
+                        <div
+                          className={`w-14 h-14 rounded-xl flex items-center justify-center
+                            ${
+                              preferences.socialPreference === option.value
+                                ? 'bg-white/20'
+                                : 'bg-[#e0e5ec] shadow-[inset_2px_2px_4px_rgba(163,177,198,0.4),inset_-2px_-2px_4px_rgba(255,255,255,0.6)]'
+                            }`}
+                        >
+                          <Icon
+                            className={`w-7 h-7 ${preferences.socialPreference === option.value ? 'text-white' : 'text-pink-600'}`}
+                          />
+                        </div>
+                        <div className="flex-1">
+                          <h3
+                            className={`font-semibold text-lg mb-1 ${preferences.socialPreference === option.value ? 'text-white' : 'text-slate-800'}`}
+                          >
+                            {option.label}
+                          </h3>
+                          <p
+                            className={`text-sm ${preferences.socialPreference === option.value ? 'text-white/80' : 'text-slate-500'}`}
+                          >
+                            {option.description}
+                          </p>
+                        </div>
+                        {preferences.socialPreference === option.value && (
+                          <CheckCircle2 className="w-6 h-6 text-white" />
+                        )}
+                      </motion.button>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+          </motion.div>
+        </AnimatePresence>
+
+        {/* Navigation Buttons */}
+        <div className="flex justify-between mt-8">
+          <Button
+            variant="outline"
+            onClick={handleBack}
+            disabled={currentStep === 1}
+            className="px-6 py-3 rounded-xl bg-[#e0e5ec] border-0 text-slate-600 font-medium
+              shadow-[4px_4px_8px_rgba(163,177,198,0.5),-4px_-4px_8px_rgba(255,255,255,0.8)]
+              hover:shadow-[6px_6px_12px_rgba(163,177,198,0.4),-6px_-6px_12px_rgba(255,255,255,0.9)]
+              disabled:opacity-50 disabled:shadow-none transition-all duration-300"
+          >
+            <ArrowLeft className="w-4 h-4 mr-2" />
+            Back
+          </Button>
+
+          {currentStep < TOTAL_STEPS ? (
+            <Button
+              onClick={handleNext}
+              disabled={!canProceed()}
+              className="px-8 py-3 rounded-xl font-medium text-white
+                bg-gradient-to-br from-blue-500 to-indigo-600
+                shadow-[4px_4px_8px_rgba(163,177,198,0.5),-4px_-4px_8px_rgba(255,255,255,0.8)]
+                hover:shadow-[6px_6px_12px_rgba(163,177,198,0.4),-6px_-6px_12px_rgba(255,255,255,0.9)]
+                disabled:opacity-50 transition-all duration-300"
+            >
+              Next
+              <ArrowRight className="w-4 h-4 ml-2" />
+            </Button>
+          ) : (
+            <Button
+              onClick={handleSubmit}
+              disabled={isSubmitting}
+              className="px-8 py-3 rounded-xl font-medium text-white
+                bg-gradient-to-br from-blue-500 to-indigo-600
+                shadow-[4px_4px_8px_rgba(163,177,198,0.5),-4px_-4px_8px_rgba(255,255,255,0.8)]
+                hover:shadow-[6px_6px_12px_rgba(163,177,198,0.4),-6px_-6px_12px_rgba(255,255,255,0.9)]
+                disabled:opacity-50 transition-all duration-300"
+            >
+              {isSubmitting ? (
+                <>
+                  <motion.div
+                    animate={{ rotate: 360 }}
+                    transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
+                    className="w-4 h-4 mr-2 border-2 border-white/30 border-t-white rounded-full"
+                  />
+                  Finding...
+                </>
               ) : (
-                <Button
-                  onClick={handleSubmit}
-                  disabled={isSubmitting}
-                  className="px-8 py-3 rounded-full bg-gradient-to-r from-purple-500 to-violet-500 text-white hover:opacity-90 disabled:opacity-50 transition-all duration-300 font-light"
-                >
-                  {isSubmitting ? (
-                    <>
-                      <motion.div
-                        animate={{ rotate: 360 }}
-                        transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
-                        className="w-4 h-4 mr-2 border-2 border-white/30 border-t-white rounded-full"
-                      />
-                      Finding...
-                    </>
-                  ) : (
-                    <>
-                      <Sparkles className="w-4 h-4 mr-2" />
-                      Get My Recommendations
-                    </>
-                  )}
-                </Button>
+                <>
+                  <Sparkles className="w-4 h-4 mr-2" />
+                  Get My Recommendations
+                </>
               )}
-            </div>
-          </div>
+            </Button>
+          )}
         </div>
-
-        {/* Bottom bar - matching Hero.tsx */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.6, delay: 0.5 }}
-          className="px-6 sm:px-12 lg:px-20 py-8 border-t border-white/5"
-        >
-          <div className="max-w-4xl mx-auto flex justify-between items-center">
-            <div className="flex items-center gap-8">
-              {['UNSW', 'Sydney', 'UTS', 'Macquarie', 'WSU'].map((uni) => (
-                <span
-                  key={uni}
-                  className="text-xs text-neutral-600 uppercase tracking-widest hover:text-neutral-400 transition-colors cursor-default hidden sm:block"
-                >
-                  {uni}
-                </span>
-              ))}
-            </div>
-            <div className="text-xs text-neutral-600 uppercase tracking-widest">
-              Find Your Perfect Home
-            </div>
-          </div>
-        </motion.div>
       </div>
     </div>
   );
