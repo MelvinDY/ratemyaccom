@@ -6,7 +6,7 @@ import FAQ from '@/components/sections/FAQ';
 
 export default function Home() {
   return (
-    <div className="bg-black">
+    <div className="bg-[#e0e5ec]">
       <Hero />
       <HowItWorks />
       <Features />
