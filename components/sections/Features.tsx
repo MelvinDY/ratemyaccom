@@ -1,128 +1,102 @@
 'use client';
 
-import { motion, useInView } from 'framer-motion';
-import { useRef } from 'react';
+import { motion } from 'framer-motion';
 import { MessageSquare, ShieldCheck, Filter, Image, Info, Scale } from 'lucide-react';
 
 const features = [
   {
     icon: MessageSquare,
     title: 'Real Reviews',
-    description: 'Authentic experiences from students who have lived there. No fake reviews.',
+    description: 'Authentic experiences from students who have lived there.',
+    stat: '100+',
   },
   {
     icon: ShieldCheck,
     title: 'Verified Students',
-    description: 'All reviewers verified with university email addresses for trustworthy feedback.',
+    description: 'All reviewers verified with university email addresses.',
+    stat: '100%',
   },
   {
     icon: Filter,
     title: 'Smart Filters',
-    description:
-      'Find exactly what you need with advanced filtering by location, price, and amenities.',
+    description: 'Advanced filtering by location, price, and amenities.',
+    stat: '20+',
   },
   {
     icon: Image,
     title: 'Photo Galleries',
-    description: 'Browse student-uploaded photos to see what accommodations really look like.',
+    description: 'Student-uploaded photos of real accommodations.',
+    stat: '500+',
   },
   {
     icon: Info,
     title: 'Detailed Info',
-    description: 'Comprehensive details including amenities, transport links, and nearby services.',
+    description: 'Amenities, transport links, and nearby services.',
+    stat: '50+',
   },
   {
     icon: Scale,
     title: 'Easy Comparison',
-    description: 'Compare options side-by-side based on price, location, ratings, and features.',
+    description: 'Compare options side-by-side on key metrics.',
+    stat: '6',
   },
 ];
 
-const containerVariants = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.08,
-    },
-  },
-};
-
-const itemVariants = {
-  hidden: { y: 20, opacity: 0 },
-  visible: {
-    y: 0,
-    opacity: 1,
-    transition: {
-      duration: 0.5,
-      ease: [0.25, 0.1, 0.25, 1] as const,
-    },
-  },
-};
-
 export default function Features() {
-  const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, margin: '-100px' });
-
   return (
-    <section
-      ref={ref}
-      className="relative py-24 sm:py-32 bg-neutral-950 overflow-hidden"
-      aria-labelledby="features-heading"
-    >
-      {/* Subtle gradient */}
-      <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-purple-500/5 rounded-full blur-[100px]" />
-      </div>
-
-      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Section Header */}
+    <section className="relative py-24 bg-[#e0e5ec]" aria-labelledby="features-heading">
+      <div className="max-w-5xl mx-auto px-6 sm:px-12">
+        {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
-          animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-          transition={{ duration: 0.6 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5 }}
           className="text-center mb-16"
         >
-          <p className="text-purple-400 text-sm font-medium tracking-wide uppercase mb-4">
+          <span className="text-sm text-blue-600 font-medium uppercase tracking-wider">
             Features
-          </p>
-          <h2
-            id="features-heading"
-            className="text-4xl sm:text-5xl font-semibold text-white mb-6 tracking-tight"
-          >
-            Everything you need.
+          </span>
+          <h2 id="features-heading" className="mt-4 text-3xl sm:text-4xl font-bold text-slate-800">
+            Everything you need
           </h2>
-          <p className="text-lg text-neutral-400 max-w-2xl mx-auto">
+          <p className="mt-4 text-slate-500 max-w-lg mx-auto">
             Powerful tools to help you find the perfect student accommodation.
           </p>
         </motion.div>
 
         {/* Features Grid */}
-        <motion.div
-          variants={containerVariants}
-          initial="hidden"
-          animate={isInView ? 'visible' : 'hidden'}
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
-        >
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {features.map((feature, index) => (
-            <motion.div key={index} variants={itemVariants} className="group">
-              <div className="relative h-full bg-neutral-900/50 backdrop-blur-sm border border-neutral-800 rounded-2xl p-8 hover:border-neutral-700 hover:bg-neutral-900/80 transition-all duration-300">
-                {/* Icon */}
-                <div className="w-12 h-12 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center mb-6 group-hover:bg-purple-500/10 group-hover:border-purple-500/20 transition-all duration-300">
-                  <feature.icon
-                    className="w-6 h-6 text-neutral-400 group-hover:text-purple-400 transition-colors"
-                    strokeWidth={1.5}
-                    aria-hidden="true"
-                  />
+            <motion.div
+              key={feature.title}
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: index * 0.08 }}
+              className="p-6 rounded-2xl bg-[#e0e5ec]
+                shadow-[6px_6px_12px_rgba(163,177,198,0.5),-6px_-6px_12px_rgba(255,255,255,0.8)]
+                hover:shadow-[8px_8px_16px_rgba(163,177,198,0.4),-8px_-8px_16px_rgba(255,255,255,0.9)]
+                transition-all duration-300"
+            >
+              {/* Icon and Stat */}
+              <div className="flex items-start justify-between mb-4">
+                <div
+                  className="w-12 h-12 rounded-xl flex items-center justify-center
+                  bg-gradient-to-br from-blue-500 to-indigo-600
+                  shadow-[3px_3px_6px_rgba(163,177,198,0.4),-3px_-3px_6px_rgba(255,255,255,0.6)]"
+                >
+                  <feature.icon className="w-6 h-6 text-white" />
                 </div>
-
-                {/* Content */}
-                <h3 className="text-xl font-semibold text-white mb-3">{feature.title}</h3>
-                <p className="text-neutral-500 leading-relaxed text-sm">{feature.description}</p>
+                <span className="text-2xl font-bold text-slate-300">{feature.stat}</span>
               </div>
+
+              {/* Content */}
+              <h3 className="text-lg font-semibold text-slate-800 mb-2">{feature.title}</h3>
+              <p className="text-sm text-slate-500 leading-relaxed">{feature.description}</p>
             </motion.div>
           ))}
-        </motion.div>
+        </div>
       </div>
     </section>
   );

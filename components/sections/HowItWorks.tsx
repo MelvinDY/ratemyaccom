@@ -7,106 +7,79 @@ const steps = [
   {
     icon: Search,
     title: 'Browse',
-    description:
-      'Explore accommodations across 5 NSW universities. Filter by price, location, and amenities.',
+    description: 'Explore accommodations across 5 NSW universities.',
+    number: '01',
   },
   {
     icon: Star,
     title: 'Compare',
-    description: 'Read verified reviews from students. See ratings across 6 key categories.',
+    description: 'Read verified reviews from real students.',
+    number: '02',
   },
   {
     icon: UserCheck,
     title: 'Verify',
-    description: 'Sign up with your .edu.au email. Access full reviews and contribute your own.',
+    description: 'Sign up with your university email.',
+    number: '03',
   },
   {
     icon: CheckCircle,
     title: 'Decide',
-    description: 'Make confident housing decisions backed by real student experiences.',
+    description: 'Make confident housing decisions.',
+    number: '04',
   },
 ];
 
 export default function HowItWorks() {
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1,
-        delayChildren: 0.1,
-      },
-    },
-  };
-
-  const itemVariants = {
-    hidden: { y: 20, opacity: 0 },
-    visible: {
-      y: 0,
-      opacity: 1,
-      transition: {
-        duration: 0.5,
-        ease: [0.25, 0.1, 0.25, 1] as const,
-      },
-    },
-  };
-
   return (
-    <section className="py-24 sm:py-32 bg-black">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section className="relative py-24 bg-[#e0e5ec]">
+      <div className="max-w-5xl mx-auto px-6 sm:px-12">
+        {/* Header */}
         <motion.div
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: '-100px' }}
-          variants={containerVariants}
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5 }}
           className="text-center mb-16"
         >
-          <motion.p
-            variants={itemVariants}
-            className="text-purple-400 text-sm font-medium tracking-wide uppercase mb-4"
-          >
+          <span className="text-sm text-blue-600 font-medium uppercase tracking-wider">
             How it works
-          </motion.p>
-
-          <motion.h2
-            variants={itemVariants}
-            className="text-4xl sm:text-5xl font-semibold text-white mb-6 tracking-tight"
-          >
-            Four simple steps.
-          </motion.h2>
-
-          <motion.p variants={itemVariants} className="text-lg text-neutral-400 max-w-2xl mx-auto">
-            Finding your ideal student accommodation has never been easier.
-          </motion.p>
+          </span>
+          <h2 className="mt-4 text-3xl sm:text-4xl font-bold text-slate-800">Four simple steps</h2>
         </motion.div>
 
-        <motion.div
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: '-50px' }}
-          variants={containerVariants}
-          className="grid md:grid-cols-2 lg:grid-cols-4 gap-6"
-        >
+        {/* Steps Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {steps.map((step, index) => (
-            <motion.div key={step.title} variants={itemVariants} className="group relative">
-              <div className="relative bg-neutral-900/50 backdrop-blur-sm border border-neutral-800 rounded-2xl p-8 hover:border-neutral-700 hover:bg-neutral-900/80 transition-all duration-300 h-full">
-                {/* Step number */}
-                <div className="absolute -top-3 -left-3 w-7 h-7 bg-purple-500/20 border border-purple-500/30 rounded-full flex items-center justify-center">
-                  <span className="text-xs font-medium text-purple-400">{index + 1}</span>
-                </div>
+            <motion.div
+              key={step.title}
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: index * 0.1 }}
+              className="relative p-6 rounded-2xl bg-[#e0e5ec]
+                shadow-[6px_6px_12px_rgba(163,177,198,0.5),-6px_-6px_12px_rgba(255,255,255,0.8)]
+                hover:shadow-[8px_8px_16px_rgba(163,177,198,0.4),-8px_-8px_16px_rgba(255,255,255,0.9)]
+                transition-all duration-300"
+            >
+              {/* Number */}
+              <span className="text-4xl font-bold text-slate-200">{step.number}</span>
 
-                {/* Icon */}
-                <div className="w-12 h-12 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center mb-6 group-hover:bg-purple-500/10 group-hover:border-purple-500/20 transition-all duration-300">
-                  <step.icon className="w-6 h-6 text-neutral-400 group-hover:text-purple-400 transition-colors" />
-                </div>
-
-                {/* Content */}
-                <h3 className="text-xl font-semibold text-white mb-3">{step.title}</h3>
-                <p className="text-neutral-500 leading-relaxed text-sm">{step.description}</p>
+              {/* Icon */}
+              <div
+                className="mt-4 w-12 h-12 rounded-xl flex items-center justify-center
+                bg-gradient-to-br from-blue-500 to-indigo-600
+                shadow-[3px_3px_6px_rgba(163,177,198,0.4),-3px_-3px_6px_rgba(255,255,255,0.6)]"
+              >
+                <step.icon className="w-6 h-6 text-white" />
               </div>
+
+              {/* Content */}
+              <h3 className="mt-4 text-lg font-semibold text-slate-800">{step.title}</h3>
+              <p className="mt-2 text-sm text-slate-500 leading-relaxed">{step.description}</p>
             </motion.div>
           ))}
-        </motion.div>
+        </div>
       </div>
     </section>
   );
