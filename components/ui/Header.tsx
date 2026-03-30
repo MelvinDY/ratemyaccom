@@ -27,7 +27,7 @@ export default function Header() {
   const { user, isAuthenticated, logout } = useAuth();
 
   // Pages with light backgrounds (neumorphism style)
-  const lightBackgroundPages = ['/', '/about', '/support'];
+  const lightBackgroundPages = ['/', '/about', '/support', '/browse', '/quiz'];
   const isLightPage = lightBackgroundPages.some(
     (page) => pathname === page || (page !== '/' && pathname?.startsWith(page))
   );

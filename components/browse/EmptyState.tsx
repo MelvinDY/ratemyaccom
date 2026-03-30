@@ -26,15 +26,16 @@ export default function EmptyState({ onClearFilters }: EmptyStateProps) {
         <motion.div
           animate={{
             scale: [1, 1.2, 1],
-            opacity: [0.3, 0.5, 0.3],
+            opacity: [0.2, 0.4, 0.2],
           }}
           transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
-          className="absolute inset-0 bg-purple-500/20 rounded-3xl blur-3xl"
+          className="absolute inset-0 bg-blue-400/20 rounded-3xl blur-3xl"
         />
 
-        {/* Icon container */}
-        <div className="relative w-28 h-28 rounded-3xl bg-gradient-to-br from-white/[0.08] to-white/[0.02] border border-white/[0.08] flex items-center justify-center backdrop-blur-sm">
-          <Search className="h-12 w-12 text-purple-400" strokeWidth={1} />
+        {/* Icon container - Neumorphic style */}
+        <div className="relative w-28 h-28 rounded-3xl bg-[#e0e5ec] flex items-center justify-center
+          shadow-[8px_8px_16px_rgba(163,177,198,0.5),-8px_-8px_16px_rgba(255,255,255,0.8)]">
+          <Search className="h-12 w-12 text-blue-500" strokeWidth={1} />
 
           {/* Decorative sparkles */}
           <motion.div
@@ -45,7 +46,7 @@ export default function EmptyState({ onClearFilters }: EmptyStateProps) {
             transition={{ duration: 2, repeat: Infinity }}
             className="absolute -top-2 -right-2"
           >
-            <Sparkles className="w-5 h-5 text-purple-400/50" />
+            <Sparkles className="w-5 h-5 text-blue-400/60" />
           </motion.div>
         </div>
       </motion.div>
@@ -57,11 +58,11 @@ export default function EmptyState({ onClearFilters }: EmptyStateProps) {
         transition={{ duration: 0.5, delay: 0.3 }}
         className="flex items-center gap-3 mb-6"
       >
-        <div className="h-px w-8 bg-purple-500" />
-        <span className="text-xs text-purple-400 uppercase tracking-[0.3em] font-light">
+        <div className="h-px w-8 bg-blue-500" />
+        <span className="text-xs text-blue-600 uppercase tracking-[0.3em] font-medium">
           No Results
         </span>
-        <div className="h-px w-8 bg-purple-500" />
+        <div className="h-px w-8 bg-blue-500" />
       </motion.div>
 
       {/* Title */}
@@ -69,7 +70,7 @@ export default function EmptyState({ onClearFilters }: EmptyStateProps) {
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, delay: 0.4 }}
-        className="text-4xl font-extralight text-white mb-4 tracking-tight"
+        className="text-4xl font-bold text-slate-800 mb-4 tracking-tight"
       >
         Nothing Found
       </motion.h3>
@@ -79,25 +80,32 @@ export default function EmptyState({ onClearFilters }: EmptyStateProps) {
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, delay: 0.5 }}
-        className="text-neutral-400 text-center mb-10 max-w-md leading-relaxed font-light"
+        className="text-slate-500 text-center mb-10 max-w-md leading-relaxed font-medium"
       >
         We couldn&apos;t find any accommodations matching your criteria. Try adjusting your filters
         or search terms.
       </motion.p>
 
-      {/* Clear filters button */}
+      {/* Clear filters button - Neumorphic style */}
       {onClearFilters && (
         <motion.button
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.6 }}
-          whileHover={{ scale: 1.02, y: -2 }}
+          whileHover={{
+            scale: 1.02,
+            y: -2,
+            boxShadow:
+              '8px 8px 16px rgba(163,177,198,0.4), -8px -8px 16px rgba(255,255,255,0.9)',
+          }}
           whileTap={{ scale: 0.98 }}
           onClick={onClearFilters}
-          className="group flex items-center gap-3 px-8 py-4 rounded-full bg-gradient-to-br from-white/[0.06] to-white/[0.02] border border-white/[0.1] text-white hover:border-purple-500/30 hover:from-purple-500/10 hover:to-purple-500/5 transition-all duration-300"
+          className="group flex items-center gap-3 px-8 py-4 rounded-2xl bg-[#e0e5ec] text-slate-700
+            shadow-[6px_6px_12px_rgba(163,177,198,0.5),-6px_-6px_12px_rgba(255,255,255,0.8)]
+            hover:text-blue-600 transition-all duration-300"
         >
-          <SlidersHorizontal className="w-4 h-4 text-neutral-400 group-hover:text-purple-400 transition-colors" />
-          <span className="text-sm font-light uppercase tracking-wider">Clear All Filters</span>
+          <SlidersHorizontal className="w-4 h-4 text-slate-500 group-hover:text-blue-500 transition-colors" />
+          <span className="text-sm font-medium uppercase tracking-wider">Clear All Filters</span>
         </motion.button>
       )}
 
@@ -106,7 +114,7 @@ export default function EmptyState({ onClearFilters }: EmptyStateProps) {
         initial={{ width: 0 }}
         animate={{ width: '200px' }}
         transition={{ duration: 0.8, delay: 0.8 }}
-        className="mt-16 h-px bg-gradient-to-r from-transparent via-purple-500/30 to-transparent"
+        className="mt-16 h-px bg-gradient-to-r from-transparent via-blue-400/40 to-transparent"
       />
     </motion.div>
   );

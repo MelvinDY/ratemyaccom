@@ -14,17 +14,19 @@ export default function AccommodationCard({ accommodation }: AccommodationCardPr
   return (
     <Link href={`/accommodation/${accommodation.slug}`}>
       <motion.div
-        whileHover={{ y: -8 }}
+        whileHover={{
+          y: -8,
+          boxShadow:
+            '10px 10px 20px rgba(163,177,198,0.4), -10px -10px 20px rgba(255,255,255,0.9)',
+        }}
         transition={{ duration: 0.4, ease: 'easeOut' }}
-        className="group relative h-full rounded-3xl bg-gradient-to-br from-white/[0.06] to-white/[0.02] border border-white/[0.08] hover:border-purple-500/30 overflow-hidden backdrop-blur-sm"
+        className="group relative h-full rounded-2xl bg-[#e0e5ec] overflow-hidden
+          shadow-[6px_6px_12px_rgba(163,177,198,0.5),-6px_-6px_12px_rgba(255,255,255,0.8)]"
       >
-        {/* Glow effect on hover */}
-        <div className="absolute inset-0 rounded-3xl bg-gradient-to-br from-purple-500/10 via-violet-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-
         {/* Image Section */}
-        <div className="relative h-56 overflow-hidden">
+        <div className="relative h-56 overflow-hidden rounded-t-2xl">
           {/* Placeholder gradient */}
-          <div className="absolute inset-0 bg-gradient-to-br from-purple-900/40 via-purple-800/30 to-violet-900/40" />
+          <div className="absolute inset-0 bg-gradient-to-br from-blue-100 via-slate-100 to-indigo-100" />
 
           {/* Accommodation Image */}
           {accommodation.images && accommodation.images.length > 0 && accommodation.images[0] && (
@@ -37,17 +39,15 @@ export default function AccommodationCard({ accommodation }: AccommodationCardPr
           )}
 
           {/* Gradient overlay */}
-          <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-[#0a0a0a]/20 to-transparent" />
-
-          {/* Top accent line */}
-          <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-purple-500/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#e0e5ec] via-transparent to-transparent" />
 
           {/* Badges */}
           <div className="absolute top-4 left-4 right-4 flex justify-between items-start">
             {accommodation.featured && (
               <motion.span
                 whileHover={{ scale: 1.05 }}
-                className="px-4 py-2 rounded-full bg-gradient-to-r from-purple-500 to-violet-500 text-white text-[10px] font-medium uppercase tracking-[0.15em] shadow-lg shadow-purple-500/30"
+                className="px-4 py-2 rounded-xl bg-gradient-to-r from-blue-500 to-indigo-600 text-white text-[10px] font-medium uppercase tracking-[0.15em]
+                  shadow-[3px_3px_6px_rgba(0,0,0,0.2)]"
               >
                 Featured
               </motion.span>
@@ -55,9 +55,10 @@ export default function AccommodationCard({ accommodation }: AccommodationCardPr
             {accommodation.verified && (
               <motion.span
                 whileHover={{ scale: 1.05 }}
-                className="flex items-center gap-1.5 px-3 py-2 rounded-full bg-white/10 backdrop-blur-md text-white text-[10px] font-medium uppercase tracking-wider border border-white/20"
+                className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-[#e0e5ec]/90 backdrop-blur-md text-slate-700 text-[10px] font-medium uppercase tracking-wider
+                  shadow-[2px_2px_4px_rgba(163,177,198,0.4),-2px_-2px_4px_rgba(255,255,255,0.6)]"
               >
-                <CheckCircle2 className="w-3 h-3 text-emerald-400" />
+                <CheckCircle2 className="w-3 h-3 text-emerald-500" />
                 Verified
               </motion.span>
             )}
@@ -66,13 +67,14 @@ export default function AccommodationCard({ accommodation }: AccommodationCardPr
           {/* Rating badge - bottom right of image */}
           <motion.div
             whileHover={{ scale: 1.05 }}
-            className="absolute bottom-4 right-4 flex items-center gap-2 px-4 py-2 rounded-full bg-black/60 backdrop-blur-md border border-white/10"
+            className="absolute bottom-4 right-4 flex items-center gap-2 px-4 py-2 rounded-xl bg-[#e0e5ec]/90 backdrop-blur-md
+              shadow-[2px_2px_4px_rgba(163,177,198,0.4),-2px_-2px_4px_rgba(255,255,255,0.6)]"
           >
-            <Star className="w-4 h-4 text-yellow-400 fill-yellow-400" />
-            <span className="text-white text-sm font-light">
+            <Star className="w-4 h-4 text-amber-500 fill-amber-500" />
+            <span className="text-slate-800 text-sm font-semibold">
               {accommodation.ratings.overall.toFixed(1)}
             </span>
-            <span className="text-neutral-500 text-xs">({accommodation.ratings.totalReviews})</span>
+            <span className="text-slate-500 text-xs">({accommodation.ratings.totalReviews})</span>
           </motion.div>
         </div>
 
@@ -80,8 +82,8 @@ export default function AccommodationCard({ accommodation }: AccommodationCardPr
         <div className="relative z-10 p-6">
           {/* University tag */}
           <div className="flex items-center gap-2 mb-3">
-            <div className="h-px w-6 bg-purple-500" />
-            <p className="text-[10px] text-purple-400 uppercase tracking-[0.2em] font-light">
+            <div className="h-px w-6 bg-blue-500" />
+            <p className="text-[10px] text-blue-600 uppercase tracking-[0.2em] font-medium">
               {accommodation.university.includes('(')
                 ? (accommodation.university.split('(')[1]?.replace(')', '') ??
                   accommodation.university)
@@ -90,14 +92,14 @@ export default function AccommodationCard({ accommodation }: AccommodationCardPr
           </div>
 
           {/* Title */}
-          <h3 className="text-xl font-light text-white mb-4 group-hover:text-purple-200 transition-colors duration-300 line-clamp-1 tracking-tight">
+          <h3 className="text-xl font-bold text-slate-800 mb-4 group-hover:text-blue-600 transition-colors duration-300 line-clamp-1 tracking-tight">
             {accommodation.name}
           </h3>
 
           {/* Location */}
-          <div className="flex items-center gap-2 text-sm text-neutral-400 mb-5">
-            <MapPin className="w-4 h-4 text-purple-400/70" />
-            <span className="font-light">
+          <div className="flex items-center gap-2 text-sm text-slate-500 mb-5">
+            <MapPin className="w-4 h-4 text-blue-500/70" />
+            <span className="font-medium">
               {accommodation.location.suburb} · {accommodation.distance.toCampus}km to campus
             </span>
           </div>
@@ -107,27 +109,29 @@ export default function AccommodationCard({ accommodation }: AccommodationCardPr
             {accommodation.amenities.slice(0, 3).map((amenity) => (
               <span
                 key={amenity.id}
-                className="text-[10px] text-neutral-400 px-3 py-1.5 rounded-full bg-white/[0.03] border border-white/[0.06] uppercase tracking-wider font-light"
+                className="text-[10px] text-slate-600 px-3 py-1.5 rounded-lg bg-[#e0e5ec] uppercase tracking-wider font-medium
+                  shadow-[2px_2px_4px_rgba(163,177,198,0.4),-2px_-2px_4px_rgba(255,255,255,0.6)]"
               >
                 {amenity.name}
               </span>
             ))}
             {accommodation.amenities.length > 3 && (
-              <span className="text-[10px] text-purple-400 px-3 py-1.5 rounded-full bg-purple-500/10 border border-purple-500/20 uppercase tracking-wider font-light">
+              <span className="text-[10px] text-blue-600 px-3 py-1.5 rounded-lg bg-blue-50 uppercase tracking-wider font-medium
+                shadow-[2px_2px_4px_rgba(163,177,198,0.3),-2px_-2px_4px_rgba(255,255,255,0.5)]">
                 +{accommodation.amenities.length - 3}
               </span>
             )}
           </div>
 
           {/* Pricing and CTA */}
-          <div className="flex items-end justify-between pt-5 border-t border-white/[0.06]">
+          <div className="flex items-end justify-between pt-5 border-t border-slate-300">
             <div>
-              <p className="text-[10px] text-neutral-500 uppercase tracking-[0.2em] mb-1">From</p>
-              <p className="text-3xl font-extralight text-white tracking-tight">
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-violet-400">
+              <p className="text-[10px] text-slate-500 uppercase tracking-[0.2em] mb-1">From</p>
+              <p className="text-3xl font-bold text-slate-800 tracking-tight">
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">
                   ${accommodation.pricing.min}
                 </span>
-                <span className="text-neutral-500 text-sm font-light ml-1">
+                <span className="text-slate-500 text-sm font-medium ml-1">
                   /{accommodation.pricing.period}
                 </span>
               </p>
@@ -135,15 +139,16 @@ export default function AccommodationCard({ accommodation }: AccommodationCardPr
             <motion.div
               whileHover={{ scale: 1.1, rotate: 5 }}
               whileTap={{ scale: 0.95 }}
-              className="w-12 h-12 rounded-2xl bg-gradient-to-br from-white/[0.06] to-white/[0.02] border border-white/[0.1] flex items-center justify-center group-hover:bg-gradient-to-br group-hover:from-purple-500/20 group-hover:to-violet-500/10 group-hover:border-purple-500/30 transition-all duration-300"
+              className="w-12 h-12 rounded-xl bg-[#e0e5ec] flex items-center justify-center
+                shadow-[4px_4px_8px_rgba(163,177,198,0.5),-4px_-4px_8px_rgba(255,255,255,0.8)]
+                group-hover:bg-gradient-to-br group-hover:from-blue-500 group-hover:to-indigo-600
+                group-hover:shadow-[4px_4px_8px_rgba(163,177,198,0.4),0_4px_12px_rgba(79,70,229,0.3)]
+                transition-all duration-300"
             >
-              <ArrowUpRight className="w-5 h-5 text-neutral-400 group-hover:text-purple-400 transition-colors duration-300" />
+              <ArrowUpRight className="w-5 h-5 text-slate-500 group-hover:text-white transition-colors duration-300" />
             </motion.div>
           </div>
         </div>
-
-        {/* Bottom accent line */}
-        <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-purple-500/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
       </motion.div>
     </Link>
   );

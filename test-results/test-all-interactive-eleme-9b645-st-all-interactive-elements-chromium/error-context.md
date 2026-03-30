@@ -1,0 +1,245 @@
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - banner [ref=e2]:
+    - navigation [ref=e3]:
+      - generic [ref=e4]:
+        - link "RMA Logo Rate My Accom NSW" [ref=e6] [cursor=pointer]:
+          - /url: /
+          - img "RMA Logo" [ref=e8]
+          - generic [ref=e9]: Rate My Accom NSW
+        - generic [ref=e11]:
+          - link "Home" [ref=e12] [cursor=pointer]:
+            - /url: /
+          - link "Browse" [ref=e13] [cursor=pointer]:
+            - /url: /browse
+          - link "Find My Accom" [ref=e14] [cursor=pointer]:
+            - /url: /quiz
+          - link "About" [ref=e15] [cursor=pointer]:
+            - /url: /about
+          - link "Support" [ref=e16] [cursor=pointer]:
+            - /url: /support
+        - generic [ref=e17]:
+          - link "Sign In" [ref=e18] [cursor=pointer]:
+            - /url: /login
+            - button "Sign In" [ref=e19]
+          - link "Write Review" [ref=e20] [cursor=pointer]:
+            - /url: /write-review
+            - button "Write Review" [ref=e21]
+  - main [ref=e22]:
+    - generic [ref=e23]:
+      - generic [ref=e31]:
+        - generic [ref=e33]:
+          - img [ref=e34]
+          - generic [ref=e37]: Built for NSW Students
+        - heading "Find Your Perfect Student Accommodation in NSW" [level=1] [ref=e38]:
+          - generic [ref=e39]: Find Your Perfect
+          - generic [ref=e40]: Student Accommodation
+          - generic [ref=e41]: in NSW
+        - paragraph [ref=e42]: Real reviews from real students. Make informed decisions about where you'll call home during your university years.
+        - generic [ref=e43]:
+          - link "Explore Accommodations" [ref=e44] [cursor=pointer]:
+            - /url: /browse
+            - button "Explore Accommodations" [ref=e45]:
+              - generic [ref=e46]: Explore Accommodations
+              - img [ref=e47]
+          - link "Learn More" [ref=e49] [cursor=pointer]:
+            - /url: /about
+            - button "Learn More" [ref=e50]
+      - region "Everything You Need to Find Your Home" [ref=e52]:
+        - generic [ref=e56]:
+          - generic [ref=e57]:
+            - generic [ref=e59]: Features
+            - heading "Everything You Need to Find Your Home" [level=2] [ref=e60]
+            - paragraph [ref=e61]: Discover how Rate My Accom helps students make informed decisions about their accommodation.
+          - generic [ref=e62]:
+            - generic [ref=e65]:
+              - img [ref=e68]
+              - generic [ref=e70]:
+                - heading "Real Student Reviews" [level=3] [ref=e71]
+                - paragraph [ref=e72]: Read authentic experiences from students who have lived in the accommodation. No fake reviews, just honest feedback.
+            - generic [ref=e76]:
+              - img [ref=e79]
+              - generic [ref=e82]:
+                - heading "Verified Students Only" [level=3] [ref=e83]
+                - paragraph [ref=e84]: All reviewers are verified with their university email addresses, ensuring genuine and trustworthy feedback.
+            - generic [ref=e88]:
+              - img [ref=e91]
+              - generic [ref=e93]:
+                - heading "Comprehensive Filters" [level=3] [ref=e94]
+                - paragraph [ref=e95]: Find exactly what you need with advanced filters for location, price range, ratings, amenities, and more.
+            - generic [ref=e99]:
+              - img [ref=e102]
+              - generic [ref=e106]:
+                - heading "Photo Galleries" [level=3] [ref=e107]
+                - paragraph [ref=e108]: Browse through extensive photo galleries uploaded by students to see what accommodations really look like.
+            - generic [ref=e112]:
+              - img [ref=e115]
+              - generic [ref=e117]:
+                - heading "Detailed Information" [level=3] [ref=e118]
+                - paragraph [ref=e119]: Access comprehensive details about each accommodation including amenities, facilities, transport links, and nearby services.
+            - generic [ref=e123]:
+              - img [ref=e126]
+              - generic [ref=e130]:
+                - heading "Compare Accommodations" [level=3] [ref=e131]
+                - paragraph [ref=e132]: Side-by-side comparison tool to help you make the best decision based on price, location, ratings, and features.
+      - region "Empowering Students to Make Better Choices" [ref=e134]:
+        - generic [ref=e140]:
+          - generic [ref=e141]:
+            - generic [ref=e143]: About Us
+            - heading "Empowering Students to Make Better Choices" [level=2] [ref=e144]
+            - generic [ref=e145]:
+              - paragraph [ref=e146]: We understand that finding the right accommodation is one of the most important decisions you'll make during your university journey. That's why we created Rate My Accom — a platform built by students, for students.
+              - paragraph [ref=e147]: "Our mission is simple: to provide honest, verified reviews from real students who have lived in these accommodations. No marketing fluff, no fake reviews — just genuine experiences to help you make informed decisions."
+              - paragraph [ref=e148]: We believe in transparency, trust, and community. Every review comes from a verified university student, ensuring that the feedback you read is authentic and reliable. Together, we're building a community that helps future students avoid the pitfalls and find their perfect home away from home.
+            - generic [ref=e150]:
+              - img [ref=e153]
+              - generic [ref=e157]:
+                - heading "Our Mission" [level=3] [ref=e158]
+                - paragraph [ref=e159]: To create the most trusted and comprehensive student accommodation review platform in NSW, helping students find safe, comfortable, and affordable homes near their universities.
+          - generic [ref=e160]:
+            - generic [ref=e163]:
+              - img [ref=e166]
+              - generic [ref=e171]: "5"
+              - generic [ref=e172]: Universities
+              - generic [ref=e173]: NSW universities covered
+            - generic [ref=e176]:
+              - img [ref=e179]
+              - generic [ref=e182]: 15+
+              - generic [ref=e183]: Accommodations
+              - generic [ref=e184]: Verified listings available
+            - generic [ref=e187]:
+              - img [ref=e190]
+              - generic [ref=e193]: 100%
+              - generic [ref=e194]: Verified Reviews
+              - generic [ref=e195]: From real university students
+            - generic [ref=e198]:
+              - img [ref=e201]
+              - generic [ref=e205]: "6"
+              - generic [ref=e206]: Rating Categories
+              - generic [ref=e207]: Detailed accommodation insights
+      - region "Frequently Asked Questions" [ref=e208]:
+        - generic [ref=e212]:
+          - generic [ref=e213]:
+            - generic [ref=e214]:
+              - img [ref=e215]
+              - generic [ref=e218]: FAQ
+            - heading "Frequently Asked Questions" [level=2] [ref=e219]
+            - paragraph [ref=e220]: Got questions? We've got answers. Find everything you need to know about using Rate My Accom.
+          - generic [ref=e222]:
+            - heading "How do I leave a review?" [level=3] [ref=e225]:
+              - button "How do I leave a review?" [ref=e226] [cursor=pointer]:
+                - generic [ref=e227]: How do I leave a review?
+                - img [ref=e228]
+            - heading "Are all reviews verified?" [level=3] [ref=e232]:
+              - button "Are all reviews verified?" [ref=e233] [cursor=pointer]:
+                - generic [ref=e234]: Are all reviews verified?
+                - img [ref=e235]
+            - heading "How do I search for accommodation?" [level=3] [ref=e239]:
+              - button "How do I search for accommodation?" [ref=e240] [cursor=pointer]:
+                - generic [ref=e241]: How do I search for accommodation?
+                - img [ref=e242]
+            - heading "Is the service free to use?" [level=3] [ref=e246]:
+              - button "Is the service free to use?" [ref=e247] [cursor=pointer]:
+                - generic [ref=e248]: Is the service free to use?
+                - img [ref=e249]
+            - heading "How are ratings calculated?" [level=3] [ref=e253]:
+              - button "How are ratings calculated?" [ref=e254] [cursor=pointer]:
+                - generic [ref=e255]: How are ratings calculated?
+                - img [ref=e256]
+            - heading "Can I edit or delete my review?" [level=3] [ref=e260]:
+              - button "Can I edit or delete my review?" [ref=e261] [cursor=pointer]:
+                - generic [ref=e262]: Can I edit or delete my review?
+                - img [ref=e263]
+            - heading "What if I find incorrect information about an accommodation?" [level=3] [ref=e267]:
+              - button "What if I find incorrect information about an accommodation?" [ref=e268] [cursor=pointer]:
+                - generic [ref=e269]: What if I find incorrect information about an accommodation?
+                - img [ref=e270]
+            - heading "Can accommodation providers respond to reviews?" [level=3] [ref=e274]:
+              - button "Can accommodation providers respond to reviews?" [ref=e275] [cursor=pointer]:
+                - generic [ref=e276]: Can accommodation providers respond to reviews?
+                - img [ref=e277]
+          - generic [ref=e279]:
+            - paragraph [ref=e280]: Still have questions?
+            - link "Contact Support" [ref=e281] [cursor=pointer]:
+              - /url: mailto:support@ratemyaccom.com
+  - contentinfo [ref=e282]:
+    - generic [ref=e283]:
+      - generic [ref=e285]:
+        - generic [ref=e286]:
+          - link "RMA Logo Rate My Accom NSW" [ref=e287] [cursor=pointer]:
+            - /url: /
+            - img "RMA Logo" [ref=e289]
+            - generic [ref=e290]: Rate My Accom NSW
+          - paragraph [ref=e291]: Helping NSW students find their perfect accommodation through honest, verified reviews from real students.
+          - generic [ref=e292]:
+            - link "GitHub" [ref=e293] [cursor=pointer]:
+              - /url: https://github.com/MelvinDY/ratemyaccom
+              - img [ref=e294]
+            - link "Twitter" [ref=e297] [cursor=pointer]:
+              - /url: "#"
+              - img [ref=e298]
+            - link "LinkedIn" [ref=e300] [cursor=pointer]:
+              - /url: "#"
+              - img [ref=e301]
+            - link "Email" [ref=e305] [cursor=pointer]:
+              - /url: mailto:support@ratemyaccom.com.au
+              - img [ref=e306]
+        - generic [ref=e309]:
+          - heading "Quick Links" [level=4] [ref=e310]
+          - list [ref=e311]:
+            - listitem [ref=e312]:
+              - link "Home" [ref=e313] [cursor=pointer]:
+                - /url: /
+                - generic [ref=e314]: Home
+            - listitem [ref=e315]:
+              - link "Browse" [ref=e316] [cursor=pointer]:
+                - /url: /browse
+                - generic [ref=e317]: Browse
+            - listitem [ref=e318]:
+              - link "About" [ref=e319] [cursor=pointer]:
+                - /url: /about
+                - generic [ref=e320]: About
+        - generic [ref=e321]:
+          - heading "Universities" [level=4] [ref=e322]
+          - list [ref=e323]:
+            - listitem [ref=e324]:
+              - link "UNSW" [ref=e325] [cursor=pointer]:
+                - /url: /browse?university=unsw
+                - generic [ref=e326]: UNSW
+            - listitem [ref=e327]:
+              - link "University of Sydney" [ref=e328] [cursor=pointer]:
+                - /url: /browse?university=sydney
+                - generic [ref=e329]: University of Sydney
+            - listitem [ref=e330]:
+              - link "Macquarie University" [ref=e331] [cursor=pointer]:
+                - /url: /browse?university=macquarie
+                - generic [ref=e332]: Macquarie University
+        - generic [ref=e333]:
+          - heading "Support & Legal" [level=4] [ref=e334]
+          - list [ref=e335]:
+            - listitem [ref=e336]:
+              - link "Help Center" [ref=e337] [cursor=pointer]:
+                - /url: /support
+                - generic [ref=e338]: Help Center
+            - listitem [ref=e339]:
+              - link "Contact Us" [ref=e340] [cursor=pointer]:
+                - /url: /support
+                - generic [ref=e341]: Contact Us
+            - listitem [ref=e342]:
+              - link "Privacy Policy" [ref=e343] [cursor=pointer]:
+                - /url: /support
+                - generic [ref=e344]: Privacy Policy
+            - listitem [ref=e345]:
+              - link "Terms of Service" [ref=e346] [cursor=pointer]:
+                - /url: /support
+                - generic [ref=e347]: Terms of Service
+      - generic [ref=e349]:
+        - paragraph [ref=e350]: © 2025 Rate My Accom NSW. All rights reserved.
+        - paragraph [ref=e351]:
+          - text: Made with
+          - img [ref=e352]
+          - text: by students, for students
+  - alert [ref=e354]
+```

@@ -1,0 +1,290 @@
+{
+  "timestamp": "2025-11-29 00:25:07",
+  "colleges": [
+    {
+      "name": "Basser College",
+      "url": "https://www.unsw.edu.au/accommodation/colleges/basser-college",
+      "room_types": [
+        {
+          "type": "Single",
+          "price_weekly": 616.0,
+          "meals": "Catered(Breakfast, lunch, dinner)",
+          "bathroom": "Shared"
+        },
+        {
+          "type": "Single",
+          "price_weekly": 669.0,
+          "meals": "Catered(Breakfast, lunch, dinner)",
+          "bathroom": "Yes"
+        }
+      ],
+      "prices": [616.0, 669.0],
+      "features": [
+        "average room size 10 to 12 square metres",
+        "fully furnished",
+        "private & shared bathrooms",
+        "all meals provided (including formal dinners)",
+        "Wi-Fi, electricity, gas and water included",
+        "cleaning of rooms fortnightly",
+        "24-hour campus security",
+        "social and group study rooms on each floor",
+        "large common room adjacent to landscaped gardens",
+        "rooftop terraces with outdoor barbecue facilities",
+        "cashless-operated laundry facilities",
+        "sporting, social and cultural programs",
+        "opportunities for student leadership and volunteering",
+        "24-hour parcel locker access"
+      ],
+      "contact": {},
+      "contract_info": "The contract period is 44 weeks. Due to high occupancy, single-term contracts are currently unavailable. Please contact the office for more details.",
+      "price_min": 616.0,
+      "price_max": 669.0
+    },
+    {
+      "name": "Philip Baxter College",
+      "url": "https://www.unsw.edu.au/accommodation/colleges/philip-baxter-college",
+      "room_types": [
+        {
+          "type": "Single",
+          "price_weekly": 616.0,
+          "meals": "Catered(Breakfast, lunch, dinner)",
+          "bathroom": "Shared"
+        },
+        {
+          "type": "Single",
+          "price_weekly": 669.0,
+          "meals": "Catered(Breakfast, lunch, dinner)",
+          "bathroom": "Yes"
+        }
+      ],
+      "prices": [616.0, 669.0],
+      "features": [
+        "average room size 10 to 12 square metres",
+        "fully furnished",
+        "private and shared bathrooms",
+        "all meals provided (including formal dinners)",
+        "Wi-Fi, electricity, gas and water included",
+        "cleaning of rooms fortnightly",
+        "opportunities for student leadership and volunteering",
+        "24-hour campus security",
+        "social and group study rooms on each floor",
+        "large common room adjacent to landscaped gardens",
+        "rooftop terraces with outdoor barbecue facilities",
+        "QR-operated and cashless-operated laundry facilities",
+        "sporting, social and cultural programs",
+        "24-hour parcel locker access."
+      ],
+      "contact": {},
+      "contract_info": "The contract period is 44 weeks.\u00a0Single-term contracts are currently unavailable due to high occupancy numbers; please contact the office for more details.",
+      "price_min": 616.0,
+      "price_max": 669.0
+    },
+    {
+      "name": "Goldstein College",
+      "url": "https://www.unsw.edu.au/accommodation/colleges/goldstein-college",
+      "room_types": [
+        {
+          "type": "Single",
+          "price_weekly": 616.0,
+          "meals": "Catered(Breakfast, lunch, dinner)",
+          "bathroom": "Shared"
+        },
+        {
+          "type": "Single",
+          "price_weekly": 669.0,
+          "meals": "Catered(Breakfast, lunch, dinner)",
+          "bathroom": "Yes"
+        }
+      ],
+      "prices": [616.0, 669.0],
+      "features": [
+        "average room size 10 to 13 square metres",
+        "fully furnished",
+        "private and shared bathrooms",
+        "all meals provided (including formal dinners)",
+        "Wi-Fi, electricity, gas and water included",
+        "cleaning of rooms fortnightly",
+        "24-hour campus security",
+        "social and group study rooms on each floor",
+        "large common room adjacent to landscaped gardens",
+        "rooftop terraces with outdoor barbecue facilities",
+        "QR operated and cashless laundry facilities",
+        "sporting, social and cultural programs",
+        "opportunities for student leadership and volunteering",
+        "24-hour parcel locker access."
+      ],
+      "contact": {},
+      "contract_info": "The contract period is 44 weeks.\u00a0Single-term contracts are currently unavailable due to high occupancy numbers; please contact the office for more details.",
+      "price_min": 616.0,
+      "price_max": 669.0
+    },
+    {
+      "name": "Fig Tree Hall",
+      "url": "https://www.unsw.edu.au/accommodation/colleges/fig-tree-hall",
+      "room_types": [
+        {
+          "type": "Single",
+          "price_weekly": 669.0,
+          "meals": "Catered(Breakfast, lunch, dinner)",
+          "bathroom": "Yes"
+        }
+      ],
+      "prices": [669.0],
+      "features": [
+        "158 rooms",
+        "average room size 10 to 12 square metres",
+        "option to live on mixed-gender or gender-segregated floors",
+        "private bathrooms (ensuite options)",
+        "all meals provided (including formal dinners)",
+        "Wi-Fi, electricity, gas and water included",
+        "QR-operated and cashless laundry facilities",
+        "cleaning of rooms fortnightly",
+        "24-hour campus security",
+        "social and group study rooms on each floor",
+        "large common room adjacent to\u00a0private outdoor courtyard",
+        "rooftop terrace with outdoor barbecue facilities",
+        "regular support from college staff",
+        "leadership and networking opportunities",
+        "24-hour parcel locker access."
+      ],
+      "contact": {},
+      "contract_info": "The contract period is 44 weeks.\u00a0Single-term contracts are currently unavailable due to high occupancy numbers; please contact the office for more details.",
+      "price_min": 669.0,
+      "price_max": 669.0
+    },
+    {
+      "name": "Colombo House",
+      "url": "https://www.unsw.edu.au/accommodation/colleges/colombo-house",
+      "room_types": [
+        {
+          "type": "Single",
+          "price_weekly": 460.0,
+          "meals": "Self-catered",
+          "bathroom": "Single"
+        }
+      ],
+      "prices": [460.0],
+      "features": [
+        "242 rooms",
+        "average room size 10-12 square metres",
+        "fully furnished",
+        "private bathrooms (ensuite)",
+        "Wi-Fi, electricity, gas and water included",
+        "regular support from college staff",
+        "leadership and networking opportunities",
+        "cleaning of common areas only",
+        "self-catered with large kitchens and cooking facilities",
+        "24-hour campus security",
+        "social and group study rooms on each floor",
+        "large common room adjacent to a private outdoor courtyard",
+        "rooftop terrace with outdoor barbecue facilities",
+        "QR-operated and cashless laundry facilities.",
+        "24-hour parcel locker access"
+      ],
+      "contact": {},
+      "contract_info": "The contract period is 51 weeks.",
+      "price_min": 460.0,
+      "price_max": 460.0
+    },
+    {
+      "name": "UNSW Hall",
+      "url": "https://www.unsw.edu.au/accommodation/colleges/unsw-hall",
+      "room_types": [
+        {
+          "type": "Single",
+          "price_weekly": 553.0,
+          "meals": "Catered(Breakfast, lunch, dinner)",
+          "bathroom": "Shared"
+        }
+      ],
+      "prices": [553.0],
+      "features": [
+        "average room size 10 to 12 square metres",
+        "leadership and networking opportunities",
+        "fully furnished",
+        "shared bathrooms",
+        "Wi-Fi, electricity, gas and water included",
+        "QR-operated and cashless laundry facilities",
+        "All meals provided (including formal dinners)",
+        "cleaning of rooms fortnightly",
+        "24-hour campus security",
+        "large common room equipped with games",
+        "sporting, social and cultural programs",
+        "cleaning of rooms fortnightly."
+      ],
+      "contact": {},
+      "contract_info": "The contract period is 44 weeks. Due to high occupancy, single-term contracts are currently unavailable. Please contact the office for more details.",
+      "price_min": 553.0,
+      "price_max": 553.0
+    },
+    {
+      "name": "International House",
+      "url": "https://www.unsw.edu.au/accommodation/colleges/international-house",
+      "room_types": [
+        {
+          "type": "Single",
+          "price_weekly": 469.0,
+          "meals": "Catered(Breakfast, lunch, dinner)",
+          "bathroom": "Shared"
+        }
+      ],
+      "prices": [469.0],
+      "features": [
+        "furnished bedrooms",
+        "all meals provided",
+        "exclusive gym, cardio and weight equipment",
+        "Wi-Fi, electricity, gas and water included",
+        "social and group study rooms",
+        "outdoor barbecue facilities",
+        "coin-operated laundry facilities",
+        "sporting, social and cultural programs",
+        "24-hour campus security",
+        "regular support from college staff",
+        "leadership and networking opportunities",
+        "bicycle storage and maintenance tools",
+        "recreational facilities \u2013 TV room, music room, pool table, table tennis and piano",
+        "24-hour parcel locker access."
+      ],
+      "contact": {},
+      "contract_info": "The contract period is 44 weeks.",
+      "price_min": 469.0,
+      "price_max": 469.0
+    }
+  ],
+  "comparisons": [
+    {
+      "accommodation": "UNSW Kensington Colleges",
+      "status": "VERIFIED",
+      "database_values": {
+        "weekly_price_min": 450,
+        "weekly_price_max": 650,
+        "capacity": 550,
+        "url": "https://www.unsw.edu.au/accommodation/colleges"
+      },
+      "scraped_values": {
+        "price_min": 460.0,
+        "price_max": 669.0,
+        "colleges_scraped": 7
+      },
+      "discrepancies": []
+    },
+    {
+      "accommodation": "UNSW Village",
+      "status": "NO_DATA",
+      "database_values": {
+        "weekly_price_min": 350,
+        "weekly_price_max": 550,
+        "capacity": 750,
+        "url": "https://www.unswvillage.com.au"
+      },
+      "scraped_values": {
+        "name": "UNSW Village",
+        "url": "https://www.unswvillage.com.au",
+        "room_types": [],
+        "prices": [],
+        "contact": {}
+      },
+      "discrepancies": ["Could not extract pricing information from website"]
+    }
+  ]
+}

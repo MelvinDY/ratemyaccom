@@ -1,0 +1,148 @@
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - banner [ref=e2]:
+    - navigation [ref=e3]:
+      - generic [ref=e4]:
+        - link "RMA Logo Rate My Accom NSW" [ref=e6] [cursor=pointer]:
+          - /url: /
+          - img "RMA Logo" [ref=e8]
+          - generic [ref=e9]: Rate My Accom NSW
+        - generic [ref=e11]:
+          - link "Home" [ref=e12] [cursor=pointer]:
+            - /url: /
+          - link "Browse" [ref=e13] [cursor=pointer]:
+            - /url: /browse
+          - link "Find My Accom" [ref=e14] [cursor=pointer]:
+            - /url: /quiz
+          - link "About" [ref=e15] [cursor=pointer]:
+            - /url: /about
+          - link "Support" [ref=e16] [cursor=pointer]:
+            - /url: /support
+        - generic [ref=e17]:
+          - link "Sign In" [ref=e18] [cursor=pointer]:
+            - /url: /login
+            - button "Sign In" [ref=e19]
+          - link "Write Review" [ref=e20] [cursor=pointer]:
+            - /url: /write-review
+            - button "Write Review" [ref=e21]
+  - main [ref=e22]:
+    - generic [ref=e23]:
+      - generic [ref=e27]:
+        - generic [ref=e28]:
+          - heading "Browse Accommodations" [level=1] [ref=e29]
+          - paragraph [ref=e30]: Discover student accommodations with verified reviews from real students
+        - generic [ref=e32]:
+          - img [ref=e33]
+          - textbox "Search accommodations" [ref=e36]:
+            - /placeholder: Search by name, location, or university...
+      - generic [ref=e38]:
+        - complementary [ref=e39]:
+          - generic [ref=e41]:
+            - heading "Filters" [level=2] [ref=e43]
+            - generic [ref=e44]:
+              - generic [ref=e45]:
+                - text: University
+                - combobox "Filter by university" [ref=e46] [cursor=pointer]:
+                  - img [ref=e47]
+                - combobox [ref=e49]
+              - generic [ref=e50]:
+                - text: Location
+                - textbox "Filter by location" [ref=e51]:
+                  - /placeholder: e.g., Kensington, Ultimo
+              - generic [ref=e52]:
+                - text: Price Range (per week)
+                - generic [ref=e53]:
+                  - generic [ref=e54]:
+                    - text: Min ($)
+                    - spinbutton "Minimum price" [ref=e55]
+                  - generic [ref=e56]:
+                    - text: Max ($)
+                    - spinbutton "Maximum price" [ref=e57]
+              - generic [ref=e58]:
+                - text: Minimum Rating
+                - combobox "Filter by minimum rating" [ref=e59] [cursor=pointer]:
+                  - img [ref=e60]
+                - combobox [ref=e62]
+        - main [ref=e63]:
+          - heading "Loading..." [level=2] [ref=e66]
+          - status "Loading accommodations" [ref=e67]
+  - contentinfo [ref=e170]:
+    - generic [ref=e171]:
+      - generic [ref=e173]:
+        - generic [ref=e174]:
+          - link "RMA Logo Rate My Accom NSW" [ref=e175] [cursor=pointer]:
+            - /url: /
+            - img "RMA Logo" [ref=e177]
+            - generic [ref=e178]: Rate My Accom NSW
+          - paragraph [ref=e179]: Helping NSW students find their perfect accommodation through honest, verified reviews from real students.
+          - generic [ref=e180]:
+            - link "GitHub" [ref=e181] [cursor=pointer]:
+              - /url: https://github.com/MelvinDY/ratemyaccom
+              - img [ref=e182]
+            - link "Twitter" [ref=e185] [cursor=pointer]:
+              - /url: "#"
+              - img [ref=e186]
+            - link "LinkedIn" [ref=e188] [cursor=pointer]:
+              - /url: "#"
+              - img [ref=e189]
+            - link "Email" [ref=e193] [cursor=pointer]:
+              - /url: mailto:support@ratemyaccom.com.au
+              - img [ref=e194]
+        - generic [ref=e197]:
+          - heading "Quick Links" [level=4] [ref=e198]
+          - list [ref=e199]:
+            - listitem [ref=e200]:
+              - link "Home" [ref=e201] [cursor=pointer]:
+                - /url: /
+                - generic [ref=e202]: Home
+            - listitem [ref=e203]:
+              - link "Browse" [ref=e204] [cursor=pointer]:
+                - /url: /browse
+                - generic [ref=e205]: Browse
+            - listitem [ref=e206]:
+              - link "About" [ref=e207] [cursor=pointer]:
+                - /url: /about
+                - generic [ref=e208]: About
+        - generic [ref=e209]:
+          - heading "Universities" [level=4] [ref=e210]
+          - list [ref=e211]:
+            - listitem [ref=e212]:
+              - link "UNSW" [ref=e213] [cursor=pointer]:
+                - /url: /browse?university=unsw
+                - generic [ref=e214]: UNSW
+            - listitem [ref=e215]:
+              - link "University of Sydney" [ref=e216] [cursor=pointer]:
+                - /url: /browse?university=sydney
+                - generic [ref=e217]: University of Sydney
+            - listitem [ref=e218]:
+              - link "Macquarie University" [ref=e219] [cursor=pointer]:
+                - /url: /browse?university=macquarie
+                - generic [ref=e220]: Macquarie University
+        - generic [ref=e221]:
+          - heading "Support & Legal" [level=4] [ref=e222]
+          - list [ref=e223]:
+            - listitem [ref=e224]:
+              - link "Help Center" [ref=e225] [cursor=pointer]:
+                - /url: /support
+                - generic [ref=e226]: Help Center
+            - listitem [ref=e227]:
+              - link "Contact Us" [ref=e228] [cursor=pointer]:
+                - /url: /support
+                - generic [ref=e229]: Contact Us
+            - listitem [ref=e230]:
+              - link "Privacy Policy" [ref=e231] [cursor=pointer]:
+                - /url: /support
+                - generic [ref=e232]: Privacy Policy
+            - listitem [ref=e233]:
+              - link "Terms of Service" [ref=e234] [cursor=pointer]:
+                - /url: /support
+                - generic [ref=e235]: Terms of Service
+      - generic [ref=e237]:
+        - paragraph [ref=e238]: © 2025 Rate My Accom NSW. All rights reserved.
+        - paragraph [ref=e239]:
+          - text: Made with
+          - img [ref=e240]
+          - text: by students, for students
+```

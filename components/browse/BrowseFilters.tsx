@@ -98,25 +98,29 @@ export default function BrowseFilters({
   const hasActiveFilters = Object.keys(filters).length > 0;
 
   return (
-    <div className="w-full rounded-3xl bg-gradient-to-br from-white/[0.06] to-white/[0.02] border border-white/[0.08] overflow-hidden backdrop-blur-sm">
-      {/* Header - Hero style */}
-      <div className="p-6 border-b border-white/[0.06]">
+    <div className="w-full">
+      {/* Header - Neumorphic style */}
+      <div className="pb-6 mb-6 border-b border-slate-300">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
             {/* Overline accent */}
-            <div className="h-px w-8 bg-purple-500" />
+            <div className="h-px w-8 bg-blue-500" />
             <div className="flex items-center gap-3">
               <motion.div
-                whileHover={{ scale: 1.05 }}
-                className="w-12 h-12 rounded-2xl bg-gradient-to-br from-purple-500/20 to-violet-500/10 border border-purple-500/20 flex items-center justify-center"
+                whileHover={{
+                  boxShadow:
+                    '8px_8px_16px_rgba(163,177,198,0.4),-8px_-8px_16px_rgba(255,255,255,0.9)',
+                }}
+                className="w-12 h-12 rounded-2xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center
+                  shadow-[3px_3px_6px_rgba(163,177,198,0.4),-3px_-3px_6px_rgba(255,255,255,0.6)]"
               >
-                <SlidersHorizontal className="w-5 h-5 text-purple-400" />
+                <SlidersHorizontal className="w-5 h-5 text-white" />
               </motion.div>
               <div>
-                <span className="text-xs text-purple-400 uppercase tracking-[0.2em] font-light block mb-1">
+                <span className="text-xs text-blue-600 uppercase tracking-[0.2em] font-medium block mb-1">
                   Refine
                 </span>
-                <h2 className="text-xl font-extralight text-white tracking-tight">Filters</h2>
+                <h2 className="text-xl font-bold text-slate-800 tracking-tight">Filters</h2>
               </div>
             </div>
           </div>
@@ -125,7 +129,10 @@ export default function BrowseFilters({
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               onClick={onClearFilters}
-              className="flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-medium text-neutral-400 hover:text-white bg-white/[0.03] hover:bg-white/[0.08] border border-white/[0.06] hover:border-white/[0.12] transition-all duration-300"
+              className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-medium text-slate-600
+                bg-[#e0e5ec] shadow-[3px_3px_6px_rgba(163,177,198,0.4),-3px_-3px_6px_rgba(255,255,255,0.6)]
+                hover:shadow-[4px_4px_8px_rgba(163,177,198,0.4),-4px_-4px_8px_rgba(255,255,255,0.8)]
+                transition-all duration-300"
               aria-label="Clear all filters"
             >
               <X className="h-3.5 w-3.5" />
@@ -135,14 +142,14 @@ export default function BrowseFilters({
         </div>
       </div>
 
-      <div className="p-6 space-y-8">
+      <div className="space-y-8">
         {/* University Filter */}
         <div className="space-y-3">
           <Label
             htmlFor="university"
-            className="flex items-center gap-3 text-sm font-light text-neutral-300"
+            className="flex items-center gap-3 text-sm font-medium text-slate-700"
           >
-            <GraduationCap className="w-4 h-4 text-purple-400" />
+            <GraduationCap className="w-4 h-4 text-blue-500" />
             <span className="uppercase tracking-wider text-xs">University</span>
           </Label>
           <Select
@@ -151,17 +158,21 @@ export default function BrowseFilters({
           >
             <SelectTrigger
               id="university"
-              className="w-full bg-white/[0.03] border-white/[0.08] text-white hover:bg-white/[0.06] hover:border-white/[0.15] focus:border-purple-500/50 focus:ring-0 focus:ring-offset-0 transition-all duration-300 rounded-2xl h-12 font-light"
+              className="w-full bg-[#e0e5ec] border-0 text-slate-700
+                shadow-[inset_3px_3px_6px_rgba(163,177,198,0.4),inset_-3px_-3px_6px_rgba(255,255,255,0.8)]
+                hover:shadow-[inset_4px_4px_8px_rgba(163,177,198,0.5),inset_-4px_-4px_8px_rgba(255,255,255,0.9)]
+                focus:ring-2 focus:ring-blue-500/30 focus:ring-offset-0
+                transition-all duration-300 rounded-xl h-12 font-medium"
               aria-label="Filter by university"
             >
               <SelectValue placeholder="Select university" />
             </SelectTrigger>
-            <SelectContent className="bg-[#151515] border-white/10 rounded-2xl backdrop-blur-xl">
+            <SelectContent className="bg-[#e0e5ec] border-slate-300 rounded-xl shadow-[6px_6px_12px_rgba(163,177,198,0.5),-6px_-6px_12px_rgba(255,255,255,0.8)]">
               {UNIVERSITIES.map((uni) => (
                 <SelectItem
                   key={uni}
                   value={uni}
-                  className="text-neutral-300 hover:bg-white/10 focus:bg-white/10 rounded-xl font-light"
+                  className="text-slate-700 hover:bg-blue-50 focus:bg-blue-50 rounded-lg font-medium"
                 >
                   {uni}
                 </SelectItem>
@@ -174,9 +185,9 @@ export default function BrowseFilters({
         <div className="space-y-3">
           <Label
             htmlFor="location"
-            className="flex items-center gap-3 text-sm font-light text-neutral-300"
+            className="flex items-center gap-3 text-sm font-medium text-slate-700"
           >
-            <MapPin className="w-4 h-4 text-purple-400" />
+            <MapPin className="w-4 h-4 text-blue-500" />
             <span className="uppercase tracking-wider text-xs">Location</span>
           </Label>
           <input
@@ -185,21 +196,26 @@ export default function BrowseFilters({
             value={filters.location || ''}
             onChange={(e) => handleLocationChange(e.target.value)}
             placeholder="e.g., Kensington, Ultimo"
-            className="w-full px-5 py-3.5 bg-white/[0.03] border border-white/[0.08] text-white placeholder:text-neutral-600 hover:bg-white/[0.06] hover:border-white/[0.15] focus:bg-white/[0.06] focus:border-purple-500/50 focus:outline-none transition-all duration-300 rounded-2xl text-sm font-light"
+            className="w-full px-5 py-3.5 bg-[#e0e5ec] border-0 text-slate-700 placeholder:text-slate-400
+              shadow-[inset_3px_3px_6px_rgba(163,177,198,0.4),inset_-3px_-3px_6px_rgba(255,255,255,0.8)]
+              hover:shadow-[inset_4px_4px_8px_rgba(163,177,198,0.5),inset_-4px_-4px_8px_rgba(255,255,255,0.9)]
+              focus:shadow-[inset_4px_4px_8px_rgba(163,177,198,0.5),inset_-4px_-4px_8px_rgba(255,255,255,0.9)]
+              focus:ring-2 focus:ring-blue-500/30 focus:outline-none
+              transition-all duration-300 rounded-xl text-sm font-medium"
             aria-label="Filter by location"
           />
         </div>
 
         {/* Price Range Filter */}
         <div className="space-y-3">
-          <Label className="flex items-center gap-3 text-sm font-light text-neutral-300">
-            <DollarSign className="w-4 h-4 text-purple-400" />
+          <Label className="flex items-center gap-3 text-sm font-medium text-slate-700">
+            <DollarSign className="w-4 h-4 text-blue-500" />
             <span className="uppercase tracking-wider text-xs">Price Range</span>
-            <span className="text-neutral-600 text-xs normal-case tracking-normal">/week</span>
+            <span className="text-slate-400 text-xs normal-case tracking-normal">/week</span>
           </Label>
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-2">
-              <span className="text-[10px] text-neutral-500 uppercase tracking-widest pl-1">
+              <span className="text-[10px] text-slate-500 uppercase tracking-widest pl-1">
                 Min
               </span>
               <input
@@ -210,12 +226,17 @@ export default function BrowseFilters({
                 placeholder="$0"
                 min="0"
                 step="50"
-                className="w-full px-4 py-3 bg-white/[0.03] border border-white/[0.08] text-white placeholder:text-neutral-600 hover:bg-white/[0.06] hover:border-white/[0.15] focus:bg-white/[0.06] focus:border-purple-500/50 focus:outline-none transition-all duration-300 rounded-2xl text-sm font-light"
+                className="w-full px-4 py-3 bg-[#e0e5ec] border-0 text-slate-700 placeholder:text-slate-400
+                  shadow-[inset_3px_3px_6px_rgba(163,177,198,0.4),inset_-3px_-3px_6px_rgba(255,255,255,0.8)]
+                  hover:shadow-[inset_4px_4px_8px_rgba(163,177,198,0.5),inset_-4px_-4px_8px_rgba(255,255,255,0.9)]
+                  focus:shadow-[inset_4px_4px_8px_rgba(163,177,198,0.5),inset_-4px_-4px_8px_rgba(255,255,255,0.9)]
+                  focus:ring-2 focus:ring-blue-500/30 focus:outline-none
+                  transition-all duration-300 rounded-xl text-sm font-medium"
                 aria-label="Minimum price"
               />
             </div>
             <div className="space-y-2">
-              <span className="text-[10px] text-neutral-500 uppercase tracking-widest pl-1">
+              <span className="text-[10px] text-slate-500 uppercase tracking-widest pl-1">
                 Max
               </span>
               <input
@@ -226,7 +247,12 @@ export default function BrowseFilters({
                 placeholder="$1000"
                 min="0"
                 step="50"
-                className="w-full px-4 py-3 bg-white/[0.03] border border-white/[0.08] text-white placeholder:text-neutral-600 hover:bg-white/[0.06] hover:border-white/[0.15] focus:bg-white/[0.06] focus:border-purple-500/50 focus:outline-none transition-all duration-300 rounded-2xl text-sm font-light"
+                className="w-full px-4 py-3 bg-[#e0e5ec] border-0 text-slate-700 placeholder:text-slate-400
+                  shadow-[inset_3px_3px_6px_rgba(163,177,198,0.4),inset_-3px_-3px_6px_rgba(255,255,255,0.8)]
+                  hover:shadow-[inset_4px_4px_8px_rgba(163,177,198,0.5),inset_-4px_-4px_8px_rgba(255,255,255,0.9)]
+                  focus:shadow-[inset_4px_4px_8px_rgba(163,177,198,0.5),inset_-4px_-4px_8px_rgba(255,255,255,0.9)]
+                  focus:ring-2 focus:ring-blue-500/30 focus:outline-none
+                  transition-all duration-300 rounded-xl text-sm font-medium"
                 aria-label="Maximum price"
               />
             </div>
@@ -237,25 +263,29 @@ export default function BrowseFilters({
         <div className="space-y-3">
           <Label
             htmlFor="rating"
-            className="flex items-center gap-3 text-sm font-light text-neutral-300"
+            className="flex items-center gap-3 text-sm font-medium text-slate-700"
           >
-            <Star className="w-4 h-4 text-purple-400" />
+            <Star className="w-4 h-4 text-blue-500" />
             <span className="uppercase tracking-wider text-xs">Min Rating</span>
           </Label>
           <Select value={filters.rating?.toString() || '0'} onValueChange={handleRatingChange}>
             <SelectTrigger
               id="rating"
-              className="w-full bg-white/[0.03] border-white/[0.08] text-white hover:bg-white/[0.06] hover:border-white/[0.15] focus:border-purple-500/50 focus:ring-0 focus:ring-offset-0 transition-all duration-300 rounded-2xl h-12 font-light"
+              className="w-full bg-[#e0e5ec] border-0 text-slate-700
+                shadow-[inset_3px_3px_6px_rgba(163,177,198,0.4),inset_-3px_-3px_6px_rgba(255,255,255,0.8)]
+                hover:shadow-[inset_4px_4px_8px_rgba(163,177,198,0.5),inset_-4px_-4px_8px_rgba(255,255,255,0.9)]
+                focus:ring-2 focus:ring-blue-500/30 focus:ring-offset-0
+                transition-all duration-300 rounded-xl h-12 font-medium"
               aria-label="Filter by minimum rating"
             >
               <SelectValue placeholder="Select rating" />
             </SelectTrigger>
-            <SelectContent className="bg-[#151515] border-white/10 rounded-2xl backdrop-blur-xl">
+            <SelectContent className="bg-[#e0e5ec] border-slate-300 rounded-xl shadow-[6px_6px_12px_rgba(163,177,198,0.5),-6px_-6px_12px_rgba(255,255,255,0.8)]">
               {RATINGS.map((rating) => (
                 <SelectItem
                   key={rating.value}
                   value={rating.value}
-                  className="text-neutral-300 hover:bg-white/10 focus:bg-white/10 rounded-xl font-light"
+                  className="text-slate-700 hover:bg-blue-50 focus:bg-blue-50 rounded-lg font-medium"
                 >
                   {rating.label}
                 </SelectItem>
@@ -265,24 +295,29 @@ export default function BrowseFilters({
         </div>
       </div>
 
-      {/* Active Filters Summary - Hero card style */}
+      {/* Active Filters Summary - Neumorphic style */}
       {hasActiveFilters && (
-        <div className="p-6 pt-0">
+        <div className="mt-8">
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="p-5 rounded-2xl bg-gradient-to-br from-purple-500/[0.12] to-purple-500/[0.04] border border-purple-500/20"
+            className="p-5 rounded-2xl bg-[#e0e5ec]
+              shadow-[6px_6px_12px_rgba(163,177,198,0.5),-6px_-6px_12px_rgba(255,255,255,0.8)]"
           >
             <div className="flex items-center gap-3 mb-4">
-              <div className="w-2 h-2 rounded-full bg-purple-400 animate-pulse" />
-              <p className="text-xs text-purple-400 uppercase tracking-[0.2em]">Active Filters</p>
+              <div className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
+              <p className="text-xs text-blue-600 uppercase tracking-[0.2em] font-medium">
+                Active Filters
+              </p>
             </div>
             <div className="flex flex-wrap gap-2">
               {filters.university && (
                 <motion.span
                   initial={{ scale: 0.9, opacity: 0 }}
                   animate={{ scale: 1, opacity: 1 }}
-                  className="inline-flex items-center px-4 py-2 rounded-full text-xs font-light bg-white/[0.06] text-white border border-white/[0.1]"
+                  className="inline-flex items-center px-4 py-2 rounded-full text-xs font-medium
+                    bg-[#e0e5ec] text-slate-700
+                    shadow-[3px_3px_6px_rgba(163,177,198,0.4),-3px_-3px_6px_rgba(255,255,255,0.6)]"
                 >
                   {filters.university.includes('(')
                     ? (filters.university.split('(')[1]?.replace(')', '') ?? filters.university)
@@ -293,7 +328,9 @@ export default function BrowseFilters({
                 <motion.span
                   initial={{ scale: 0.9, opacity: 0 }}
                   animate={{ scale: 1, opacity: 1 }}
-                  className="inline-flex items-center px-4 py-2 rounded-full text-xs font-light bg-white/[0.06] text-white border border-white/[0.1]"
+                  className="inline-flex items-center px-4 py-2 rounded-full text-xs font-medium
+                    bg-[#e0e5ec] text-slate-700
+                    shadow-[3px_3px_6px_rgba(163,177,198,0.4),-3px_-3px_6px_rgba(255,255,255,0.6)]"
                 >
                   {filters.location}
                 </motion.span>
@@ -302,7 +339,9 @@ export default function BrowseFilters({
                 <motion.span
                   initial={{ scale: 0.9, opacity: 0 }}
                   animate={{ scale: 1, opacity: 1 }}
-                  className="inline-flex items-center px-4 py-2 rounded-full text-xs font-light bg-white/[0.06] text-white border border-white/[0.1]"
+                  className="inline-flex items-center px-4 py-2 rounded-full text-xs font-medium
+                    bg-[#e0e5ec] text-slate-700
+                    shadow-[3px_3px_6px_rgba(163,177,198,0.4),-3px_-3px_6px_rgba(255,255,255,0.6)]"
                 >
                   Min: ${filters.priceMin}
                 </motion.span>
@@ -311,7 +350,9 @@ export default function BrowseFilters({
                 <motion.span
                   initial={{ scale: 0.9, opacity: 0 }}
                   animate={{ scale: 1, opacity: 1 }}
-                  className="inline-flex items-center px-4 py-2 rounded-full text-xs font-light bg-white/[0.06] text-white border border-white/[0.1]"
+                  className="inline-flex items-center px-4 py-2 rounded-full text-xs font-medium
+                    bg-[#e0e5ec] text-slate-700
+                    shadow-[3px_3px_6px_rgba(163,177,198,0.4),-3px_-3px_6px_rgba(255,255,255,0.6)]"
                 >
                   Max: ${filters.priceMax}
                 </motion.span>
@@ -320,7 +361,9 @@ export default function BrowseFilters({
                 <motion.span
                   initial={{ scale: 0.9, opacity: 0 }}
                   animate={{ scale: 1, opacity: 1 }}
-                  className="inline-flex items-center px-4 py-2 rounded-full text-xs font-light bg-white/[0.06] text-white border border-white/[0.1]"
+                  className="inline-flex items-center px-4 py-2 rounded-full text-xs font-medium
+                    bg-[#e0e5ec] text-slate-700
+                    shadow-[3px_3px_6px_rgba(163,177,198,0.4),-3px_-3px_6px_rgba(255,255,255,0.6)]"
                 >
                   {filters.rating}+ Stars
                 </motion.span>
