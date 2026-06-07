@@ -12,6 +12,18 @@
     @apply bg-gradient-to-b from-purple-900 via-gray-900 to-gray-900 text-gray-900;
   }
   :root {
+    /* Editorial design tokens */
+    --ed-blue: #0C06F7;
+    --ed-blue-deep: #0500B8;
+    --ed-blue-soft: #E8E7FE;
+    --ed-ink: #0A0A0F;
+    --ed-ink-2: #1A1A22;
+    --ed-mute: #6B6B78;
+    --ed-mute-2: #A1A1AD;
+    --ed-rule: #E5E5EA;
+    --ed-paper: #FAFAFA;
+    --ed-mono: var(--font-mono, 'JetBrains Mono', 'SF Mono', ui-monospace, monospace);
+
     --background: 0 0% 100%;
     --foreground: 0 0% 3.9%;
     --card: 0 0% 100%;
@@ -106,6 +118,11 @@
   .badge-info {
     @apply bg-primary-100 text-primary-800;
   }
+}
+
+@keyframes ed-pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.4; transform: scale(0.7); }
 }
 
 @layer utilities {

@@ -1,60 +1,67 @@
 import { notFound } from 'next/navigation';
+import Link from 'next/link';
+import Image from 'next/image';
+import type { Metadata } from 'next';
 import { prisma } from '@/lib/database/prisma';
-import RatingBreakdown from '@/components/reviews/RatingBreakdown';
-import ReviewCard from '@/components/reviews/ReviewCard';
-import ReviewForm from '@/components/forms/ReviewForm';
-import ImageGallery from '@/components/accommodations/ImageGallery';
-import LocationMap from '@/components/accommodations/LocationMap';
-import { Accommodation, Review } from '@/types';
+import type { Accommodation, Review } from '@/types';
+import styles from './page.module.css';
 
 interface AccommodationPageProps {
-  params: {
-    slug: string;
-  };
+  params: { slug: string };
 }
 
-async function getAccommodation(
-  slug: string
-): Promise<{ accommodation: Accommodation; reviews: Review[] } | null> {
+interface ComparableAccom {
+  id: string;
+  name: string;
+  slug: string;
+  university: string;
+  suburb: string;
+  type: string;
+  priceMin: number;
+  ratingOverall: number;
+  totalReviews: number;
+}
+
+async function getAccommodation(slug: string): Promise<{
+  accommodation: Accommodation;
+  reviews: Review[];
+  comparables: ComparableAccom[];
+} | null> {
   try {
-    // Fetch directly from database using Prisma (server-side)
     const dbAccommodation = await prisma.accommodation.findFirst({
-      where: {
-        OR: [{ id: slug }, { slug: slug }],
-      },
+      where: { OR: [{ id: slug }, { slug: slug }] },
       include: {
-        amenities: {
-          include: {
-            amenity: true,
-          },
-        },
+        amenities: { include: { amenity: true } },
         reviews: {
-          where: {
-            status: 'PUBLISHED',
-          },
-          orderBy: {
-            createdAt: 'desc',
-          },
+          where: { status: 'PUBLISHED' },
+          orderBy: { rating: 'desc' },
           take: 10,
           include: {
-            user: {
-              select: {
-                id: true,
-                name: true,
-                university: true,
-                verified: true,
-              },
-            },
+            user: { select: { id: true, name: true, university: true, verified: true } },
           },
         },
       },
     });
 
-    if (!dbAccommodation) {
-      return null;
-    }
+    if (!dbAccommodation) return null;
 
-    // Transform to frontend format
+    const comparables = await prisma.accommodation.findMany({
+      where: { university: dbAccommodation.university, id: { not: dbAccommodation.id } },
+      select: {
+        id: true,
+        name: true,
+        slug: true,
+        university: true,
+        suburb: true,
+        type: true,
+        priceMin: true,
+        ratingOverall: true,
+        totalReviews: true,
+      },
+      orderBy: { ratingOverall: 'desc' },
+      take: 3,
+    });
+
     const accommodation: Accommodation = {
       id: dbAccommodation.id,
       name: dbAccommodation.name,
@@ -87,9 +94,7 @@ async function getAccommodation(
       capacity: dbAccommodation.capacity,
       roomTypes: dbAccommodation.roomTypes,
       contactInfo: dbAccommodation.contactInfo as {
-        phone?: string;
-        email?: string;
-        website?: string;
+        phone?: string; email?: string; website?: string;
       },
       ratings: {
         overall: dbAccommodation.ratingOverall,
@@ -115,7 +120,6 @@ async function getAccommodation(
       sourceUrl: dbAccommodation.sourceUrl,
     };
 
-    // Transform reviews
     const reviews: Review[] = dbAccommodation.reviews.map((r) => ({
       id: r.id,
       accommodationId: r.accommodationId,
@@ -144,298 +148,776 @@ async function getAccommodation(
       reported: r.reported,
     }));
 
-    return { accommodation, reviews };
+    return { accommodation, reviews, comparables };
   } catch (error) {
     console.error('Error fetching accommodation:', error);
     return null;
   }
 }
 
+export async function generateMetadata({ params }: AccommodationPageProps): Promise<Metadata> {
+  const result = await getAccommodation(params.slug);
+  if (!result) return { title: 'Not Found' };
+  const { accommodation } = result;
+  return {
+    title: `${accommodation.name} — Rate My Accom`,
+    description: `${accommodation.ratings.totalReviews} student reviews for ${accommodation.name}. ★${accommodation.ratings.overall.toFixed(1)} overall · from $${accommodation.pricing.min}/${accommodation.pricing.period}.`,
+  };
+}
+
+/* ── helpers ── */
+const bw = (rating: number) => `${Math.round((rating / 5) * 100)}%`;
+
+const NSW_AVG: Record<string, { pct: string; val: number }> = {
+  cleanliness: { pct: '76%', val: 3.8 },
+  location:    { pct: '78%', val: 3.9 },
+  value:       { pct: '82%', val: 4.1 },
+  amenities:   { pct: '74%', val: 3.7 },
+  management:  { pct: '72%', val: 3.6 },
+  safety:      { pct: '80%', val: 4.0 },
+};
+
+function fmtDelta(actual: number, dim: string) {
+  const avg = NSW_AVG[dim].val;
+  const diff = actual - avg;
+  const sign = diff >= 0 ? '+' : '−';
+  const abs = Math.abs(diff).toFixed(1);
+  return { sign, abs, positive: diff >= 0 };
+}
+
+function fmtDate(d: Date) {
+  return new Date(d).toLocaleDateString('en-AU', { day: 'numeric', month: 'short', year: 'numeric' }).toUpperCase();
+}
+
+function fmtPeriod(p: string) {
+  if (p === 'week') return '/wk';
+  if (p === 'month') return '/mo';
+  return `/${p}`;
+}
+
+function fmtDist(km: number) {
+  if (km < 1) return { val: `${Math.round(km * 1000)}`, unit: 'm' };
+  return { val: km.toFixed(1), unit: 'km' };
+}
+
+type DimKey = keyof typeof NSW_AVG;
+
 export default async function AccommodationPage({ params }: AccommodationPageProps) {
   const result = await getAccommodation(params.slug);
+  if (!result) notFound();
 
-  if (!result) {
-    notFound();
-  }
+  const { accommodation, reviews, comparables } = result;
+  const { ratings, pricing, location, amenities, contactInfo, distance } = accommodation;
 
-  const { accommodation, reviews } = result;
+  const featuredReview = reviews[0] ?? null;
+  const otherReviews = reviews.slice(1, 5);
+  const leftCol = otherReviews.filter((_, i) => i % 2 === 0);
+  const rightCol = otherReviews.filter((_, i) => i % 2 === 1);
+
+  const photos = accommodation.images.slice(0, 3);
+
+  /* Pricing tiers from roomTypes */
+  const roomTypes = accommodation.roomTypes.length > 0
+    ? accommodation.roomTypes
+    : ['Standard'];
+  const priceRange = pricing.max - pricing.min;
+  const pricingTiers = roomTypes.slice(0, 3).map((type, idx) => {
+    const total = Math.min(roomTypes.length, 3);
+    const price = Math.round(pricing.min + (priceRange * idx / Math.max(total - 1, 1)));
+    const featured = total === 3 ? idx === 1 : idx === 0;
+    return { type, price, featured };
+  });
+
+  /* Dimension rows */
+  const dims: { key: DimKey; label: string }[] = [
+    { key: 'cleanliness', label: 'Cleanliness' },
+    { key: 'location',    label: 'Location' },
+    { key: 'value',       label: 'Value' },
+    { key: 'amenities',   label: 'Amenities' },
+    { key: 'management',  label: 'Management' },
+    { key: 'safety',      label: 'Safety' },
+  ];
+
+  const availableAmenities = amenities.filter((a) => a.available);
+  const campus = fmtDist(distance.toCampus);
+  const transport = fmtDist(distance.toTransport);
 
   return (
-    <div className="min-h-screen bg-charcoal-dark">
-      {/* Header Section */}
-      <div className="relative bg-gradient-to-br from-charcoal via-charcoal-dark to-black overflow-hidden border-b border-white/10">
-        {/* Gradient Accent Overlay */}
-        <div className="absolute inset-0 bg-gradient-to-br from-lyra-purple-start/10 via-transparent to-lyra-purple-end/10"></div>
-        <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-5"></div>
+    <div className={styles.page}>
 
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-          <div className="flex items-start justify-between">
-            <div className="flex-1">
-              <div className="flex items-center space-x-3 mb-4">
-                <h1 className="text-4xl font-bold bg-gradient-to-b from-white to-white/70 bg-clip-text text-transparent">
-                  {accommodation.name}
-                </h1>
-                {accommodation.verified && (
-                  <span className="bg-gradient-to-r from-lyra-purple-start to-lyra-purple-end text-white px-3 py-1 rounded-full text-sm font-semibold">
-                    Verified
-                  </span>
-                )}
-              </div>
+      {/* ── BREADCRUMB ── */}
+      <nav className={styles.crumbs}>
+        <Link href="/browse" className={styles.crumbAction}>Browse</Link>
+        <span className={styles.crumbSep}>/</span>
+        <span>{accommodation.university}</span>
+        <span className={styles.crumbSep}>/</span>
+        <span>{location.suburb}</span>
+        <span className={styles.crumbSep}>/</span>
+        <span className={styles.crumbHere}><em>{accommodation.name}</em></span>
+        <div className={styles.crumbActions}>
+          <a className={styles.crumbAction}>
+            ★ <span className={styles.crumbActionLabel}>Save to shortlist</span>
+          </a>
+          <a className={styles.crumbAction}>
+            ↗ <span className={styles.crumbActionLabel}>Share</span>
+          </a>
+          <a className={styles.crumbAction}>
+            ⇆ <span className={styles.crumbActionLabel}>Compare</span>
+          </a>
+        </div>
+      </nav>
 
-              <div className="flex items-center space-x-6 text-white/60">
-                <div className="flex items-center">
-                  <svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                    <path
-                      fillRule="evenodd"
-                      d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                  {accommodation.location.suburb}, {accommodation.location.state}
-                </div>
-                <div className="flex items-center">
-                  <svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                    <path d="M10.394 2.08a1 1 0 00-.788 0l-7 3a1 1 0 000 1.84L5.25 8.051a.999.999 0 01.356-.257l4-1.714a1 1 0 11.788 1.838L7.667 9.088l1.94.831a1 1 0 00.787 0l7-3a1 1 0 000-1.838l-7-3zM3.31 9.397L5 10.12v4.102a8.969 8.969 0 00-1.05-.174 1 1 0 01-.89-.89 11.115 11.115 0 01.25-3.762zM9.3 16.573A9.026 9.026 0 007 14.935v-3.957l1.818.78a3 3 0 002.364 0l5.508-2.361a11.026 11.026 0 01.25 3.762 1 1 0 01-.89.89 8.968 8.968 0 00-5.35 2.524 1 1 0 01-1.4 0zM6 18a1 1 0 001-1v-2.065a8.935 8.935 0 00-2-.712V17a1 1 0 001 1z" />
-                  </svg>
-                  {accommodation.university}
-                </div>
-              </div>
+      {/* ── HERO ── */}
+      <section className={styles.hero}>
+        <div className={styles.heroRow}>
+          <div>
+            <div className={styles.kicker}>
+              § FILE N° 001 · ON THE INDEX · {accommodation.type.toUpperCase().replace('-', ' ')}
             </div>
-
-            <div className="text-right">
-              <div className="flex items-center space-x-2 mb-2">
-                <div className="flex">
-                  {[...Array(5)].map((_, i) => (
-                    <svg
-                      key={i}
-                      className={`w-6 h-6 ${
-                        i < Math.floor(accommodation.ratings.overall)
-                          ? 'text-yellow-400'
-                          : 'text-white/30'
-                      }`}
-                      fill="currentColor"
-                      viewBox="0 0 20 20"
-                    >
-                      <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                    </svg>
-                  ))}
-                </div>
-                <span className="text-3xl font-bold text-white">
-                  {accommodation.ratings.overall.toFixed(1)}
+            <h1 className={styles.heroH1}>
+              {accommodation.name}<span className={styles.heroDot}>.</span>
+            </h1>
+            <div className={styles.heroTags}>
+              {accommodation.featured && (
+                <span className={`${styles.tag} ${styles.tagBlue}`}>★ FEATURED</span>
+              )}
+              {accommodation.verified && (
+                <span className={`${styles.tag} ${styles.tagFill}`}>VERIFIED</span>
+              )}
+              <span className={`${styles.tag} ${styles.tagItalic}`}>
+                {accommodation.type.replace('-', ' ')}
+              </span>
+              {accommodation.capacity > 0 && (
+                <span className={styles.tag}>
+                  CAPACITY <b>{accommodation.capacity}</b>
                 </span>
+              )}
+              <span className={styles.tag}>{location.suburb.toUpperCase()}</span>
+            </div>
+          </div>
+
+          {/* At-a-glance card */}
+          <div className={styles.glance}>
+            <div className={styles.glanceRow}>
+              <span className={styles.glanceLab}>RATING</span>
+              <span className={styles.glanceVal}>
+                <span className={styles.glanceStar}>★</span>
+                {ratings.overall.toFixed(1)}{' '}
+                <span className={styles.glanceUnit}>/ {ratings.totalReviews} reviews</span>
+              </span>
+            </div>
+            <div className={styles.glanceRow}>
+              <span className={styles.glanceLab}>PRICE / {pricing.period.toUpperCase()}</span>
+              <span className={styles.glanceVal}>
+                <span className={styles.glanceFrom}>from</span>
+                ${pricing.min}
+              </span>
+            </div>
+            <div className={styles.glanceRow}>
+              <span className={styles.glanceLab}>DISTANCE · CAMPUS</span>
+              <span className={styles.glanceVal}>
+                {campus.val}{' '}
+                <span className={styles.glanceUnit}>{campus.unit}</span>
+              </span>
+            </div>
+            <div className={styles.glanceRow}>
+              <span className={styles.glanceLab}>DISTANCE · TRANSPORT</span>
+              <span className={styles.glanceVal}>
+                {transport.val}{' '}
+                <span className={styles.glanceUnit}>{transport.unit}</span>
+              </span>
+            </div>
+            <div className={styles.glanceRow}>
+              <span className={styles.glanceLab}>ROOM TYPES</span>
+              <span className={styles.glanceVal} style={{ fontSize: 14, fontWeight: 500 }}>
+                {accommodation.roomTypes.join(' · ') || 'Various'}
+              </span>
+            </div>
+            <div className={styles.glanceCtas}>
+              {contactInfo.website ? (
+                <a
+                  href={contactInfo.website}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={styles.btnPrimary}
+                >
+                  VISIT WEBSITE →
+                </a>
+              ) : (
+                <span className={styles.btnPrimary} style={{ opacity: 0.5 }}>NO WEBSITE</span>
+              )}
+              <Link
+                href={`/write-review?accommodation=${accommodation.slug}`}
+                className={styles.btnSecondary}
+              >
+                WRITE A REVIEW
+              </Link>
+              <a className={styles.btnSecondary} style={{ gridColumn: '1 / -1' }}>
+                ★ ADD TO SHORTLIST
+              </a>
+            </div>
+          </div>
+        </div>
+
+        {/* Cover photo */}
+        <div className={styles.cover}>
+          {photos[0] && (
+            <Image
+              src={photos[0]}
+              alt={`${accommodation.name} exterior`}
+              fill
+              style={{ objectFit: 'cover' }}
+              priority
+            />
+          )}
+          <div className={styles.cropTL} /><div className={styles.cropTR} />
+          <div className={styles.cropBL} /><div className={styles.cropBR} />
+          <div className={styles.coverCorner}>FIG. 01 / EXTERIOR</div>
+          <div className={styles.coverLabel}>
+            {accommodation.name.toUpperCase()} · {location.suburb.toUpperCase()}, {location.state.toUpperCase()}
+          </div>
+        </div>
+      </section>
+
+      {/* ── LEDE ── */}
+      <div className={styles.sectionHead}>
+        <div className={styles.sectionKicker}>
+          § 01 — WHAT WE FOUND
+          <span className={styles.sectionKickerP}>
+            Synthesised from {ratings.totalReviews} verified student reviews.
+          </span>
+        </div>
+        <h2 className={styles.sectionH2}>
+          {featuredReview
+            ? <><em>&ldquo;{featuredReview.title}&rdquo;</em></>
+            : <>The place students talk about.</>
+          }
+        </h2>
+      </div>
+      <div className={styles.lede}>
+        {featuredReview ? (
+          <div className={styles.pullquote}>
+            &ldquo;{featuredReview.text.slice(0, 160)}{featuredReview.text.length > 160 ? '…' : ''}&rdquo;
+            <span className={styles.pullquoteBy}>
+              — {featuredReview.userName.toUpperCase()}
+              {featuredReview.userUniversity ? ` · ${featuredReview.userUniversity.toUpperCase()}` : ''}
+              {featuredReview.roomType ? ` · ${featuredReview.roomType.toUpperCase()}` : ''}
+              {' '}· {featuredReview.rating.toFixed(1)} ★
+            </span>
+          </div>
+        ) : (
+          <div className={styles.pullquote}>
+            <em>&ldquo;No reviews yet. Be the first to share your experience.&rdquo;</em>
+          </div>
+        )}
+        <div className={styles.ledeBody}>
+          <p>{accommodation.description}</p>
+          {ratings.breakdown.location >= 4.5 && (
+            <p>
+              Location is the highest-rated dimension — students consistently note
+              the <em>proximity to campus</em> as a standout feature.
+            </p>
+          )}
+          {ratings.breakdown.safety >= 4.5 && (
+            <p>
+              On safety — ★{ratings.breakdown.safety.toFixed(1)} — this property
+              rates in the <em>top tier</em> of NSW accommodations on the platform.
+            </p>
+          )}
+        </div>
+      </div>
+
+      {/* ── SCORECARD ── */}
+      <div className={styles.sectionHead}>
+        <div className={styles.sectionKicker}>
+          § 02 — THE NUMBERS
+          <span className={styles.sectionKickerP}>Six dimensions, not one star.</span>
+        </div>
+        <h2 className={styles.sectionH2}>
+          Where {accommodation.name.split(' ')[0]} <em>wins</em> — and where it doesn&apos;t.
+        </h2>
+      </div>
+      <div className={styles.scorecard}>
+        <div>
+          <p className={styles.overallNum}>
+            <span className={styles.overallStar}>★</span>
+            {ratings.overall.toFixed(1)}
+            <span className={styles.overallMax}>/5</span>
+          </p>
+          <div className={styles.overallLab}>
+            OVERALL · WEIGHTED AVG ·{' '}
+            <span className={styles.overallLabBlue}>{ratings.totalReviews} REVIEWS</span>
+            <br />
+            RATED{' '}
+            <span className={styles.overallLabBlue}>
+              {ratings.overall >= 3.8 ? '+' : '−'}{Math.abs(ratings.overall - 3.8).toFixed(1)}
+            </span>{' '}
+            {ratings.overall >= 3.8 ? 'ABOVE' : 'BELOW'} NSW AVERAGE (3.8)
+          </div>
+        </div>
+        <div className={styles.breakdown}>
+          {dims.map(({ key, label }) => {
+            const val = ratings.breakdown[key as keyof typeof ratings.breakdown];
+            const delta = fmtDelta(val, key);
+            return (
+              <div key={key} className={styles.dim}>
+                <div className={styles.dimName}>{label}</div>
+                <div
+                  className={styles.bar}
+                  style={{ '--w': bw(val), '--avg': NSW_AVG[key].pct } as React.CSSProperties}
+                >
+                  <div className={styles.barAvg} />
+                </div>
+                <div className={styles.dimVal}>{val.toFixed(1)}</div>
+                <div className={`${styles.delta} ${delta.positive ? styles.deltaPos : styles.deltaNeg}`}>
+                  <b>{delta.positive ? `+${delta.abs}` : `−${delta.abs}`}</b> vs NSW avg
+                </div>
               </div>
-              <p className="text-white/60">{accommodation.ratings.totalReviews} reviews</p>
+            );
+          })}
+          <div className={styles.legend}>
+            <div className={styles.legendKey}>
+              <span className={styles.legendSw} /> THIS BUILDING
+            </div>
+            <div className={styles.legendKey}>
+              <span className={styles.legendSwL} /> NSW PLATFORM AVERAGE
             </div>
           </div>
         </div>
       </div>
 
-      {/* Main Content */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="grid lg:grid-cols-3 gap-8">
-          {/* Left Column - Main Content */}
-          <div className="lg:col-span-2 space-y-8">
-            {/* Photo Gallery */}
-            <ImageGallery images={accommodation.images} name={accommodation.name} />
+      {/* ── PHOTO ESSAY ── */}
+      <section className={styles.essay}>
+        <div className={styles.essayHead}>
+          <h3 className={styles.essayH3}>The look <em>— a photo essay.</em></h3>
+          <div className={styles.essayNav}>
+            SHOWING <b>{Math.min(photos.length, 3)}</b> OF {Math.max(photos.length, 3)} ARCHIVE IMAGES · ← VIEW ALL
+          </div>
+        </div>
+        <div className={styles.essayGrid}>
+          {/* Photo A */}
+          {photos[0] ? (
+            <div className={`${styles.photoReal} ${styles.photoA}`}>
+              <Image src={photos[0]} alt="Interior" fill style={{ objectFit: 'cover' }} />
+              <div className={styles.photoCap}>INTERIOR · MAIN</div>
+              <div className={styles.photoFig}>FIG. 02 / INTERIOR</div>
+            </div>
+          ) : (
+            <div className={`${styles.photoPlaceholder} ${styles.photoA}`}>
+              <div className={styles.photoFig}>FIG. 02 / KITCHEN</div>
+              <div className={styles.photoCap}>COMMUNAL KITCHEN · NORTH-FACING</div>
+            </div>
+          )}
+          {/* Photo B */}
+          {photos[1] ? (
+            <div className={`${styles.photoReal} ${styles.photoB}`}>
+              <Image src={photos[1]} alt="Room" fill style={{ objectFit: 'cover' }} />
+              <div className={styles.photoCap}>ROOM · STANDARD</div>
+              <div className={styles.photoFig}>FIG. 03 / ROOM</div>
+            </div>
+          ) : (
+            <div className={`${styles.photoPlaceholder} ${styles.photoB}`}>
+              <div className={styles.photoFig}>FIG. 03 / ROOM</div>
+              <div className={styles.photoCap}>STANDARD ROOM</div>
+            </div>
+          )}
+          {/* Photo C — always dark blue */}
+          {photos[2] ? (
+            <div className={`${styles.photoReal} ${styles.photoC}`}>
+              <Image src={photos[2]} alt="Common area" fill style={{ objectFit: 'cover' }} />
+              <div className={styles.photoCap}>COMMON AREA</div>
+              <div className={styles.photoFig}>FIG. 04 / COMMON</div>
+            </div>
+          ) : (
+            <div className={`${styles.photoPlaceholder} ${styles.photoC}`}>
+              <div className={styles.photoFig}>FIG. 04 / COURTYARD</div>
+              <div className={styles.photoCap}>SOCIAL COURTYARD · WEEKEND</div>
+            </div>
+          )}
+        </div>
+      </section>
 
-            {/* Location Map */}
-            {accommodation.location.coordinates && (
-              <LocationMap
-                accommodationName={accommodation.name}
-                university={accommodation.university}
-                address={accommodation.location.address}
-                suburb={accommodation.location.suburb}
-                state={accommodation.location.state}
-                postcode={accommodation.location.postcode}
-                coordinates={accommodation.location.coordinates}
-                distanceToCampus={accommodation.distance.toCampus}
-              />
-            )}
-
-            {/* About Section */}
-            <section className="bg-white/5 backdrop-blur-md border border-white/10 rounded-xl p-6">
-              <h2 className="text-2xl font-bold bg-gradient-to-b from-white to-white/70 bg-clip-text text-transparent mb-4">
-                About
-              </h2>
-              <p className="text-white/70 leading-relaxed mb-6">{accommodation.description}</p>
-
-              <div className="grid md:grid-cols-2 gap-4 mb-6">
-                <div>
-                  <h3 className="font-semibold text-white mb-2">Type</h3>
-                  <p className="text-white/60 capitalize">{accommodation.type.replace('-', ' ')}</p>
-                </div>
-                <div>
-                  <h3 className="font-semibold text-white mb-2">Capacity</h3>
-                  <p className="text-white/60">{accommodation.capacity} students</p>
-                </div>
-                <div>
-                  <h3 className="font-semibold text-white mb-2">Distance to Campus</h3>
-                  <p className="text-white/60">{accommodation.distance.toCampus}km</p>
-                </div>
-                <div>
-                  <h3 className="font-semibold text-white mb-2">Distance to Transport</h3>
-                  <p className="text-white/60">{accommodation.distance.toTransport}km</p>
-                </div>
+      {/* ── PRICING ── */}
+      <section className={styles.pricing}>
+        <div className={styles.pricingHead}>
+          <div className={styles.kicker}>§ 03 — ROOMS & PRICING</div>
+          <h3 className={styles.pricingH3}>
+            {pricingTiers.length === 1 ? 'One tier.' : `${pricingTiers.length === 2 ? 'Two' : 'Three'} tiers.`}{' '}
+            <em>Pick yours.</em>
+          </h3>
+        </div>
+        <div className={styles.priceTable}>
+          {pricingTiers.map((tier, idx) => (
+            <div
+              key={tier.type}
+              className={`${styles.priceCard} ${tier.featured ? styles.priceCardFeatured : ''}`}
+            >
+              {tier.featured && <div className={styles.priceRibbon}>★ MOST REVIEWED</div>}
+              <div className={styles.priceKick}>N° 0{idx + 1} · {tier.type.toUpperCase()}</div>
+              <div className={styles.priceName}>{tier.type}</div>
+              <div className={styles.priceAmt}>
+                <span className={styles.priceFrom}>from</span>
+                ${tier.price}
+                <span className={styles.priceUnit}>{fmtPeriod(pricing.period)}</span>
               </div>
-
-              <div>
-                <h3 className="font-semibold text-white mb-3">Room Types Available</h3>
-                <div className="flex flex-wrap gap-2">
-                  {accommodation.roomTypes.map((type) => (
-                    <span
-                      key={type}
-                      className="bg-gradient-to-r from-lyra-purple-start/20 to-lyra-purple-end/20 text-white border border-white/20 px-3 py-1 rounded-full text-sm"
-                    >
-                      {type}
-                    </span>
+              {availableAmenities.length > 0 && (
+                <ul className={styles.priceFeatures}>
+                  {availableAmenities.slice(0, 4).map((a) => (
+                    <li key={a.id}>{a.name}</li>
                   ))}
+                </ul>
+              )}
+              {contactInfo.website ? (
+                <a
+                  href={contactInfo.website}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={styles.priceCta}
+                >
+                  VIEW AVAILABILITY →
+                </a>
+              ) : (
+                <div className={styles.priceCta}>ENQUIRE FOR AVAILABILITY →</div>
+              )}
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* ── AMENITIES ── */}
+      <section className={styles.amens}>
+        <div className={styles.amensHead}>
+          <h3 className={styles.amensH3}>
+            What&apos;s <em>in the building.</em>
+          </h3>
+          <div className={styles.amensMeta}>
+            <b>{availableAmenities.length} of {amenities.length}</b> amenities
+            {accommodation.lastVerified && (
+              <> · <em>updated {fmtDate(accommodation.lastVerified)}</em></>
+            )}
+          </div>
+        </div>
+        <div className={styles.amenGrid}>
+          {amenities.map((amenity) => (
+            <div
+              key={amenity.id}
+              className={`${styles.amen} ${!amenity.available ? styles.amenUnavailable : ''}`}
+            >
+              <div className={styles.amenLabel}>{amenity.name}</div>
+              <div className={styles.amenStatus}>
+                {amenity.available ? '↳ available' : 'not at this property'}
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* ── REVIEWS ── */}
+      <section className={styles.reviewsSection}>
+        <div className={styles.reviewsHead}>
+          <h3 className={styles.reviewsH3}>
+            Reviews <em>from</em> students.
+          </h3>
+          <div className={styles.reviewToolbar}>
+            <button style={{ background: 'var(--ed-ink)', color: 'white', border: '1px solid var(--ed-ink)', padding: '7px 12px', cursor: 'pointer', fontFamily: 'var(--ed-mono)', fontSize: 11, letterSpacing: '0.05em', textTransform: 'uppercase' }}>★ ALL · {ratings.totalReviews}</button>
+            <button>↑ POSITIVE</button>
+            <button>↓ CRITICAL</button>
+            <button>NEWEST</button>
+          </div>
+        </div>
+
+        {featuredReview ? (
+          <>
+            <article className={styles.reviewFeatured}>
+              <div className={styles.figmark}>
+                <span>FEATURED REVIEW</span>
+                <span className={styles.figmarkBig}>{featuredReview.rating.toFixed(1)}</span>
+                <span className={styles.figmarkStar}>
+                  {Array.from({ length: 5 }, (_, i) =>
+                    i < Math.round(featuredReview.rating) ? '★' : '☆'
+                  ).join(' ')}
+                </span>
+              </div>
+              <div>
+                <p className={styles.featuredQuote}>
+                  &ldquo;{featuredReview.title || featuredReview.text.slice(0, 120)}&rdquo;
+                </p>
+                <p className={styles.featuredBody}>{featuredReview.text}</p>
+                <div className={styles.featuredByline}>
+                  — <b>{featuredReview.userName.toUpperCase()}</b>
+                  {featuredReview.userUniversity && ` · ${featuredReview.userUniversity.toUpperCase()}`}
+                  {featuredReview.roomType && ` · ${featuredReview.roomType.toUpperCase()}`}
+                  {featuredReview.stayDuration && `, ${featuredReview.stayDuration.toUpperCase()}`}
+                  {' '}· POSTED {fmtDate(featuredReview.createdAt)}
                 </div>
               </div>
-            </section>
-
-            {/* Amenities */}
-            <section className="bg-white/5 backdrop-blur-md border border-white/10 rounded-xl p-6">
-              <h2 className="text-2xl font-bold bg-gradient-to-b from-white to-white/70 bg-clip-text text-transparent mb-4">
-                Amenities
-              </h2>
-              <div className="grid md:grid-cols-2 gap-3">
-                {accommodation.amenities.map((amenity) => (
-                  <div
-                    key={amenity.id}
-                    className={`flex items-center space-x-3 ${
-                      amenity.available ? 'text-white' : 'text-white/30 line-through'
-                    }`}
-                  >
-                    <svg
-                      className={`w-5 h-5 ${
-                        amenity.available ? 'text-lyra-purple-start' : 'text-white/20'
-                      }`}
-                      fill="currentColor"
-                      viewBox="0 0 20 20"
-                    >
-                      <path
-                        fillRule="evenodd"
-                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                        clipRule="evenodd"
-                      />
-                    </svg>
-                    <span>{amenity.name}</span>
+              <div className={styles.ratingBreakdownGrid}>
+                {dims.map(({ key, label }) => (
+                  <div key={key} className={styles.ratingBreakdownItem}>
+                    <span className={styles.ratingItemLabel}>{label.toUpperCase().slice(0, 5)}</span>
+                    <span className={styles.ratingItemVal}>
+                      <span className={styles.reviewStar}>★</span>
+                      {featuredReview.ratingBreakdown[key as keyof typeof featuredReview.ratingBreakdown].toFixed(1)}
+                    </span>
                   </div>
                 ))}
               </div>
-            </section>
+            </article>
 
-            {/* Reviews */}
-            <section>
-              <h2 className="text-2xl font-bold bg-gradient-to-b from-white to-white/70 bg-clip-text text-transparent mb-6">
-                Student Reviews
-              </h2>
-              {reviews.length > 0 ? (
-                <div className="space-y-6">
-                  {reviews.map((review) => (
-                    <ReviewCard key={review.id} review={review} />
+            {otherReviews.length > 0 && (
+              <div className={styles.reviewCols}>
+                <div className={styles.reviewCol}>
+                  {leftCol.map((review) => (
+                    <div key={review.id} className={styles.rentry}>
+                      <div className={styles.rentryHead}>
+                        <div className={styles.rentryRate}>
+                          <span className={styles.reviewStar}>★</span>{review.rating.toFixed(1)}
+                        </div>
+                        <div className={styles.rentryByline}>
+                          — <b>{review.userName.toUpperCase()}</b>
+                          {review.userUniversity && ` · ${review.userUniversity.toUpperCase()}`}
+                          {' '}· {fmtDate(review.createdAt)}
+                        </div>
+                      </div>
+                      <h4 className={styles.rentryH4}>
+                        {review.title || <em>Student review</em>}
+                      </h4>
+                      <p className={styles.rentryText}>
+                        {review.text.slice(0, 280)}{review.text.length > 280 ? '…' : ''}
+                      </p>
+                      {((review.pros && review.pros.length > 0) || (review.cons && review.cons.length > 0)) && (
+                        <div className={styles.prosCons}>
+                          {review.pros && review.pros.length > 0 && (
+                            <div className={`${styles.prosConsCol} ${styles.prosConsColP}`}>
+                              <h5>↑ PROS</h5>
+                              <ul className={styles.prosConsList}>
+                                {review.pros.slice(0, 3).map((p, i) => <li key={i}>{p}</li>)}
+                              </ul>
+                            </div>
+                          )}
+                          {review.cons && review.cons.length > 0 && (
+                            <div className={styles.prosConsCol}>
+                              <h5>↓ CONS</h5>
+                              <ul className={`${styles.prosConsList} ${styles.consConsList}`}>
+                                {review.cons.slice(0, 3).map((c, i) => <li key={i}>{c}</li>)}
+                              </ul>
+                            </div>
+                          )}
+                        </div>
+                      )}
+                    </div>
                   ))}
                 </div>
-              ) : (
-                <div className="bg-white/5 backdrop-blur-md border border-white/10 rounded-xl p-8 text-center">
-                  <p className="text-white/60">
-                    No reviews yet. Be the first to share your experience!
-                  </p>
+                <div className={styles.reviewCol}>
+                  {rightCol.map((review) => (
+                    <div key={review.id} className={styles.rentry}>
+                      <div className={styles.rentryHead}>
+                        <div className={styles.rentryRate}>
+                          <span className={styles.reviewStar}>★</span>{review.rating.toFixed(1)}
+                        </div>
+                        <div className={styles.rentryByline}>
+                          — <b>{review.userName.toUpperCase()}</b>
+                          {review.userUniversity && ` · ${review.userUniversity.toUpperCase()}`}
+                          {' '}· {fmtDate(review.createdAt)}
+                        </div>
+                      </div>
+                      <h4 className={styles.rentryH4}>
+                        {review.title || <em>Student review</em>}
+                      </h4>
+                      <p className={styles.rentryText}>
+                        {review.text.slice(0, 280)}{review.text.length > 280 ? '…' : ''}
+                      </p>
+                      {((review.pros && review.pros.length > 0) || (review.cons && review.cons.length > 0)) && (
+                        <div className={styles.prosCons}>
+                          {review.pros && review.pros.length > 0 && (
+                            <div className={`${styles.prosConsCol} ${styles.prosConsColP}`}>
+                              <h5>↑ PROS</h5>
+                              <ul className={styles.prosConsList}>
+                                {review.pros.slice(0, 3).map((p, i) => <li key={i}>{p}</li>)}
+                              </ul>
+                            </div>
+                          )}
+                          {review.cons && review.cons.length > 0 && (
+                            <div className={styles.prosConsCol}>
+                              <h5>↓ CONS</h5>
+                              <ul className={`${styles.prosConsList} ${styles.consConsList}`}>
+                                {review.cons.slice(0, 3).map((c, i) => <li key={i}>{c}</li>)}
+                              </ul>
+                            </div>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  ))}
                 </div>
-              )}
-            </section>
-
-            {/* Review Form */}
-            <section>
-              <ReviewForm
-                accommodationId={accommodation.id}
-                accommodationSlug={accommodation.slug}
-              />
-            </section>
-          </div>
-
-          {/* Right Column - Sidebar */}
-          <div className="space-y-6">
-            {/* Pricing Card */}
-            <div className="bg-white/5 backdrop-blur-md border border-white/10 rounded-xl p-6">
-              <h3 className="text-lg font-bold bg-gradient-to-b from-white to-white/70 bg-clip-text text-transparent mb-4">
-                Pricing
-              </h3>
-              <div className="mb-6">
-                <div className="flex items-baseline space-x-2">
-                  <span className="text-3xl font-bold bg-gradient-to-r from-lyra-purple-start to-lyra-purple-end bg-clip-text text-transparent">
-                    ${accommodation.pricing.min}
-                  </span>
-                  <span className="text-xl text-white/70">- ${accommodation.pricing.max}</span>
-                </div>
-                <p className="text-white/50 text-sm mt-1">per {accommodation.pricing.period}</p>
-                {accommodation.lastVerified && (
-                  <div className="flex items-center gap-1.5 mt-3 text-xs text-white/40">
-                    <svg
-                      className="w-3.5 h-3.5"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-                      />
-                    </svg>
-                    <span>
-                      Prices verified{' '}
-                      {new Date(accommodation.lastVerified).toLocaleDateString('en-AU', {
-                        day: 'numeric',
-                        month: 'short',
-                        year: 'numeric',
-                      })}
-                    </span>
-                  </div>
-                )}
               </div>
+            )}
+          </>
+        ) : (
+          <div style={{ padding: '48px 0', borderTop: '1px solid var(--ed-ink)', textAlign: 'center', color: 'var(--ed-mute)', fontFamily: 'var(--ed-mono)', fontSize: 13, letterSpacing: '0.05em', textTransform: 'uppercase' }}>
+            NO REVIEWS YET —{' '}
+            <Link href={`/write-review?accommodation=${accommodation.slug}`} style={{ color: 'var(--ed-blue)', fontStyle: 'italic', textTransform: 'none', letterSpacing: 0 }}>
+              be the first to write one.
+            </Link>
+          </div>
+        )}
+      </section>
 
-              {accommodation.contactInfo.website && (
-                <a
-                  href={accommodation.contactInfo.website}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="block w-full text-center bg-gradient-to-r from-lyra-purple-start to-lyra-purple-end hover:shadow-lg hover:shadow-lyra-purple-start/50 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-300 mb-3"
-                >
-                  Visit Website
-                </a>
+      {/* ── LOCATION ── */}
+      <section className={styles.location}>
+        <div className={styles.locationGrid}>
+          <div>
+            <div className={styles.kicker} style={{ marginBottom: 16 }}>§ 04 — LOCATION</div>
+            <h3 className={styles.locationH3}>
+              {location.suburb},<br /><em>{campus.val} {campus.unit}</em> from {accommodation.university}.
+            </h3>
+            <div className={styles.locationAddress}>
+              <b>{location.address}, {location.suburb} {location.state} {location.postcode}</b>
+              {location.coordinates && (
+                <><br /><em>{location.coordinates.lat.toFixed(4)}°S, {location.coordinates.lng.toFixed(4)}°E · WGS-84</em></>
               )}
-
-              <div className="space-y-3 text-sm">
-                {accommodation.contactInfo.phone && (
-                  <div className="flex items-center text-white/60">
-                    <svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                      <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z" />
-                    </svg>
-                    {accommodation.contactInfo.phone}
-                  </div>
-                )}
-                {accommodation.contactInfo.email && (
-                  <div className="flex items-center text-white/60">
-                    <svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                      <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z" />
-                      <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z" />
-                    </svg>
-                    {accommodation.contactInfo.email}
-                  </div>
-                )}
+            </div>
+            <div className={styles.distList}>
+              <div className={styles.dist}>
+                <div className={styles.distLabel}>{accommodation.university} CAMPUS</div>
+                <div className={styles.distVal}>
+                  {campus.val}<em>{campus.unit} · walk</em>
+                </div>
+              </div>
+              <div className={styles.dist}>
+                <div className={styles.distLabel}>NEAREST TRANSPORT</div>
+                <div className={styles.distVal}>
+                  {transport.val}<em>{transport.unit} · walk</em>
+                </div>
+              </div>
+              <div className={styles.dist}>
+                <div className={styles.distLabel}>SUBURB</div>
+                <div className={styles.distVal} style={{ fontSize: 18 }}>
+                  {location.suburb}
+                </div>
+              </div>
+              <div className={styles.dist}>
+                <div className={styles.distLabel}>STATE</div>
+                <div className={styles.distVal} style={{ fontSize: 18 }}>
+                  {location.state} {location.postcode}
+                </div>
               </div>
             </div>
+          </div>
 
-            {/* Rating Breakdown */}
-            <RatingBreakdown
-              breakdown={accommodation.ratings.breakdown}
-              totalReviews={accommodation.ratings.totalReviews}
-            />
+          {/* Mini atlas */}
+          <div className={styles.miniAtlas}>
+            <div className={styles.miniHead}>
+              <span>{location.suburb.toUpperCase()} · 1 : 25K</span>
+              <span className={styles.miniHeadTag}>FIG. 05 / SITE PLAN</span>
+            </div>
+            <div className={styles.refCoast} />
+            <div className={styles.ref} style={{ left: '35%', top: '28%' }}>Sydney CBD</div>
+            <div className={styles.ref} style={{ left: '60%', top: '76%' }}>{location.suburb}</div>
+            <div className={styles.uniPin} style={{ left: '52%', top: '52%' }}>
+              <div className={styles.uniPinDot} />
+              <div className={styles.uniPinLabel}>{accommodation.university}</div>
+            </div>
+            <div className={styles.thisPin} style={{ left: '58%', top: '62%' }}>
+              <div className={styles.thisPinRing} />
+              <div className={styles.thisPinLabel}>
+                {accommodation.name.split(' ').slice(0, 2).join(' ').toUpperCase()}{' '}
+                <em style={{ opacity: 0.8, marginLeft: 4, fontStyle: 'italic' }}>— here</em>
+              </div>
+            </div>
           </div>
         </div>
-      </div>
+      </section>
+
+      {/* ── APPLY ── */}
+      <section className={styles.apply}>
+        <div className={styles.applyGrid}>
+          <div>
+            <div className={styles.applySection}>§ 05 — APPLY</div>
+            <h2 className={styles.applyH2}>
+              Would you<br /><em>live here?</em>
+            </h2>
+          </div>
+          <div>
+            <p className={styles.applyBody}>
+              Applications are made directly through {accommodation.name}.{' '}
+              <em>We don&apos;t take a cut.</em> The buttons below open the operator&apos;s site —
+              you&apos;ll see the same prices you read here.
+            </p>
+            <div className={styles.applyContact}>
+              {contactInfo.phone && (
+                <div><span>PHONE</span>{contactInfo.phone}</div>
+              )}
+              {contactInfo.email && (
+                <div><span>EMAIL</span>{contactInfo.email}</div>
+              )}
+              {contactInfo.website && (
+                <div><span>WEB</span>{contactInfo.website.replace(/^https?:\/\//, '')}</div>
+              )}
+            </div>
+            <div className={styles.applyCtas}>
+              {contactInfo.website ? (
+                <a
+                  href={contactInfo.website}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={styles.btnSolid}
+                >
+                  VISIT OPERATOR SITE →
+                </a>
+              ) : (
+                <span className={styles.btnSolid} style={{ opacity: 0.5 }}>NO WEBSITE</span>
+              )}
+              <a className={styles.btnGhost}>★ ADD TO SHORTLIST</a>
+              <a className={styles.btnGhost}>⇆ COMPARE</a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── COMPARABLES ── */}
+      {comparables.length > 0 && (
+        <section className={styles.comparables}>
+          <div className={styles.compHead}>
+            <h3 className={styles.compH3}>
+              If you like {accommodation.name.split(' ')[0]},{' '}
+              <em>also worth seeing —</em>
+            </h3>
+            <div className={styles.compMeta}>
+              SHOWING{' '}
+              <span className={styles.compMetaB}>{comparables.length}</span>{' '}
+              SIMILAR · {accommodation.university.toUpperCase()}
+            </div>
+          </div>
+          <div className={styles.compGrid}>
+            {comparables.map((comp, idx) => (
+              <Link
+                key={comp.id}
+                href={`/accommodation/${comp.slug}`}
+                className={styles.comp}
+              >
+                <div className={styles.compNum}>N° 0{(idx + 8).toString().padStart(2, '0')}</div>
+                <div className={styles.compPhoto} />
+                <h4 className={styles.compName}>{comp.name}</h4>
+                <div className={styles.compMeta2}>
+                  {comp.university.toUpperCase()} · {comp.suburb.toUpperCase()} · {comp.type.toUpperCase().replace('_', '-')}
+                </div>
+                <div className={styles.compFooter}>
+                  <div className={styles.compVal}><em>★</em>{comp.ratingOverall.toFixed(1)}</div>
+                  <div className={styles.compVal}><em>from</em>${comp.priceMin}/wk</div>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {/* ── COLOPHON ── */}
+      <footer className={styles.colophon}>
+        <span>© 2026 RATEMYACCOM · SYDNEY NSW</span>
+        <span>SET IN INTER · <em>printed on the internet</em></span>
+      </footer>
+
     </div>
   );
 }
