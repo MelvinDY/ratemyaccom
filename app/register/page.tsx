@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { useAuth } from '@/hooks/useAuth';
 import { ArrowUpRight, Info, Check, X, Eye, EyeOff, ChevronDown } from 'lucide-react';
+import OAuthButtons from '@/components/auth/OAuthButtons';
 import type { University } from '@/lib/validation/schemas';
 
 const universities: { value: University; label: string }[] = [
@@ -261,7 +262,8 @@ export default function RegisterPage() {
                 transition={{ duration: 0.8, delay: 0.4 }}
                 className="lg:col-span-3"
               >
-                <div className="p-8 sm:p-10 rounded-3xl bg-gradient-to-br from-white/[0.08] to-white/[0.02] border border-white/10 backdrop-blur-sm">
+                <OAuthButtons redirect="/" label="Sign up" />
+                <div className="mt-4 p-8 sm:p-10 rounded-3xl bg-gradient-to-br from-white/[0.08] to-white/[0.02] border border-white/10 backdrop-blur-sm">
                   <form onSubmit={handleSubmit} className="space-y-6">
                     {error && (
                       <motion.div

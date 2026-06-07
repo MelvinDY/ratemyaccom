@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { useAuth } from '@/hooks/useAuth';
 import { Mail, Lock, ArrowLeft, KeyRound, ArrowUpRight } from 'lucide-react';
+import OAuthButtons from '@/components/auth/OAuthButtons';
 
 type LoginMethod = 'password' | 'otp';
 type OtpStep = 'email' | 'verify';
@@ -304,6 +305,18 @@ export default function LoginPage() {
                   : 'Enter your university email to access your account'}
               </p>
             </motion.div>
+
+            {/* OAuth buttons */}
+            {!(loginMethod === 'otp' && otpStep === 'verify') && (
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.15 }}
+                className="mb-4"
+              >
+                <OAuthButtons redirect="/" label="Sign in" />
+              </motion.div>
+            )}
 
             {/* Form Card */}
             <motion.div
