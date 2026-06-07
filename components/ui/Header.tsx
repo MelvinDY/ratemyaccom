@@ -22,6 +22,7 @@ interface NavLink {
 
 const navLinks: NavLink[] = [
   { href: '/browse', label: 'Browse' },
+  { href: '/browse/universities', label: 'Universities' },
   { href: '/quiz', label: 'Quiz', thePrefix: true },
   { href: '/about', label: 'About' },
   { href: '/support', label: 'Support' },

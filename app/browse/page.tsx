@@ -1,593 +1,352 @@
 'use client';
 
-import { useState, useEffect, useCallback, Suspense } from 'react';
-import { useSearchParams } from 'next/navigation';
-import { motion } from 'framer-motion';
-import { SearchFilters, Accommodation } from '@/types';
-import BrowseFilters from '@/components/browse/BrowseFilters';
-import AccommodationCard from '@/components/accommodations/AccommodationCard';
-import AccommodationCardSkeleton from '@/components/browse/AccommodationCardSkeleton';
-import EmptyState from '@/components/browse/EmptyState';
-import { ErrorDisplay } from '@/components/ui/ErrorBoundary';
-import { ChevronLeft, ChevronRight, Building2, Star, Sparkles, Search } from 'lucide-react';
+import { useState, useEffect, useMemo } from 'react';
+import Link from 'next/link';
+import styles from './page.module.css';
 
-const ITEMS_PER_PAGE = 12;
+interface Accom {
+  id: string;
+  name: string;
+  slug: string;
+  university: string;
+  suburb: string;
+  type: string;
+  priceMin: number;
+  priceMax: number;
+  pricePeriod: string;
+  ratingOverall: number;
+  totalReviews: number;
+  roomTypes: string[];
+  amenities: { name: string; available: boolean }[];
+}
 
-// Map short university names to full names used in filters
-const UNIVERSITY_MAP: Record<string, string> = {
-  unsw: 'University of New South Wales (UNSW)',
-  sydney: 'University of Sydney',
-  uts: 'University of Technology Sydney (UTS)',
-  macquarie: 'Macquarie University',
-  wsu: 'Western Sydney University',
-};
+type SortKey = 'rating' | 'reviews' | 'priceLow' | 'priceHigh' | 'name';
+type ViewMode = 'catalog' | 'grid';
 
-function BrowsePageContent() {
-  const searchParams = useSearchParams();
-  const universityParam = searchParams.get('university');
+const MAX_PRICE = 800;
 
-  const [searchQuery, setSearchQuery] = useState('');
-  const [filters, setFilters] = useState<SearchFilters>({});
+export default function BrowsePage() {
+  const [items, setItems]         = useState<Accom[]>([]);
+  const [loading, setLoading]     = useState(true);
+  const [query, setQuery]         = useState('');
+  const [priceMax, setPriceMax]   = useState(MAX_PRICE);
+  const [minRating, setMinRating] = useState(0);
+  const [sort, setSort]           = useState<SortKey>('rating');
+  const [view, setView]           = useState<ViewMode>('catalog');
+  const [unis, setUnis]           = useState(new Set<string>());
+  const [types, setTypes]         = useState(new Set<string>());
+  const [rooms, setRooms]         = useState(new Set<string>());
+  const [amens, setAmens]         = useState(new Set<string>());
 
-  // Update filters when URL parameter changes
   useEffect(() => {
-    if (universityParam) {
-      const mappedUniversity = UNIVERSITY_MAP[universityParam.toLowerCase()];
-      if (mappedUniversity) {
-        setFilters((prev) => ({ ...prev, university: mappedUniversity }));
-      }
-    } else {
-      // Clear university filter if param is removed
-      setFilters((prev) => {
-        const { university: _university, ...rest } = prev;
-        return rest;
-      });
+    fetch('/api/accommodations?limit=100')
+      .then(r => r.json())
+      .then(d => {
+        const list: Accom[] = (d.data ?? d ?? []).map((a: Accom) => a);
+        setItems(list);
+      })
+      .catch(() => {})
+      .finally(() => setLoading(false));
+  }, []);
+
+  /* Derived filter option lists */
+  const uniList   = useMemo(() => [...new Set(items.map(a => a.university))].sort(), [items]);
+  const typeList  = useMemo(() => [...new Set(items.map(a => a.type))].sort(), [items]);
+  const roomList  = useMemo(() => [...new Set(items.flatMap(a => a.roomTypes ?? []))].sort(), [items]);
+  const amenList  = useMemo(() => [...new Set(items.flatMap(a => (a.amenities ?? []).filter(x => x.available).map(x => x.name)))].sort(), [items]);
+
+  /* Filtered + sorted list */
+  const visible = useMemo(() => {
+    const q = query.toLowerCase();
+    let list = items.filter(a => {
+      if (q && !`${a.name} ${a.suburb} ${a.university} ${a.type}`.toLowerCase().includes(q)) return false;
+      if (a.priceMin > priceMax) return false;
+      if (minRating && a.ratingOverall < minRating) return false;
+      if (unis.size && !unis.has(a.university)) return false;
+      if (types.size && !types.has(a.type)) return false;
+      if (rooms.size && !(a.roomTypes ?? []).some(r => rooms.has(r))) return false;
+      if (amens.size && ![...amens].every(am => (a.amenities ?? []).some(x => x.available && x.name === am))) return false;
+      return true;
+    });
+    switch (sort) {
+      case 'rating':    list = list.sort((a, b) => b.ratingOverall - a.ratingOverall); break;
+      case 'reviews':   list = list.sort((a, b) => b.totalReviews - a.totalReviews); break;
+      case 'priceLow':  list = list.sort((a, b) => a.priceMin - b.priceMin); break;
+      case 'priceHigh': list = list.sort((a, b) => b.priceMax - a.priceMax); break;
+      case 'name':      list = list.sort((a, b) => a.name.localeCompare(b.name)); break;
     }
-  }, [universityParam]);
-  const [accommodations, setAccommodations] = useState<Accommodation[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
-  const [total, setTotal] = useState(0);
+    return list;
+  }, [items, query, priceMax, minRating, unis, types, rooms, amens, sort]);
 
-  // Debounced search query
-  const [debouncedQuery, setDebouncedQuery] = useState('');
+  /* Active filter pills */
+  type Pill = { key: string; val: string; label: string };
+  const activePills: Pill[] = useMemo(() => {
+    const p: Pill[] = [];
+    unis.forEach(v => p.push({ key: 'uni', val: v, label: v }));
+    types.forEach(v => p.push({ key: 'type', val: v, label: v.replace('-', ' ').toUpperCase() }));
+    rooms.forEach(v => p.push({ key: 'room', val: v, label: v.toUpperCase() }));
+    amens.forEach(v => p.push({ key: 'amen', val: v, label: v.toUpperCase() }));
+    if (minRating > 0) p.push({ key: 'rating', val: String(minRating), label: `≥ ${minRating}★` });
+    if (priceMax < MAX_PRICE) p.push({ key: 'price', val: String(priceMax), label: `≤ $${priceMax}/WK` });
+    if (query) p.push({ key: 'q', val: query, label: `"${query}"` });
+    return p;
+  }, [unis, types, rooms, amens, minRating, priceMax, query]);
 
-  // Debounce search query
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setDebouncedQuery(searchQuery);
-    }, 300);
+  function removePill(key: string, val: string) {
+    if (key === 'uni')    setUnis(s  => { const n = new Set(s); n.delete(val); return n; });
+    if (key === 'type')   setTypes(s => { const n = new Set(s); n.delete(val); return n; });
+    if (key === 'room')   setRooms(s => { const n = new Set(s); n.delete(val); return n; });
+    if (key === 'amen')   setAmens(s => { const n = new Set(s); n.delete(val); return n; });
+    if (key === 'rating') setMinRating(0);
+    if (key === 'price')  setPriceMax(MAX_PRICE);
+    if (key === 'q')      setQuery('');
+  }
 
-    return () => clearTimeout(timer);
-  }, [searchQuery]);
+  function clearAll() {
+    setQuery(''); setPriceMax(MAX_PRICE); setMinRating(0);
+    setUnis(new Set()); setTypes(new Set()); setRooms(new Set()); setAmens(new Set());
+  }
 
-  // Fetch accommodations
-  const fetchAccommodations = useCallback(async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const params = new URLSearchParams({
-        page: currentPage.toString(),
-        limit: ITEMS_PER_PAGE.toString(),
-      });
+  function toggleSet(setter: React.Dispatch<React.SetStateAction<Set<string>>>, val: string) {
+    setter(s => { const n = new Set(s); n.has(val) ? n.delete(val) : n.add(val); return n; });
+  }
 
-      // Add filters to params
-      if (filters.university) {
-        params.append('university', filters.university);
-      }
-      if (filters.location) {
-        params.append('location', filters.location);
-      }
-      if (filters.priceMin) {
-        params.append('priceMin', filters.priceMin.toString());
-      }
-      if (filters.priceMax) {
-        params.append('priceMax', filters.priceMax.toString());
-      }
-      if (filters.rating) {
-        params.append('rating', filters.rating.toString());
-      }
-
-      const response = await fetch(`/api/accommodations?${params.toString()}`);
-      const data = await response.json();
-
-      if (data.success) {
-        let results = data.data;
-
-        // Client-side search filtering (since API doesn't support general search)
-        if (debouncedQuery) {
-          const query = debouncedQuery.toLowerCase();
-          results = results.filter(
-            (accom: Accommodation) =>
-              accom.name.toLowerCase().includes(query) ||
-              accom.location.suburb.toLowerCase().includes(query) ||
-              accom.university.toLowerCase().includes(query)
-          );
-        }
-
-        setAccommodations(results);
-        setTotalPages(data.pagination.totalPages);
-        setTotal(data.pagination.total);
-      }
-    } catch (err) {
-      console.error('Error fetching accommodations:', err);
-      setError('Failed to load accommodations. Please try again.');
-      setAccommodations([]);
-    } finally {
-      setLoading(false);
-    }
-  }, [currentPage, filters, debouncedQuery]);
-
-  // Fetch when filters or page change
-  useEffect(() => {
-    fetchAccommodations();
-  }, [fetchAccommodations]);
-
-  // Reset to page 1 when filters or search change
-  useEffect(() => {
-    setCurrentPage(1);
-  }, [filters, debouncedQuery]);
-
-  const handleClearFilters = () => {
-    setFilters({});
-    setSearchQuery('');
-  };
-
-  const handlePageChange = (newPage: number) => {
-    setCurrentPage(newPage);
-    // Scroll to top
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
+  const fmtPeriod = (p: string) => p === 'WEEK' ? '/wk' : p === 'MONTH' ? '/mo' : `/${p.toLowerCase()}`;
 
   return (
-    <div className="relative min-h-screen bg-[#e0e5ec] overflow-hidden">
-      {/* Main content */}
-      <div className="relative z-10 min-h-screen flex flex-col pt-20">
-        {/* Top bar */}
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          className="flex justify-between items-center px-6 sm:px-12 lg:px-20 py-8"
-        >
-          <div className="flex items-center gap-2">
-            <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-            <span className="text-xs text-slate-500 uppercase tracking-widest">Live Listings</span>
-          </div>
-          <div className="text-xs text-slate-500 uppercase tracking-widest">NSW Universities</div>
-        </motion.div>
+    <div className={styles.page}>
 
-        {/* Hero Section - Neumorphic Style */}
-        <section className="px-6 sm:px-12 lg:px-20 pb-16">
-          <div className="max-w-7xl mx-auto">
-            <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center mb-12">
-              {/* Left column - Typography */}
-              <div>
-                {/* Overline */}
-                <motion.div
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ duration: 0.6, delay: 0.2 }}
-                  className="flex items-center gap-4 mb-8"
-                >
-                  <div className="h-px w-12 bg-blue-500" />
-                  <span className="text-sm text-blue-600 uppercase tracking-[0.3em] font-medium">
-                    Discover
-                  </span>
-                </motion.div>
-
-                {/* Main headline */}
-                <div className="space-y-2 mb-8">
-                  <motion.h1
-                    initial={{ opacity: 0, y: 40 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.8, delay: 0.3 }}
-                    className="text-5xl sm:text-6xl lg:text-7xl font-bold text-slate-800 leading-[0.9] tracking-tight"
-                  >
-                    Find Your
-                  </motion.h1>
-                  <motion.h1
-                    initial={{ opacity: 0, y: 40 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.8, delay: 0.4 }}
-                    className="text-5xl sm:text-6xl lg:text-7xl font-bold leading-[0.9] tracking-tight"
-                  >
-                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-indigo-600">
-                      Perfect
-                    </span>
-                  </motion.h1>
-                  <motion.h1
-                    initial={{ opacity: 0, y: 40 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.8, delay: 0.5 }}
-                    className="text-5xl sm:text-6xl lg:text-7xl font-bold text-slate-800 leading-[0.9] tracking-tight"
-                  >
-                    Home
-                  </motion.h1>
-                </div>
-
-                {/* Description */}
-                <motion.p
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ duration: 0.8, delay: 0.7 }}
-                  className="text-lg text-slate-500 max-w-md leading-relaxed"
-                >
-                  Browse verified student accommodations across NSW universities. Real reviews from
-                  real students.
-                </motion.p>
-              </div>
-
-              {/* Right column - Stats cards with neumorphic style */}
-              <motion.div
-                initial={{ opacity: 0, x: 40 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.8, delay: 0.6 }}
-                className="relative"
-              >
-                <div className="grid grid-cols-2 gap-4">
-                  {/* Card 1 - Total Listings */}
-                  <motion.div
-                    whileHover={{
-                      boxShadow:
-                        '8px 8px 16px rgba(163,177,198,0.4), -8px -8px 16px rgba(255,255,255,0.9)',
-                    }}
-                    className="col-span-2 p-8 rounded-2xl bg-[#e0e5ec]
-                      shadow-[6px_6px_12px_rgba(163,177,198,0.5),-6px_-6px_12px_rgba(255,255,255,0.8)]
-                      transition-all duration-300"
-                  >
-                    <div className="flex items-center justify-between mb-4">
-                      <span className="text-xs text-slate-500 uppercase tracking-widest">
-                        Total Listings
-                      </span>
-                      <div className="flex">
-                        {[...Array(5)].map((_, i) => (
-                          <Star key={i} className="w-3 h-3 text-blue-500 fill-blue-500" />
-                        ))}
-                      </div>
-                    </div>
-                    <p className="text-5xl sm:text-6xl font-bold text-slate-800">
-                      {total || '50+'}
-                    </p>
-                    <p className="text-sm text-slate-500 mt-2">Verified accommodations</p>
-                  </motion.div>
-
-                  {/* Card 2 - Universities */}
-                  <motion.div
-                    whileHover={{
-                      boxShadow:
-                        '8px 8px 16px rgba(163,177,198,0.4), -8px -8px 16px rgba(255,255,255,0.9)',
-                    }}
-                    className="p-6 rounded-2xl bg-[#e0e5ec]
-                      shadow-[6px_6px_12px_rgba(163,177,198,0.5),-6px_-6px_12px_rgba(255,255,255,0.8)]
-                      transition-all duration-300"
-                  >
-                    <div
-                      className="w-10 h-10 rounded-xl flex items-center justify-center mb-3
-                      bg-gradient-to-br from-blue-500 to-indigo-600
-                      shadow-[3px_3px_6px_rgba(163,177,198,0.4),-3px_-3px_6px_rgba(255,255,255,0.6)]"
-                    >
-                      <Building2 className="w-5 h-5 text-white" />
-                    </div>
-                    <p className="text-4xl sm:text-5xl font-bold text-slate-800 mb-2">5</p>
-                    <p className="text-xs text-slate-500 uppercase tracking-wider">Universities</p>
-                  </motion.div>
-
-                  {/* Card 3 - Reviews */}
-                  <motion.div
-                    whileHover={{
-                      boxShadow:
-                        '8px 8px 16px rgba(163,177,198,0.4), -8px -8px 16px rgba(255,255,255,0.9)',
-                    }}
-                    className="p-6 rounded-2xl bg-[#e0e5ec]
-                      shadow-[6px_6px_12px_rgba(163,177,198,0.5),-6px_-6px_12px_rgba(255,255,255,0.8)]
-                      transition-all duration-300"
-                  >
-                    <div
-                      className="w-10 h-10 rounded-xl flex items-center justify-center mb-3
-                      bg-gradient-to-br from-blue-500 to-indigo-600
-                      shadow-[3px_3px_6px_rgba(163,177,198,0.4),-3px_-3px_6px_rgba(255,255,255,0.6)]"
-                    >
-                      <Sparkles className="w-5 h-5 text-white" />
-                    </div>
-                    <p className="text-4xl sm:text-5xl font-bold text-slate-800 mb-2">100+</p>
-                    <p className="text-xs text-slate-500 uppercase tracking-wider">Reviews</p>
-                  </motion.div>
-                </div>
-              </motion.div>
-            </div>
-
-            {/* Search Bar - Neumorphic Style */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.8 }}
-              className="max-w-3xl"
-            >
-              <div
-                className="relative rounded-2xl bg-[#e0e5ec]
-                shadow-[inset_4px_4px_8px_rgba(163,177,198,0.5),inset_-4px_-4px_8px_rgba(255,255,255,0.8)]"
-              >
-                <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
-                <input
-                  type="text"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Search accommodations, suburbs, universities..."
-                  className="w-full pl-12 pr-4 py-4 bg-transparent text-slate-700 placeholder-slate-400
-                    focus:outline-none text-lg"
-                />
-              </div>
-            </motion.div>
-          </div>
-        </section>
-
-        {/* Bottom divider */}
-        <div className="px-6 sm:px-12 lg:px-20">
-          <div className="max-w-7xl mx-auto h-px bg-gradient-to-r from-transparent via-slate-300 to-transparent" />
+      {/* ── TITLEBAR ── */}
+      <section className={styles.titlebar}>
+        <div>
+          <div className={styles.kicker}>§ THE INDEX — ALL PROPERTIES</div>
+          <h1 className={styles.h1}>Browse the<br /><em>catalogue.</em></h1>
         </div>
+        <p className={styles.lede}>
+          Every student building in NSW we&apos;ve collected reviews for.{' '}
+          <em>Filter, search, sort.</em> Hover a row for details.
+        </p>
+      </section>
 
-        {/* Main Content Area */}
-        <div className="flex-1 px-6 sm:px-12 lg:px-20 py-12 lg:py-16">
-          <div className="max-w-7xl mx-auto">
-            <div className="flex flex-col lg:flex-row gap-10">
-              {/* Sidebar - Filters */}
-              <aside className="w-full lg:w-80 flex-shrink-0">
-                <motion.div
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ duration: 0.6, delay: 0.2 }}
-                  className="sticky top-28"
-                >
-                  <div
-                    className="rounded-2xl p-6 bg-[#e0e5ec]
-                    shadow-[6px_6px_12px_rgba(163,177,198,0.5),-6px_-6px_12px_rgba(255,255,255,0.8)]"
-                  >
-                    <BrowseFilters
-                      filters={filters}
-                      onFilterChange={setFilters}
-                      onClearFilters={handleClearFilters}
-                    />
-                  </div>
-                </motion.div>
-              </aside>
-
-              {/* Results */}
-              <main className="flex-1 min-w-0">
-                {/* Results Header */}
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5, delay: 0.3 }}
-                  className="flex items-end justify-between mb-8 pb-6 border-b border-slate-300"
-                >
-                  <div>
-                    <span className="text-xs text-blue-600 uppercase tracking-[0.2em] font-medium mb-2 block">
-                      Results
-                    </span>
-                    <h2 className="text-3xl sm:text-4xl font-bold text-slate-800">
-                      {loading ? (
-                        <span className="text-slate-400">Searching...</span>
-                      ) : (
-                        <>
-                          <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-indigo-600">
-                            {total}
-                          </span>
-                          <span className="text-slate-600 font-normal"> accommodations</span>
-                        </>
-                      )}
-                    </h2>
-                  </div>
-                  {!loading && total > 0 && (
-                    <div className="flex items-center gap-2">
-                      <span className="text-xs text-slate-500 uppercase tracking-widest">Page</span>
-                      <span className="text-slate-800 font-medium">{currentPage}</span>
-                      <span className="text-slate-400">/</span>
-                      <span className="text-slate-500">{totalPages}</span>
-                    </div>
-                  )}
-                </motion.div>
-
-                {/* Results Grid */}
-                {error ? (
-                  <ErrorDisplay
-                    title="Unable to Load Accommodations"
-                    message={error}
-                    onRetry={fetchAccommodations}
-                  />
-                ) : loading ? (
-                  <div
-                    className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6"
-                    role="status"
-                    aria-live="polite"
-                    aria-label="Loading accommodations"
-                  >
-                    {[...Array(6)].map((_, i) => (
-                      <AccommodationCardSkeleton key={i} />
-                    ))}
-                  </div>
-                ) : accommodations.length === 0 ? (
-                  <EmptyState onClearFilters={handleClearFilters} />
-                ) : (
-                  <>
-                    <motion.div
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      transition={{ duration: 0.5, delay: 0.4 }}
-                      className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6"
-                      role="list"
-                      aria-label="Accommodation results"
-                    >
-                      {accommodations.map((accommodation, index) => (
-                        <motion.div
-                          key={accommodation.id}
-                          initial={{ opacity: 0, y: 20 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          transition={{ duration: 0.4, delay: index * 0.05 }}
-                          role="listitem"
-                        >
-                          <AccommodationCard accommodation={accommodation} />
-                        </motion.div>
-                      ))}
-                    </motion.div>
-
-                    {/* Pagination - Neumorphic Style */}
-                    {totalPages > 1 && (
-                      <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.5, delay: 0.4 }}
-                        className="mt-16 flex items-center justify-center gap-4"
-                        role="navigation"
-                        aria-label="Pagination"
-                      >
-                        <motion.button
-                          whileHover={{ scale: 1.02 }}
-                          whileTap={{ scale: 0.98 }}
-                          onClick={() => handlePageChange(currentPage - 1)}
-                          disabled={currentPage === 1}
-                          className="px-6 py-3 rounded-xl bg-[#e0e5ec] text-slate-700 font-medium text-sm uppercase tracking-wider
-                            shadow-[4px_4px_8px_rgba(163,177,198,0.5),-4px_-4px_8px_rgba(255,255,255,0.8)]
-                            hover:shadow-[6px_6px_12px_rgba(163,177,198,0.4),-6px_-6px_12px_rgba(255,255,255,0.9)]
-                            disabled:opacity-40 disabled:cursor-not-allowed
-                            transition-all duration-300 flex items-center gap-2"
-                          aria-label="Previous page"
-                        >
-                          <ChevronLeft className="h-4 w-4" />
-                          Previous
-                        </motion.button>
-
-                        <div className="flex items-center gap-2 px-4">
-                          {[...Array(totalPages)].map((_, i) => {
-                            const page = i + 1;
-                            // Show first, last, current, and adjacent pages
-                            if (
-                              page === 1 ||
-                              page === totalPages ||
-                              (page >= currentPage - 1 && page <= currentPage + 1)
-                            ) {
-                              return (
-                                <motion.button
-                                  key={page}
-                                  whileHover={{ scale: 1.1 }}
-                                  whileTap={{ scale: 0.95 }}
-                                  onClick={() => handlePageChange(page)}
-                                  className={`w-10 h-10 rounded-xl flex items-center justify-center text-sm font-medium transition-all duration-300 ${
-                                    currentPage === page
-                                      ? 'bg-gradient-to-br from-blue-500 to-indigo-600 text-white shadow-[3px_3px_6px_rgba(163,177,198,0.4),-3px_-3px_6px_rgba(255,255,255,0.6)]'
-                                      : 'bg-[#e0e5ec] text-slate-600 shadow-[3px_3px_6px_rgba(163,177,198,0.4),-3px_-3px_6px_rgba(255,255,255,0.6)] hover:text-slate-800'
-                                  }`}
-                                  aria-label={`Go to page ${page}`}
-                                  aria-current={currentPage === page ? 'page' : undefined}
-                                >
-                                  {page}
-                                </motion.button>
-                              );
-                            } else if (page === currentPage - 2 || page === currentPage + 2) {
-                              return (
-                                <span key={page} className="text-slate-400 px-1">
-                                  ...
-                                </span>
-                              );
-                            }
-                            return null;
-                          })}
-                        </div>
-
-                        <motion.button
-                          whileHover={{ scale: 1.02 }}
-                          whileTap={{ scale: 0.98 }}
-                          onClick={() => handlePageChange(currentPage + 1)}
-                          disabled={currentPage === totalPages}
-                          className="px-6 py-3 rounded-xl bg-[#e0e5ec] text-slate-700 font-medium text-sm uppercase tracking-wider
-                            shadow-[4px_4px_8px_rgba(163,177,198,0.5),-4px_-4px_8px_rgba(255,255,255,0.8)]
-                            hover:shadow-[6px_6px_12px_rgba(163,177,198,0.4),-6px_-6px_12px_rgba(255,255,255,0.9)]
-                            disabled:opacity-40 disabled:cursor-not-allowed
-                            transition-all duration-300 flex items-center gap-2"
-                          aria-label="Next page"
-                        >
-                          Next
-                          <ChevronRight className="h-4 w-4" />
-                        </motion.button>
-                      </motion.div>
-                    )}
-                  </>
-                )}
-              </main>
-            </div>
-          </div>
+      {/* ── SEARCH ── */}
+      <div className={styles.searchStrip}>
+        <div className={styles.searchLabel}>SEARCH ↘</div>
+        <input
+          className={styles.searchInput}
+          type="text"
+          value={query}
+          onChange={e => setQuery(e.target.value)}
+          placeholder={`Try "UNSW Village", "Ultimo", or "ensuite under 500"…`}
+        />
+        <div className={styles.searchCount}>
+          SHOWING <span className={styles.searchCountB}>{visible.length}</span> OF {items.length}
         </div>
+      </div>
 
-        {/* Bottom bar */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.6, delay: 1 }}
-          className="px-6 sm:px-12 lg:px-20 py-8 border-t border-slate-300"
-        >
-          <div className="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-4">
-            <div className="flex items-center gap-8">
-              {['UNSW', 'Sydney', 'UTS', 'Macquarie', 'WSU'].map((uni) => (
-                <span
-                  key={uni}
-                  className="text-xs text-slate-500 uppercase tracking-widest hover:text-slate-700 transition-colors cursor-default"
+      {/* ── ACTIVE FILTERS ── */}
+      <div className={styles.activeStrip}>
+        <div className={styles.activeLabel}>ACTIVE FILTERS</div>
+        {activePills.length === 0 ? (
+          <div className={styles.activeEmpty}>none — <em>browsing all {items.length}</em></div>
+        ) : (
+          <>
+            {activePills.map(p => (
+              <button key={p.key + p.val} className={styles.pill} onClick={() => removePill(p.key, p.val)}>
+                {p.label} <span className={styles.pillX}>×</span>
+              </button>
+            ))}
+            <button className={styles.clearBtn} onClick={clearAll}>Clear all <em>filters</em></button>
+          </>
+        )}
+      </div>
+
+      <div className={styles.main}>
+        {/* ── SIDEBAR ── */}
+        <aside className={styles.sidebar}>
+          {/* University */}
+          <div className={styles.fgroup}>
+            <h4 className={styles.fgroupHead}>University <span className={styles.fgroupHeadCount}>— pick any</span></h4>
+            {uniList.map(u => {
+              const checked = unis.has(u);
+              return (
+                <label key={u} className={styles.fopt}>
+                  <span className={`${styles.foptBox} ${checked ? styles.foptBoxChecked : ''}`} />
+                  <input type="checkbox" style={{ display: 'none' }} checked={checked} onChange={() => toggleSet(setUnis, u)} />
+                  <span className={`${styles.foptLabel} ${checked ? styles.foptLabelChecked : ''}`}>{u}</span>
+                  <span className={styles.foptCount}>{items.filter(a => a.university === u).length}</span>
+                </label>
+              );
+            })}
+          </div>
+
+          {/* Price */}
+          <div className={styles.fgroup}>
+            <h4 className={styles.fgroupHead}>Price <span className={styles.fgroupHeadCount}>— $ per week</span></h4>
+            <div className={styles.rangeRow}>
+              <span>FROM <span className={styles.rangeB}>$280</span></span>
+              <span>TO <span className={styles.rangeB}>${priceMax}</span></span>
+            </div>
+            <input
+              type="range"
+              min="280"
+              max={MAX_PRICE}
+              step="10"
+              value={priceMax}
+              onChange={e => setPriceMax(Number(e.target.value))}
+              className={styles.slider}
+            />
+            <div className={styles.sliderHint}>DRAG TO CAP THE MAX</div>
+          </div>
+
+          {/* Min rating */}
+          <div className={styles.fgroup}>
+            <h4 className={styles.fgroupHead}>Min. rating</h4>
+            <div className={styles.starRow}>
+              {([0, 3.5, 4, 4.3] as const).map(r => (
+                <button
+                  key={r}
+                  className={`${styles.starBtn} ${minRating === r ? styles.starBtnActive : ''}`}
+                  onClick={() => setMinRating(r)}
                 >
-                  {uni}
-                </span>
+                  {r === 0 ? 'ANY' : `${r}+`}
+                </button>
               ))}
             </div>
-            <div className="text-xs text-slate-500 uppercase tracking-widest">
-              {total} listings available
+          </div>
+
+          {/* Type */}
+          {typeList.length > 0 && (
+            <div className={styles.fgroup}>
+              <h4 className={styles.fgroupHead}>Type</h4>
+              {typeList.map(t => {
+                const checked = types.has(t);
+                return (
+                  <label key={t} className={styles.fopt}>
+                    <span className={`${styles.foptBox} ${checked ? styles.foptBoxChecked : ''}`} />
+                    <input type="checkbox" style={{ display: 'none' }} checked={checked} onChange={() => toggleSet(setTypes, t)} />
+                    <span className={`${styles.foptLabel} ${checked ? styles.foptLabelChecked : ''}`}>{t.replace('-', ' ')}</span>
+                    <span className={styles.foptCount}>{items.filter(a => a.type === t).length}</span>
+                  </label>
+                );
+              })}
+            </div>
+          )}
+
+          {/* Room type */}
+          {roomList.length > 0 && (
+            <div className={styles.fgroup}>
+              <h4 className={styles.fgroupHead}>Room type</h4>
+              {roomList.map(r => {
+                const checked = rooms.has(r);
+                return (
+                  <label key={r} className={styles.fopt}>
+                    <span className={`${styles.foptBox} ${checked ? styles.foptBoxChecked : ''}`} />
+                    <input type="checkbox" style={{ display: 'none' }} checked={checked} onChange={() => toggleSet(setRooms, r)} />
+                    <span className={`${styles.foptLabel} ${checked ? styles.foptLabelChecked : ''}`}>{r}</span>
+                    <span className={styles.foptCount}>{items.filter(a => (a.roomTypes ?? []).includes(r)).length}</span>
+                  </label>
+                );
+              })}
+            </div>
+          )}
+
+          {/* Amenities */}
+          {amenList.length > 0 && (
+            <div className={styles.fgroup}>
+              <h4 className={styles.fgroupHead}>Amenities</h4>
+              {amenList.slice(0, 10).map(a => {
+                const checked = amens.has(a);
+                return (
+                  <label key={a} className={styles.fopt}>
+                    <span className={`${styles.foptBox} ${checked ? styles.foptBoxChecked : ''}`} />
+                    <input type="checkbox" style={{ display: 'none' }} checked={checked} onChange={() => toggleSet(setAmens, a)} />
+                    <span className={`${styles.foptLabel} ${checked ? styles.foptLabelChecked : ''}`}>{a}</span>
+                    <span className={styles.foptCount}>{items.filter(ac => (ac.amenities ?? []).some(x => x.available && x.name === a)).length}</span>
+                  </label>
+                );
+              })}
+            </div>
+          )}
+        </aside>
+
+        {/* ── RESULTS ── */}
+        <section className={styles.content}>
+          <div className={styles.toolbar}>
+            <h2 className={styles.toolbarH2}>The <em>index.</em></h2>
+            <div className={styles.toolbarRight}>
+              <div className={styles.sortWrap}>
+                SORT:
+                <select className={styles.sortSelect} value={sort} onChange={e => setSort(e.target.value as SortKey)}>
+                  <option value="rating">★ HIGHEST RATED</option>
+                  <option value="reviews">↘ MOST REVIEWED</option>
+                  <option value="priceLow">$ LOWEST PRICE</option>
+                  <option value="priceHigh">$ HIGHEST PRICE</option>
+                  <option value="name">A → Z</option>
+                </select>
+              </div>
+              <div className={styles.viewToggle}>
+                <button className={`${styles.viewBtn} ${view === 'catalog' ? styles.viewBtnActive : ''}`} onClick={() => setView('catalog')}>CATALOGUE</button>
+                <button className={`${styles.viewBtn} ${view === 'grid' ? styles.viewBtnActive : ''}`} onClick={() => setView('grid')}>GRID</button>
+              </div>
             </div>
           </div>
-        </motion.div>
+
+          {loading ? (
+            <div className={styles.empty}>Loading the index…</div>
+          ) : visible.length === 0 ? (
+            <div className={styles.empty}>No matches. Try <em>&ldquo;on-campus under $400&rdquo;</em> or clear the filters.</div>
+          ) : view === 'catalog' ? (
+            <div className={styles.catalog}>
+              {visible.map((a, i) => (
+                <Link key={a.id} href={`/accommodation/${a.slug}`} className={styles.crow}>
+                  <span className={styles.crowNum}>N° {String(i + 1).padStart(3, '0')}</span>
+                  <div className={styles.crowPhoto} />
+                  <div className={styles.crowTitle}>
+                    <div className={styles.crowName}>
+                      {a.name}<em className={styles.crowKicker}>— {a.type.replace('-', ' ')}</em>
+                    </div>
+                    <div className={styles.crowMeta}>
+                      <span className={styles.crowUni}>{a.university}</span> · {a.suburb.toUpperCase()}
+                      <span className={styles.crowType}>{a.type === 'on-campus' ? 'ON-CAMPUS' : 'OFF-CAMPUS'}</span>
+                    </div>
+                  </div>
+                  <div className={styles.crowRatebox}>
+                    <div className={styles.crowRateNum}><span className={styles.crowRateStar}>★</span>{a.ratingOverall.toFixed(1)}</div>
+                    <div className={styles.crowBar} style={{ '--w': `${Math.round((a.ratingOverall / 5) * 100)}%` } as React.CSSProperties} />
+                    <div className={styles.crowBarLab}>{a.totalReviews} REVIEWS</div>
+                  </div>
+                  <div className={styles.crowPricebox}>
+                    <div className={styles.crowPrice}>
+                      <em className={styles.crowPriceFrom}>from</em>${a.priceMin}<span className={styles.crowPriceUnit}>{fmtPeriod(a.pricePeriod)}</span>
+                    </div>
+                    <div className={styles.crowPriceLab}>UP TO ${a.priceMax}{fmtPeriod(a.pricePeriod)}</div>
+                  </div>
+                  <div className={styles.crowArr}>→</div>
+                </Link>
+              ))}
+            </div>
+          ) : (
+            <div className={styles.grid}>
+              {visible.map((a, i) => (
+                <Link key={a.id} href={`/accommodation/${a.slug}`} className={styles.gcard}>
+                  <div className={styles.gcardHeaderRow}>
+                    <span className={styles.gcardNum}>N° {String(i + 1).padStart(3, '0')}</span>
+                    <span className={styles.gcardKicker}>{a.type.replace('-', ' ').toUpperCase()}</span>
+                  </div>
+                  <div className={styles.gcardPhoto} />
+                  <h3 className={styles.gcardName}>{a.name}</h3>
+                  <div className={styles.gcardMeta}>{a.university} · {a.suburb.toUpperCase()}</div>
+                  <div className={styles.gcardFooter}>
+                    <div className={styles.gcardVal}><em className={styles.gcardValStar}>★</em>{a.ratingOverall.toFixed(1)}</div>
+                    <div className={styles.gcardVal}><em className={styles.gcardValFrom}>from</em>${a.priceMin}</div>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          )}
+        </section>
       </div>
+
     </div>
-  );
-}
-
-// Loading component for Suspense - Neumorphic style
-function BrowsePageLoading() {
-  return (
-    <div className="relative min-h-screen bg-[#e0e5ec] overflow-hidden">
-      <div className="relative z-10 min-h-screen flex items-center justify-center">
-        <div className="flex flex-col items-center gap-6">
-          {/* Animated spinner */}
-          <motion.div
-            animate={{ rotate: 360 }}
-            transition={{ duration: 2, repeat: Infinity, ease: 'linear' }}
-            className="relative"
-          >
-            <div
-              className="w-16 h-16 rounded-full bg-[#e0e5ec]
-              shadow-[6px_6px_12px_rgba(163,177,198,0.5),-6px_-6px_12px_rgba(255,255,255,0.8)]"
-            />
-            <div className="absolute inset-0 w-16 h-16 rounded-full border-4 border-transparent border-t-blue-500" />
-          </motion.div>
-
-          {/* Loading text */}
-          <div className="text-center">
-            <motion.p
-              animate={{ opacity: [0.5, 1, 0.5] }}
-              transition={{ duration: 2, repeat: Infinity }}
-              className="text-sm text-slate-500 uppercase tracking-[0.3em]"
-            >
-              Loading
-            </motion.p>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-// Main export with Suspense wrapper
-export default function BrowsePage() {
-  return (
-    <Suspense fallback={<BrowsePageLoading />}>
-      <BrowsePageContent />
-    </Suspense>
   );
 }

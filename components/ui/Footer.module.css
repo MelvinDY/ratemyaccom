@@ -1,0 +1,100 @@
+.root {
+  background: white;
+  color: var(--ed-ink);
+  font-family: var(--font-inter, 'Inter', system-ui, sans-serif);
+  -webkit-font-smoothing: antialiased;
+  border-top: 1px solid var(--ed-ink);
+}
+
+.main {
+  padding: 64px 48px 48px;
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr;
+  gap: 48px;
+  font-size: 13px;
+  border-bottom: 1px solid var(--ed-ink);
+}
+
+.brand {}
+
+.brandWordmark {
+  font-weight: 700;
+  font-size: 28px;
+  letter-spacing: -0.03em;
+  margin-bottom: 12px;
+  color: var(--ed-ink);
+  text-decoration: none;
+  display: inline-block;
+}
+.brandWordmark em {
+  font-style: italic;
+  font-weight: 500;
+  color: var(--ed-blue);
+}
+
+.brandMeta {
+  font-family: var(--ed-mono);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ed-mute);
+  margin-bottom: 16px;
+}
+
+.brandDesc {
+  color: var(--ed-ink-2);
+  line-height: 1.55;
+  max-width: 380px;
+  font-size: 13px;
+}
+.brandDesc em { font-style: italic; font-weight: 500; }
+
+.col {}
+
+.colHead {
+  font-family: var(--ed-mono);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ed-ink);
+  margin-bottom: 16px;
+  display: block;
+}
+
+.colLink {
+  display: block;
+  margin-bottom: 10px;
+  color: var(--ed-ink-2);
+  text-decoration: none;
+  font-size: 13px;
+  transition: color 0.15s;
+}
+.colLink:hover { color: var(--ed-blue); }
+
+.colophon {
+  padding: 20px 48px;
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--ed-mono);
+  font-size: 11px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--ed-mute);
+}
+.colophon em {
+  font-style: italic;
+  text-transform: none;
+  letter-spacing: 0;
+  color: var(--ed-ink);
+}
+
+@media (max-width: 1024px) {
+  .main { grid-template-columns: 1fr 1fr; padding: 48px 32px; gap: 32px; }
+  .brand { grid-column: 1 / -1; }
+  .colophon { padding: 20px 32px; }
+}
+
+@media (max-width: 768px) {
+  .main { grid-template-columns: 1fr; padding: 40px 24px; gap: 32px; }
+  .colophon { padding: 16px 24px; flex-direction: column; gap: 6px; }
+}
