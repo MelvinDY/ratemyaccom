@@ -2,7 +2,6 @@ import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import Features from '@/components/sections/Features';
 
-// Mock framer-motion to avoid animation issues in tests
 vi.mock('framer-motion', () => ({
   motion: {
     div: ({
@@ -43,6 +42,7 @@ vi.mock('framer-motion', () => ({
       </span>
     ),
   },
+  AnimatePresence: ({ children }: { children: React.ReactNode }) => <>{children}</>,
   useInView: () => true,
 }));
 
@@ -96,13 +96,15 @@ describe('Features Component', () => {
         screen.getByText(/All reviewers verified with university email addresses/i)
       ).toBeInTheDocument();
       expect(
-        screen.getByText(/Find exactly what you need with advanced filtering/i)
+        screen.getByText(/Advanced filtering by location, price, and amenities/i)
       ).toBeInTheDocument();
-      expect(screen.getByText(/Browse student-uploaded photos/i)).toBeInTheDocument();
       expect(
-        screen.getByText(/Comprehensive details including amenities, transport links/i)
+        screen.getByText(/Student-uploaded photos of real accommodations/i)
       ).toBeInTheDocument();
-      expect(screen.getByText(/Compare options side-by-side/i)).toBeInTheDocument();
+      expect(
+        screen.getByText(/Amenities, transport links, and nearby services/i)
+      ).toBeInTheDocument();
+      expect(screen.getByText(/Compare options side-by-side on key metrics/i)).toBeInTheDocument();
     });
 
     it('should have 6 h3 headings for feature cards', () => {
@@ -123,22 +125,16 @@ describe('Features Component', () => {
   describe('Grid Layout', () => {
     it('should have grid with responsive classes', () => {
       render(<Features />);
-      const grid = document.querySelector('.grid.grid-cols-1.md\\:grid-cols-2.lg\\:grid-cols-3');
+      const grid = document.querySelector('.grid.grid-cols-1.sm\\:grid-cols-2.lg\\:grid-cols-3');
       expect(grid).toBeInTheDocument();
-    });
-
-    it('should have 6 feature cards', () => {
-      render(<Features />);
-      const cards = document.querySelectorAll('.group');
-      expect(cards).toHaveLength(6);
     });
   });
 
   describe('Styling', () => {
-    it('should have dark background on section', () => {
+    it('should have light neumorphic background on section', () => {
       render(<Features />);
       const section = document.querySelector('section');
-      expect(section).toHaveClass('bg-neutral-950');
+      expect(section).toHaveClass('bg-[#e0e5ec]');
     });
   });
 });
