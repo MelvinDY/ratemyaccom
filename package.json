@@ -31,6 +31,7 @@
     "db:studio": "prisma studio",
     "db:reset": "prisma migrate reset",
     "db:push": "prisma db push",
+    "db:seed:nsw": "tsx scripts/seed-nsw-accommodations.ts",
     "generate": "prisma generate",
     "scraper:run": "tsx scripts/run-scraper.ts",
     "vercel:env": "vercel env pull .env.local"
