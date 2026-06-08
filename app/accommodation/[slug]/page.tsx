@@ -216,6 +216,12 @@ function fmtDist(km: number) {
 
 type DimKey = keyof typeof NSW_AVG;
 
+/* Split "UNSW Village" → ["UNSW", "Village"] for two-line hero h1 */
+function splitNameLines(name: string): [string, string] {
+  const i = name.lastIndexOf(' ');
+  return i === -1 ? [name, ''] : [name.slice(0, i), name.slice(i + 1)];
+}
+
 export default async function AccommodationPage({ params }: AccommodationPageProps) {
   const result = await getAccommodation(params.slug);
   if (!result) {
@@ -255,6 +261,7 @@ export default async function AccommodationPage({ params }: AccommodationPagePro
   const availableAmenities = amenities.filter((a) => a.available);
   const campus = fmtDist(distance.toCampus);
   const transport = fmtDist(distance.toTransport);
+  const [nameLine1, nameLine2] = splitNameLines(accommodation.name);
 
   return (
     <div className={styles.page}>
@@ -273,13 +280,13 @@ export default async function AccommodationPage({ params }: AccommodationPagePro
         </span>
         <div className={styles.crumbActions}>
           <a className={styles.crumbAction}>
-            ★ <span className={styles.crumbActionLabel}>Save to shortlist</span>
+            ★ <span className={styles.crumbActionItalic}>Save to shortlist</span>
           </a>
           <a className={styles.crumbAction}>
-            ↗ <span className={styles.crumbActionLabel}>Share</span>
+            ↗ <span className={styles.crumbActionItalic}>Share</span>
           </a>
           <a className={styles.crumbAction}>
-            ⇆ <span className={styles.crumbActionLabel}>Compare</span>
+            ⇆ <span className={styles.crumbActionItalic}>Compare</span>
           </a>
         </div>
       </nav>
@@ -292,7 +299,13 @@ export default async function AccommodationPage({ params }: AccommodationPagePro
               § FILE N° 001 · ON THE INDEX · {accommodation.type.toUpperCase().replace('-', ' ')}
             </div>
             <h1 className={styles.heroH1}>
-              {accommodation.name}
+              {nameLine1}
+              {nameLine2 && (
+                <>
+                  <br />
+                  {nameLine2}
+                </>
+              )}
               <span className={styles.heroDot}>.</span>
             </h1>
             <div className={styles.heroTags}>
@@ -342,7 +355,7 @@ export default async function AccommodationPage({ params }: AccommodationPagePro
                 {transport.val} <span className={styles.glanceUnit}>{transport.unit}</span>
               </span>
             </div>
-            <div className={styles.glanceRow}>
+            <div className={`${styles.glanceRow} ${styles.glanceRowLast}`}>
               <span className={styles.glanceLab}>ROOM TYPES</span>
               <span className={styles.glanceVal} style={{ fontSize: 14, fontWeight: 500 }}>
                 {accommodation.roomTypes.join(' · ') || 'Various'}
@@ -369,9 +382,7 @@ export default async function AccommodationPage({ params }: AccommodationPagePro
               >
                 WRITE A REVIEW
               </Link>
-              <a className={styles.btnSecondary} style={{ gridColumn: '1 / -1' }}>
-                ★ ADD TO SHORTLIST
-              </a>
+              <a className={`${styles.btnSecondary} ${styles.glanceFull}`}>★ ADD TO SHORTLIST</a>
             </div>
           </div>
         </div>
@@ -403,7 +414,7 @@ export default async function AccommodationPage({ params }: AccommodationPagePro
       <div className={styles.sectionHead}>
         <div className={styles.sectionKicker}>
           § 01 — WHAT WE FOUND
-          <span className={styles.sectionKickerP}>
+          <span className={styles.sectionKickerSub}>
             Synthesised from {ratings.totalReviews} verified student reviews.
           </span>
         </div>
@@ -457,7 +468,7 @@ export default async function AccommodationPage({ params }: AccommodationPagePro
       <div className={styles.sectionHead}>
         <div className={styles.sectionKicker}>
           § 02 — THE NUMBERS
-          <span className={styles.sectionKickerP}>Six dimensions, not one star.</span>
+          <span className={styles.sectionKickerSub}>Six dimensions, not one star.</span>
         </div>
         <h2 className={styles.sectionH2}>
           Where {accommodation.name.split(' ')[0]} <em>wins</em> — and where it doesn&apos;t.
@@ -529,45 +540,32 @@ export default async function AccommodationPage({ params }: AccommodationPagePro
           </div>
         </div>
         <div className={styles.essayGrid}>
-          {/* Photo A */}
-          {photos[0] ? (
-            <div className={`${styles.photoReal} ${styles.photoA}`}>
-              <Image src={photos[0]} alt="Interior" fill style={{ objectFit: 'cover' }} />
-              <div className={styles.photoCap}>INTERIOR · MAIN</div>
-              <div className={styles.photoFig}>FIG. 02 / INTERIOR</div>
+          {/* Photo A — light */}
+          <div className={`${styles.photoBase} ${styles.photoLight} ${styles.photoA}`}>
+            {photos[0] && <Image src={photos[0]} alt="Interior" fill className={styles.photoImg} />}
+            <div className={styles.photoFig}>FIG. 02 / {photos[0] ? 'INTERIOR' : 'KITCHEN'}</div>
+            <div className={styles.photoCap}>
+              {photos[0] ? 'INTERIOR · MAIN' : 'FLOOR 4 · COMMUNAL KITCHEN · NORTH-FACING'}
             </div>
-          ) : (
-            <div className={`${styles.photoPlaceholder} ${styles.photoA}`}>
-              <div className={styles.photoFig}>FIG. 02 / KITCHEN</div>
-              <div className={styles.photoCap}>COMMUNAL KITCHEN · NORTH-FACING</div>
+          </div>
+          {/* Photo B — light */}
+          <div className={`${styles.photoBase} ${styles.photoLight} ${styles.photoB}`}>
+            {photos[1] && <Image src={photos[1]} alt="Room" fill className={styles.photoImg} />}
+            <div className={styles.photoFig}>FIG. 03 / ROOM</div>
+            <div className={styles.photoCap}>
+              {photos[1] ? 'ROOM · STANDARD' : 'SINGLE · TYPICAL · 12 m²'}
             </div>
-          )}
-          {/* Photo B */}
-          {photos[1] ? (
-            <div className={`${styles.photoReal} ${styles.photoB}`}>
-              <Image src={photos[1]} alt="Room" fill style={{ objectFit: 'cover' }} />
-              <div className={styles.photoCap}>ROOM · STANDARD</div>
-              <div className={styles.photoFig}>FIG. 03 / ROOM</div>
-            </div>
-          ) : (
-            <div className={`${styles.photoPlaceholder} ${styles.photoB}`}>
-              <div className={styles.photoFig}>FIG. 03 / ROOM</div>
-              <div className={styles.photoCap}>STANDARD ROOM</div>
-            </div>
-          )}
+          </div>
           {/* Photo C — always dark blue */}
-          {photos[2] ? (
-            <div className={`${styles.photoReal} ${styles.photoC}`}>
-              <Image src={photos[2]} alt="Common area" fill style={{ objectFit: 'cover' }} />
-              <div className={styles.photoCap}>COMMON AREA</div>
-              <div className={styles.photoFig}>FIG. 04 / COMMON</div>
+          <div className={`${styles.photoBase} ${styles.photoDark} ${styles.photoC}`}>
+            {photos[2] && (
+              <Image src={photos[2]} alt="Common area" fill className={styles.photoImg} />
+            )}
+            <div className={styles.photoFig}>FIG. 04 / COURTYARD</div>
+            <div className={styles.photoCap}>
+              {photos[2] ? 'COMMON AREA' : 'SOCIAL COURTYARD · WEEKEND'}
             </div>
-          ) : (
-            <div className={`${styles.photoPlaceholder} ${styles.photoC}`}>
-              <div className={styles.photoFig}>FIG. 04 / COURTYARD</div>
-              <div className={styles.photoCap}>SOCIAL COURTYARD · WEEKEND</div>
-            </div>
-          )}
+          </div>
         </div>
       </section>
 
@@ -662,24 +660,12 @@ export default async function AccommodationPage({ params }: AccommodationPagePro
             Reviews <em>from</em> students.
           </h3>
           <div className={styles.reviewToolbar}>
-            <button
-              style={{
-                background: 'var(--ed-ink)',
-                color: 'white',
-                border: '1px solid var(--ed-ink)',
-                padding: '7px 12px',
-                cursor: 'pointer',
-                fontFamily: 'var(--ed-mono)',
-                fontSize: 11,
-                letterSpacing: '0.05em',
-                textTransform: 'uppercase',
-              }}
-            >
+            <button className={`${styles.reviewToolbarBtn} ${styles.reviewToolbarBtnActive}`}>
               ★ ALL · {ratings.totalReviews}
             </button>
-            <button>↑ POSITIVE</button>
-            <button>↓ CRITICAL</button>
-            <button>NEWEST</button>
+            <button className={styles.reviewToolbarBtn}>↑ POSITIVE</button>
+            <button className={styles.reviewToolbarBtn}>↓ CRITICAL</button>
+            <button className={styles.reviewToolbarBtn}>NEWEST</button>
           </div>
         </div>
 
@@ -861,9 +847,7 @@ export default async function AccommodationPage({ params }: AccommodationPagePro
       <section className={styles.location}>
         <div className={styles.locationGrid}>
           <div>
-            <div className={styles.kicker} style={{ marginBottom: 16 }}>
-              § 04 — LOCATION
-            </div>
+            <div className={styles.locationKicker}>§ 04 — LOCATION</div>
             <h3 className={styles.locationH3}>
               {location.suburb},<br />
               <em>
