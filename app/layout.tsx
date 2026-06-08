@@ -6,6 +6,7 @@ import './globals.css';
 import Header from '@/components/ui/Header';
 import Footer from '@/components/ui/Footer';
 import OAuthSync from '@/components/auth/OAuthSync';
+import { getPlatformStats } from '@/lib/stats';
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
 const jetbrainsMono = JetBrains_Mono({ subsets: ['latin'], variable: '--font-mono' });
@@ -38,12 +39,13 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  const stats = await getPlatformStats();
   return (
     <html lang="en">
       <body className={`${inter.variable} ${jetbrainsMono.variable} ${inter.className}`}>
         <OAuthSync />
-        <Header />
+        <Header stats={stats} />
         <main>{children}</main>
         <Footer />
         <Analytics />

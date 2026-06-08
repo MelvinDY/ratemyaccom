@@ -39,7 +39,11 @@ function NavLabel({ link }: { link: NavLink }) {
   return <>{link.label}</>;
 }
 
-export default function Header() {
+interface HeaderProps {
+  stats?: { properties: number; reviews: number; universities: number };
+}
+
+export default function Header({ stats }: HeaderProps) {
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
@@ -49,6 +53,12 @@ export default function Header() {
   const now = new Date();
   const week = getISOWeek(now).toString().padStart(2, '0');
   const year = now.getFullYear();
+
+  // Live counts when available; fall back to em dashes on an empty/unseeded DB.
+  const fmt = (n?: number) => (n && n > 0 ? n.toLocaleString('en-AU') : '—');
+  const statLine = `${fmt(stats?.properties)} PROPERTIES · ${fmt(stats?.reviews)} REVIEWS · ${
+    stats?.universities && stats.universities > 0 ? stats.universities : '—'
+  } UNIS`;
 
   useEffect(() => {
     setMobileOpen(false);
@@ -81,7 +91,7 @@ export default function Header() {
         <Link href="/" className={styles.wordmark}>
           Rate<em>My</em>Accom
         </Link>
-        <div className={styles.stats}>240 PROPERTIES · 12,400 REVIEWS · 5 UNIS</div>
+        <div className={styles.stats}>{statLine}</div>
       </div>
 
       {/* ── SUBNAV ── */}

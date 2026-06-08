@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { prisma } from '@/lib/database/prisma';
 import HeroRotator from '@/components/home/HeroRotator';
+import { getPlatformStats } from '@/lib/stats';
 import styles from './page.module.css';
 
 async function getFeaturedAccommodations() {
@@ -43,9 +44,14 @@ const DIMS = [
 ] as const;
 
 export default async function HomePage() {
-  const allAccoms = await getFeaturedAccommodations();
+  const [allAccoms, stats] = await Promise.all([getFeaturedAccommodations(), getPlatformStats()]);
   const heroes = allAccoms.slice(0, 2);
   const index = allAccoms.slice(2, 8);
+  const avgRating =
+    allAccoms.length > 0
+      ? (allAccoms.reduce((s, a) => s + a.ratingOverall, 0) / allAccoms.length).toFixed(1)
+      : '—';
+  const fmt = (n: number) => (n > 0 ? n.toLocaleString('en-AU') : '—');
 
   return (
     <div className={styles.page}>
@@ -63,7 +69,7 @@ export default async function HomePage() {
 
         <div className={styles.heroRight}>
           <p className={styles.heroLede}>
-            Twelve thousand students. Two hundred and forty buildings.{' '}
+            Real student reviews. Every NSW building worth knowing about.{' '}
             <em>One brief: tell the truth.</em>
           </p>
           <div className={styles.heroCtas}>
@@ -76,31 +82,24 @@ export default async function HomePage() {
           </div>
           <div className={styles.heroStats}>
             <div>
-              <div className={styles.statNum}>
-                240<span className={styles.statDelta}>+3</span>
-              </div>
+              <div className={styles.statNum}>{fmt(stats.properties)}</div>
               <div className={styles.statLabel}>PROPERTIES</div>
             </div>
             <div>
-              <div className={styles.statNum}>
-                12.4k<span className={styles.statDelta}>+14 today</span>
-              </div>
+              <div className={styles.statNum}>{fmt(stats.reviews)}</div>
               <div className={styles.statLabel}>REVIEWS</div>
             </div>
             <div>
               <div className={styles.statNum}>
-                {allAccoms.length > 0
-                  ? (allAccoms.reduce((s, a) => s + a.ratingOverall, 0) / allAccoms.length).toFixed(
-                      1
-                    )
-                  : '4.3'}{' '}
-                ★
+                {avgRating} <span style={{ color: 'var(--ed-blue)', fontStyle: 'italic' }}>★</span>
               </div>
               <div className={styles.statLabel}>AVG. RATING</div>
             </div>
             <div>
-              <div className={styles.statNum}>87%</div>
-              <div className={styles.statLabel}>QUIZ → SIGNED</div>
+              <div className={styles.statNum}>
+                {stats.universities > 0 ? stats.universities : '—'}
+              </div>
+              <div className={styles.statLabel}>UNIVERSITIES</div>
             </div>
           </div>
         </div>
@@ -297,7 +296,8 @@ export default async function HomePage() {
               <em>The rest of</em> this week&apos;s index
             </h3>
             <div className={styles.weeklyHeadRight}>
-              SHOWING {index.length} OF 240 · <Link href="/browse">SEE ALL →</Link>
+              SHOWING {index.length} OF {fmt(stats.properties)} ·{' '}
+              <Link href="/browse">SEE ALL →</Link>
             </div>
           </div>
           <div className={styles.indexGrid}>
