@@ -126,14 +126,16 @@ Resend (email) · Vercel hosting · Vitest + Jest + Playwright.
 > P3 = polish.
 
 ### P0 — Make it look finished & function end-to-end
-- [ ] **Redesign remaining pages to editorial Bold** so the site isn't visually
-  half-and-half: `/login`, `/register`, `/about`, `/quiz`, `/quiz/results`,
-  `/support`, `/write-review`, plus a `not-found.tsx` (404). _(Biggest visible gap.)_
-- [ ] **Wire the dead buttons on the detail page** — "Save to shortlist", "Share",
-  "Compare", and the review toolbar (All/Positive/Critical/Newest) are currently
-  static placeholders. Either implement or hide them.
-- [ ] **Real counts on homepage & header** — `240 PROPERTIES · 12,400 REVIEWS · 5 UNIS`
-  is hardcoded. Replace with live DB counts (or clearly label as illustrative).
+- [x] **Redesign remaining pages to editorial Bold** — done: `/login`, `/register`,
+  `/about`, `/quiz`, `/quiz/results`, `/support`, `/write-review` + `not-found.tsx`
+  all converted (shared `components/editorial/editorial.module.css`).
+- [x] **Wire the dead buttons on the detail page** — done: Save toggles a
+  localStorage shortlist, Share uses the Web Share API + clipboard fallback, and
+  the review toolbar (All/Positive/Critical/Newest) filters live. "Compare" was
+  removed (deferred to the P2 Compare feature).
+- [x] **Real counts on homepage & header** — done: `lib/stats.ts` feeds live
+  property/review/university counts to the header and homepage (em-dash fallback
+  on an empty DB).
 - [ ] **Seed the production DB** — run `npm run db:seed:nsw` against Neon so the
   live site isn't empty.
 
