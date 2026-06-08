@@ -9,8 +9,12 @@ export default function HeroRotator() {
 
   useEffect(() => {
     const track = trackRef.current;
-    if (!track) return;
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    if (!track) {
+      return;
+    }
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      return;
+    }
 
     let i = 0;
     const total = ROT_WORDS.length;
@@ -42,7 +46,9 @@ export default function HeroRotator() {
     return () => {
       clearTimeout(start);
       const iv = (track as HTMLElement & { _iv?: ReturnType<typeof setInterval> })._iv;
-      if (iv) clearInterval(iv);
+      if (iv) {
+        clearInterval(iv);
+      }
     };
   }, []);
 
