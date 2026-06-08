@@ -11,7 +11,7 @@ function getISOWeek(date: Date): number {
   const dayNum = d.getUTCDay() || 7;
   d.setUTCDate(d.getUTCDate() + 4 - dayNum);
   const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
-  return Math.ceil((((d.valueOf() - yearStart.valueOf()) / 86400000) + 1) / 7);
+  return Math.ceil(((d.valueOf() - yearStart.valueOf()) / 86400000 + 1) / 7);
 }
 
 interface NavLink {
@@ -30,7 +30,11 @@ const navLinks: NavLink[] = [
 
 function NavLabel({ link }: { link: NavLink }) {
   if (link.thePrefix) {
-    return <><em>The</em> {link.label}</>;
+    return (
+      <>
+        <em>The</em> {link.label}
+      </>
+    );
   }
   return <>{link.label}</>;
 }
@@ -68,7 +72,6 @@ export default function Header() {
 
   return (
     <header className={styles.root}>
-
       {/* ── TOP BAR ── */}
       <div className={styles.topBar}>
         <div className={styles.dateline}>
@@ -78,9 +81,7 @@ export default function Header() {
         <Link href="/" className={styles.wordmark}>
           Rate<em>My</em>Accom
         </Link>
-        <div className={styles.stats}>
-          240 PROPERTIES · 12,400 REVIEWS · 5 UNIS
-        </div>
+        <div className={styles.stats}>240 PROPERTIES · 12,400 REVIEWS · 5 UNIS</div>
       </div>
 
       {/* ── SUBNAV ── */}
@@ -88,8 +89,7 @@ export default function Header() {
         <div className={styles.subnavLinks}>
           {navLinks.map((link) => {
             const isActive =
-              pathname === link.href ||
-              (link.href !== '/' && pathname?.startsWith(link.href));
+              pathname === link.href || (link.href !== '/' && pathname?.startsWith(link.href));
             return (
               <Link
                 key={link.href + link.label}
@@ -169,8 +169,7 @@ export default function Header() {
         <div className={styles.mobileMenu}>
           {navLinks.map((link) => {
             const isActive =
-              pathname === link.href ||
-              (link.href !== '/' && pathname?.startsWith(link.href));
+              pathname === link.href || (link.href !== '/' && pathname?.startsWith(link.href));
             return (
               <Link
                 key={link.href + link.label}
@@ -209,7 +208,6 @@ export default function Header() {
           </div>
         </div>
       )}
-
     </header>
   );
 }

@@ -62,12 +62,13 @@ async function analyzeSite() {
       metrics.title = await page.title();
 
       // Check for common elements
-      metrics.hasHeader = await page.locator('header').count() > 0;
-      metrics.hasFooter = await page.locator('footer').count() > 0;
-      metrics.hasNav = await page.locator('nav').count() > 0;
+      metrics.hasHeader = (await page.locator('header').count()) > 0;
+      metrics.hasFooter = (await page.locator('footer').count()) > 0;
+      metrics.hasNav = (await page.locator('nav').count()) > 0;
 
       // Check for loading states
-      metrics.hasLoadingSpinner = await page.locator('[role="status"], [aria-busy="true"], .spinner, .loading').count() > 0;
+      metrics.hasLoadingSpinner =
+        (await page.locator('[role="status"], [aria-busy="true"], .spinner, .loading').count()) > 0;
 
       // Check for buttons and links
       metrics.buttonCount = await page.locator('button').count();
@@ -106,7 +107,6 @@ async function analyzeSite() {
       metrics.ariaRoles = await page.locator('[role]').count();
 
       report.pages.push(metrics);
-
     } catch (error) {
       console.error(`✗ Error analyzing ${pageInfo.description}:`, error.message);
       report.pages.push({
@@ -126,13 +126,16 @@ async function analyzeSite() {
 
     // Find first accommodation link
     const firstAccomLink = page.locator('a[href*="/accommodation/"]').first();
-    const accomLinkExists = await firstAccomLink.count() > 0;
+    const accomLinkExists = (await firstAccomLink.count()) > 0;
 
     if (accomLinkExists) {
       const accomUrl = await firstAccomLink.getAttribute('href');
       console.log(`Found accommodation: ${accomUrl}`);
 
-      await page.goto(`http://localhost:3000${accomUrl}`, { waitUntil: 'networkidle', timeout: 30000 });
+      await page.goto(`http://localhost:3000${accomUrl}`, {
+        waitUntil: 'networkidle',
+        timeout: 30000,
+      });
       await page.waitForTimeout(2000);
 
       // Desktop screenshot
@@ -154,8 +157,8 @@ async function analyzeSite() {
         desktopScreenshot: desktopPath,
         mobileScreenshot: mobilePath,
         title: await page.title(),
-        hasHeader: await page.locator('header').count() > 0,
-        hasFooter: await page.locator('footer').count() > 0,
+        hasHeader: (await page.locator('header').count()) > 0,
+        hasFooter: (await page.locator('footer').count()) > 0,
         imageCount: await page.locator('img').count(),
         buttonCount: await page.locator('button').count(),
       };

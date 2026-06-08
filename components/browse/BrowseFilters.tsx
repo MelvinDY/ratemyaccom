@@ -215,9 +215,7 @@ export default function BrowseFilters({
           </Label>
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-2">
-              <span className="text-[10px] text-slate-500 uppercase tracking-widest pl-1">
-                Min
-              </span>
+              <span className="text-[10px] text-slate-500 uppercase tracking-widest pl-1">Min</span>
               <input
                 id="priceMin"
                 type="number"
@@ -236,9 +234,7 @@ export default function BrowseFilters({
               />
             </div>
             <div className="space-y-2">
-              <span className="text-[10px] text-slate-500 uppercase tracking-widest pl-1">
-                Max
-              </span>
+              <span className="text-[10px] text-slate-500 uppercase tracking-widest pl-1">Max</span>
               <input
                 id="priceMax"
                 type="number"

@@ -16,8 +16,7 @@ export default function AccommodationCard({ accommodation }: AccommodationCardPr
       <motion.div
         whileHover={{
           y: -8,
-          boxShadow:
-            '10px 10px 20px rgba(163,177,198,0.4), -10px -10px 20px rgba(255,255,255,0.9)',
+          boxShadow: '10px 10px 20px rgba(163,177,198,0.4), -10px -10px 20px rgba(255,255,255,0.9)',
         }}
         transition={{ duration: 0.4, ease: 'easeOut' }}
         className="group relative h-full rounded-2xl bg-[#e0e5ec] overflow-hidden
@@ -116,8 +115,10 @@ export default function AccommodationCard({ accommodation }: AccommodationCardPr
               </span>
             ))}
             {accommodation.amenities.length > 3 && (
-              <span className="text-[10px] text-blue-600 px-3 py-1.5 rounded-lg bg-blue-50 uppercase tracking-wider font-medium
-                shadow-[2px_2px_4px_rgba(163,177,198,0.3),-2px_-2px_4px_rgba(255,255,255,0.5)]">
+              <span
+                className="text-[10px] text-blue-600 px-3 py-1.5 rounded-lg bg-blue-50 uppercase tracking-wider font-medium
+                shadow-[2px_2px_4px_rgba(163,177,198,0.3),-2px_-2px_4px_rgba(255,255,255,0.5)]"
+              >
                 +{accommodation.amenities.length - 3}
               </span>
             )}

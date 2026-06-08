@@ -41,8 +41,8 @@ export default function Footer() {
           </Link>
           <div className={styles.brandMeta}>EST. SYDNEY, 2024</div>
           <p className={styles.brandDesc}>
-            An <em>independent, student-run</em> review platform for student accommodation
-            across New South Wales. <em>No commercial relationship with operators.</em>
+            An <em>independent, student-run</em> review platform for student accommodation across
+            New South Wales. <em>No commercial relationship with operators.</em>
           </p>
         </div>
         {COLS.map((col) => (
@@ -58,7 +58,9 @@ export default function Footer() {
       </div>
       <div className={styles.colophon}>
         <span>© {year} RATEMYACCOM PTY LTD · SYDNEY NSW</span>
-        <span>SET IN INTER · <em>printed on the internet</em></span>
+        <span>
+          SET IN INTER · <em>printed on the internet</em>
+        </span>
       </div>
     </footer>
   );

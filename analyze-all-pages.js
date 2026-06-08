@@ -16,7 +16,11 @@ async function analyzeAllPages() {
     { name: 'browse', url: 'http://localhost:3002/browse', description: 'Browse Page' },
     { name: 'about', url: 'http://localhost:3002/about', description: 'About Page' },
     { name: 'login', url: 'http://localhost:3002/login', description: 'Login Page' },
-    { name: 'accommodation-detail', url: 'http://localhost:3002/accommodation/unsw-kensington-colleges', description: 'Accommodation Detail' },
+    {
+      name: 'accommodation-detail',
+      url: 'http://localhost:3002/accommodation/unsw-kensington-colleges',
+      description: 'Accommodation Detail',
+    },
   ];
 
   console.log('📸 Capturing Desktop Screenshots...\n');

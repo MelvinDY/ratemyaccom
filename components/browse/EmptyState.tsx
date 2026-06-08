@@ -33,8 +33,10 @@ export default function EmptyState({ onClearFilters }: EmptyStateProps) {
         />
 
         {/* Icon container - Neumorphic style */}
-        <div className="relative w-28 h-28 rounded-3xl bg-[#e0e5ec] flex items-center justify-center
-          shadow-[8px_8px_16px_rgba(163,177,198,0.5),-8px_-8px_16px_rgba(255,255,255,0.8)]">
+        <div
+          className="relative w-28 h-28 rounded-3xl bg-[#e0e5ec] flex items-center justify-center
+          shadow-[8px_8px_16px_rgba(163,177,198,0.5),-8px_-8px_16px_rgba(255,255,255,0.8)]"
+        >
           <Search className="h-12 w-12 text-blue-500" strokeWidth={1} />
 
           {/* Decorative sparkles */}
@@ -95,8 +97,7 @@ export default function EmptyState({ onClearFilters }: EmptyStateProps) {
           whileHover={{
             scale: 1.02,
             y: -2,
-            boxShadow:
-              '8px 8px 16px rgba(163,177,198,0.4), -8px -8px 16px rgba(255,255,255,0.9)',
+            boxShadow: '8px 8px 16px rgba(163,177,198,0.4), -8px -8px 16px rgba(255,255,255,0.9)',
           }}
           whileTap={{ scale: 0.98 }}
           onClick={onClearFilters}

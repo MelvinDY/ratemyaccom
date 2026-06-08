@@ -5,7 +5,7 @@ async function getAccommodationSlug() {
 
   try {
     const accommodation = await prisma.accommodation.findFirst({
-      select: { slug: true, name: true }
+      select: { slug: true, name: true },
     });
 
     if (accommodation) {

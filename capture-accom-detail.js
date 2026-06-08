@@ -28,7 +28,6 @@ async function captureDetail() {
     const mobilePath = path.join(screenshotDir, 'accommodation-detail-mobile.png');
     await page.screenshot({ path: mobilePath, fullPage: true });
     console.log(`✓ Mobile screenshot saved: ${mobilePath}`);
-
   } catch (error) {
     console.error('Error:', error.message);
   }
