@@ -4,6 +4,8 @@ import Image from 'next/image';
 import type { Metadata } from 'next';
 import { prisma } from '@/lib/database/prisma';
 import type { Accommodation, Review } from '@/types';
+import DetailReviews from './DetailReviews';
+import { SaveButton, ShareButton } from './DetailActions';
 import styles from './page.module.css';
 
 interface AccommodationPageProps {
@@ -232,9 +234,6 @@ export default async function AccommodationPage({ params }: AccommodationPagePro
   const { ratings, pricing, location, amenities, contactInfo, distance } = accommodation;
 
   const featuredReview = reviews[0] ?? null;
-  const otherReviews = reviews.slice(1, 5);
-  const leftCol = otherReviews.filter((_, i) => i % 2 === 0);
-  const rightCol = otherReviews.filter((_, i) => i % 2 === 1);
 
   const photos = accommodation.images.slice(0, 3);
 
@@ -279,15 +278,8 @@ export default async function AccommodationPage({ params }: AccommodationPagePro
           <em>{accommodation.name}</em>
         </span>
         <div className={styles.crumbActions}>
-          <a className={styles.crumbAction}>
-            ★ <span className={styles.crumbActionItalic}>Save to shortlist</span>
-          </a>
-          <a className={styles.crumbAction}>
-            ↗ <span className={styles.crumbActionItalic}>Share</span>
-          </a>
-          <a className={styles.crumbAction}>
-            ⇆ <span className={styles.crumbActionItalic}>Compare</span>
-          </a>
+          <SaveButton slug={accommodation.slug} mode="crumb" />
+          <ShareButton title={accommodation.name} mode="crumb" />
         </div>
       </nav>
 
@@ -382,7 +374,7 @@ export default async function AccommodationPage({ params }: AccommodationPagePro
               >
                 WRITE A REVIEW
               </Link>
-              <a className={`${styles.btnSecondary} ${styles.glanceFull}`}>★ ADD TO SHORTLIST</a>
+              <SaveButton slug={accommodation.slug} mode="secondary" />
             </div>
           </div>
         </div>
@@ -654,194 +646,11 @@ export default async function AccommodationPage({ params }: AccommodationPagePro
       </section>
 
       {/* ── REVIEWS ── */}
-      <section className={styles.reviewsSection}>
-        <div className={styles.reviewsHead}>
-          <h3 className={styles.reviewsH3}>
-            Reviews <em>from</em> students.
-          </h3>
-          <div className={styles.reviewToolbar}>
-            <button className={`${styles.reviewToolbarBtn} ${styles.reviewToolbarBtnActive}`}>
-              ★ ALL · {ratings.totalReviews}
-            </button>
-            <button className={styles.reviewToolbarBtn}>↑ POSITIVE</button>
-            <button className={styles.reviewToolbarBtn}>↓ CRITICAL</button>
-            <button className={styles.reviewToolbarBtn}>NEWEST</button>
-          </div>
-        </div>
-
-        {featuredReview ? (
-          <>
-            <article className={styles.reviewFeatured}>
-              <div className={styles.figmark}>
-                <span>FEATURED REVIEW</span>
-                <span className={styles.figmarkBig}>{featuredReview.rating.toFixed(1)}</span>
-                <span className={styles.figmarkStar}>
-                  {Array.from({ length: 5 }, (_, i) =>
-                    i < Math.round(featuredReview.rating) ? '★' : '☆'
-                  ).join(' ')}
-                </span>
-              </div>
-              <div>
-                <p className={styles.featuredQuote}>
-                  &ldquo;{featuredReview.title || featuredReview.text.slice(0, 120)}&rdquo;
-                </p>
-                <p className={styles.featuredBody}>{featuredReview.text}</p>
-                <div className={styles.featuredByline}>
-                  — <b>{featuredReview.userName.toUpperCase()}</b>
-                  {featuredReview.userUniversity &&
-                    ` · ${featuredReview.userUniversity.toUpperCase()}`}
-                  {featuredReview.roomType && ` · ${featuredReview.roomType.toUpperCase()}`}
-                  {featuredReview.stayDuration &&
-                    `, ${featuredReview.stayDuration.toUpperCase()}`}{' '}
-                  · POSTED {fmtDate(featuredReview.createdAt)}
-                </div>
-              </div>
-              <div className={styles.ratingBreakdownGrid}>
-                {dims.map(({ key, label }) => (
-                  <div key={key} className={styles.ratingBreakdownItem}>
-                    <span className={styles.ratingItemLabel}>
-                      {label.toUpperCase().slice(0, 5)}
-                    </span>
-                    <span className={styles.ratingItemVal}>
-                      <span className={styles.reviewStar}>★</span>
-                      {featuredReview.ratingBreakdown[
-                        key as keyof typeof featuredReview.ratingBreakdown
-                      ].toFixed(1)}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            </article>
-
-            {otherReviews.length > 0 && (
-              <div className={styles.reviewCols}>
-                <div className={styles.reviewCol}>
-                  {leftCol.map((review) => (
-                    <div key={review.id} className={styles.rentry}>
-                      <div className={styles.rentryHead}>
-                        <div className={styles.rentryRate}>
-                          <span className={styles.reviewStar}>★</span>
-                          {review.rating.toFixed(1)}
-                        </div>
-                        <div className={styles.rentryByline}>
-                          — <b>{review.userName.toUpperCase()}</b>
-                          {review.userUniversity &&
-                            ` · ${review.userUniversity.toUpperCase()}`} ·{' '}
-                          {fmtDate(review.createdAt)}
-                        </div>
-                      </div>
-                      <h4 className={styles.rentryH4}>{review.title || <em>Student review</em>}</h4>
-                      <p className={styles.rentryText}>
-                        {review.text.slice(0, 280)}
-                        {review.text.length > 280 ? '…' : ''}
-                      </p>
-                      {((review.pros && review.pros.length > 0) ||
-                        (review.cons && review.cons.length > 0)) && (
-                        <div className={styles.prosCons}>
-                          {review.pros && review.pros.length > 0 && (
-                            <div className={`${styles.prosConsCol} ${styles.prosConsColP}`}>
-                              <h5>↑ PROS</h5>
-                              <ul className={styles.prosConsList}>
-                                {review.pros.slice(0, 3).map((p, i) => (
-                                  <li key={i}>{p}</li>
-                                ))}
-                              </ul>
-                            </div>
-                          )}
-                          {review.cons && review.cons.length > 0 && (
-                            <div className={styles.prosConsCol}>
-                              <h5>↓ CONS</h5>
-                              <ul className={`${styles.prosConsList} ${styles.consConsList}`}>
-                                {review.cons.slice(0, 3).map((c, i) => (
-                                  <li key={i}>{c}</li>
-                                ))}
-                              </ul>
-                            </div>
-                          )}
-                        </div>
-                      )}
-                    </div>
-                  ))}
-                </div>
-                <div className={styles.reviewCol}>
-                  {rightCol.map((review) => (
-                    <div key={review.id} className={styles.rentry}>
-                      <div className={styles.rentryHead}>
-                        <div className={styles.rentryRate}>
-                          <span className={styles.reviewStar}>★</span>
-                          {review.rating.toFixed(1)}
-                        </div>
-                        <div className={styles.rentryByline}>
-                          — <b>{review.userName.toUpperCase()}</b>
-                          {review.userUniversity &&
-                            ` · ${review.userUniversity.toUpperCase()}`} ·{' '}
-                          {fmtDate(review.createdAt)}
-                        </div>
-                      </div>
-                      <h4 className={styles.rentryH4}>{review.title || <em>Student review</em>}</h4>
-                      <p className={styles.rentryText}>
-                        {review.text.slice(0, 280)}
-                        {review.text.length > 280 ? '…' : ''}
-                      </p>
-                      {((review.pros && review.pros.length > 0) ||
-                        (review.cons && review.cons.length > 0)) && (
-                        <div className={styles.prosCons}>
-                          {review.pros && review.pros.length > 0 && (
-                            <div className={`${styles.prosConsCol} ${styles.prosConsColP}`}>
-                              <h5>↑ PROS</h5>
-                              <ul className={styles.prosConsList}>
-                                {review.pros.slice(0, 3).map((p, i) => (
-                                  <li key={i}>{p}</li>
-                                ))}
-                              </ul>
-                            </div>
-                          )}
-                          {review.cons && review.cons.length > 0 && (
-                            <div className={styles.prosConsCol}>
-                              <h5>↓ CONS</h5>
-                              <ul className={`${styles.prosConsList} ${styles.consConsList}`}>
-                                {review.cons.slice(0, 3).map((c, i) => (
-                                  <li key={i}>{c}</li>
-                                ))}
-                              </ul>
-                            </div>
-                          )}
-                        </div>
-                      )}
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-          </>
-        ) : (
-          <div
-            style={{
-              padding: '48px 0',
-              borderTop: '1px solid var(--ed-ink)',
-              textAlign: 'center',
-              color: 'var(--ed-mute)',
-              fontFamily: 'var(--ed-mono)',
-              fontSize: 13,
-              letterSpacing: '0.05em',
-              textTransform: 'uppercase',
-            }}
-          >
-            NO REVIEWS YET —{' '}
-            <Link
-              href={`/write-review?accommodation=${accommodation.slug}`}
-              style={{
-                color: 'var(--ed-blue)',
-                fontStyle: 'italic',
-                textTransform: 'none',
-                letterSpacing: 0,
-              }}
-            >
-              be the first to write one.
-            </Link>
-          </div>
-        )}
-      </section>
+      <DetailReviews
+        reviews={reviews}
+        totalReviews={ratings.totalReviews}
+        writeReviewHref={`/write-review?accommodation=${accommodation.slug}`}
+      />
 
       {/* ── LOCATION ── */}
       <section className={styles.location}>
@@ -979,8 +788,8 @@ export default async function AccommodationPage({ params }: AccommodationPagePro
                   NO WEBSITE
                 </span>
               )}
-              <a className={styles.btnGhost}>★ ADD TO SHORTLIST</a>
-              <a className={styles.btnGhost}>⇆ COMPARE</a>
+              <SaveButton slug={accommodation.slug} mode="ghost" />
+              <ShareButton title={accommodation.name} mode="ghost" />
             </div>
           </div>
         </div>
