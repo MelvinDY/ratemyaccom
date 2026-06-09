@@ -259,11 +259,23 @@ export default function BrowseUniversitiesPage() {
 
           {/* Main NSW atlas */}
           <div className={styles.atlas}>
+            {/* Stylised NSW outline, aligned to the same 0–100 pin space */}
+            <svg
+              className={styles.atlasMap}
+              viewBox="0 0 100 100"
+              preserveAspectRatio="none"
+              aria-hidden="true"
+            >
+              <path
+                className={styles.atlasMapLand}
+                vectorEffect="non-scaling-stroke"
+                d="M8,12 L40,11 L58,9 L67,7 L67,18 L65,28 L66,34 L64,40 L66,46 L70,53 L73,58 L70,64 L66,72 L63,80 L60,91 L46,89 L33,88 L18,85 L9,84 Z"
+              />
+            </svg>
             <div className={styles.compass}>
               <span className={styles.compassArrow} />
               <br />N
             </div>
-            <div className={styles.coast} />
             <div className={styles.coastLabel}>Pacific Ocean</div>
             {[
               ['8%', '28°S'],
