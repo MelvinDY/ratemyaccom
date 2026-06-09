@@ -2,7 +2,14 @@
 
 import { useState, useMemo } from 'react';
 import Link from 'next/link';
+import dynamic from 'next/dynamic';
 import styles from './page.module.css';
+
+// Leaflet touches `window`, so load the map client-side only.
+const UniMap = dynamic(() => import('@/components/maps/UniMap'), {
+  ssr: false,
+  loading: () => <div className={styles.mapLoading}>Loading map…</div>,
+});
 
 interface Uni {
   id: string;
@@ -10,13 +17,10 @@ interface Uni {
   name: string;
   suburb: string;
   region: 'sydney' | 'coast' | 'inland' | 'far';
-  x: number;
-  y: number; // % on main NSW atlas
-  ix?: number;
-  iy?: number; // % on Sydney inset
+  lat: number;
+  lng: number;
   props: number;
   rating: number;
-  flip?: boolean; // label on left side of pin
 }
 
 const UNIS: Uni[] = [
@@ -26,13 +30,10 @@ const UNIS: Uni[] = [
     name: 'University of Sydney',
     suburb: 'Camperdown',
     region: 'sydney',
-    x: 70.5,
-    y: 58.5,
-    ix: 64,
-    iy: 62,
+    lat: -33.8888,
+    lng: 151.1872,
     props: 38,
     rating: 4.2,
-    flip: true,
   },
   {
     id: 'unsw',
@@ -40,13 +41,10 @@ const UNIS: Uni[] = [
     name: 'University of New South Wales',
     suburb: 'Kensington',
     region: 'sydney',
-    x: 71.5,
-    y: 60.0,
-    ix: 78,
-    iy: 82,
+    lat: -33.9173,
+    lng: 151.2313,
     props: 42,
     rating: 4.3,
-    flip: true,
   },
   {
     id: 'uts',
@@ -54,13 +52,10 @@ const UNIS: Uni[] = [
     name: 'University of Technology Sydney',
     suburb: 'Ultimo',
     region: 'sydney',
-    x: 69.5,
-    y: 57.5,
-    ix: 76,
-    iy: 50,
+    lat: -33.8835,
+    lng: 151.2005,
     props: 27,
     rating: 4.1,
-    flip: true,
   },
   {
     id: 'mq',
@@ -68,10 +63,8 @@ const UNIS: Uni[] = [
     name: 'Macquarie University',
     suburb: 'North Ryde',
     region: 'sydney',
-    x: 66,
-    y: 55.5,
-    ix: 52,
-    iy: 22,
+    lat: -33.7738,
+    lng: 151.1126,
     props: 31,
     rating: 4.4,
   },
@@ -81,10 +74,8 @@ const UNIS: Uni[] = [
     name: 'Western Sydney University',
     suburb: 'Parramatta',
     region: 'sydney',
-    x: 60,
-    y: 57,
-    ix: 16,
-    iy: 60,
+    lat: -33.8084,
+    lng: 150.9962,
     props: 22,
     rating: 4.0,
   },
@@ -94,10 +85,8 @@ const UNIS: Uni[] = [
     name: 'Australian Catholic University',
     suburb: 'Strathfield',
     region: 'sydney',
-    x: 64,
-    y: 58.5,
-    ix: 40,
-    iy: 70,
+    lat: -33.8716,
+    lng: 151.0931,
     props: 14,
     rating: 4.1,
   },
@@ -107,11 +96,10 @@ const UNIS: Uni[] = [
     name: 'University of Wollongong',
     suburb: 'Wollongong',
     region: 'coast',
-    x: 65,
-    y: 72,
+    lat: -34.405,
+    lng: 150.8787,
     props: 18,
     rating: 4.2,
-    flip: true,
   },
   {
     id: 'newc',
@@ -119,8 +107,8 @@ const UNIS: Uni[] = [
     name: 'University of Newcastle',
     suburb: 'Callaghan',
     region: 'coast',
-    x: 62,
-    y: 40,
+    lat: -32.8929,
+    lng: 151.705,
     props: 24,
     rating: 4.3,
   },
@@ -130,8 +118,8 @@ const UNIS: Uni[] = [
     name: 'University of New England',
     suburb: 'Armidale',
     region: 'inland',
-    x: 55,
-    y: 30,
+    lat: -30.4833,
+    lng: 151.6431,
     props: 9,
     rating: 4.0,
   },
@@ -141,8 +129,8 @@ const UNIS: Uni[] = [
     name: 'Charles Sturt University',
     suburb: 'Bathurst',
     region: 'inland',
-    x: 38,
-    y: 52,
+    lat: -33.4291,
+    lng: 149.563,
     props: 12,
     rating: 3.9,
   },
@@ -152,11 +140,21 @@ const UNIS: Uni[] = [
     name: 'Southern Cross University',
     suburb: 'Lismore',
     region: 'far',
-    x: 60,
-    y: 14,
+    lat: -28.8169,
+    lng: 153.287,
     props: 7,
     rating: 4.0,
   },
+];
+
+// Map view bounds [SW, NE]
+const NSW_BOUNDS: [[number, number], [number, number]] = [
+  [-35.2, 148.8],
+  [-28.3, 153.7],
+];
+const SYD_BOUNDS: [[number, number], [number, number]] = [
+  [-33.97, 150.93],
+  [-33.72, 151.3],
 ];
 
 const REGIONS = [
@@ -172,8 +170,6 @@ const REGIONS = [
 ] as const;
 
 const sydUnis = UNIS.filter((u) => u.region === 'sydney');
-const sydX = sydUnis.reduce((a, u) => a + u.x, 0) / sydUnis.length;
-const sydY = sydUnis.reduce((a, u) => a + u.y, 0) / sydUnis.length;
 
 const sorted = [...UNIS].sort((a, b) => b.props - a.props);
 
@@ -195,11 +191,6 @@ export default function BrowseUniversitiesPage() {
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const visible = useMemo(() => new Set(UNIS.filter(isVisible).map((u) => u.id)), [query, region]);
-  const sydVisible = useMemo(
-    () =>
-      Array.from(visible).filter((id) => UNIS.find((u) => u.id === id)?.region === 'sydney').length,
-    [visible]
-  );
 
   return (
     <div className={styles.page}>
@@ -257,156 +248,32 @@ export default function BrowseUniversitiesPage() {
             <div className={styles.mapScale}>SCALE 1 : 8M · WGS-84</div>
           </div>
 
-          {/* Main NSW atlas */}
+          {/* Main NSW atlas — live map */}
           <div className={styles.atlas}>
-            {/* Stylised NSW outline, aligned to the same 0–100 pin space */}
-            <svg
-              className={styles.atlasMap}
-              viewBox="0 0 100 100"
-              preserveAspectRatio="none"
-              aria-hidden="true"
-            >
-              <path
-                className={styles.atlasMapLand}
-                vectorEffect="non-scaling-stroke"
-                d="M8,12 L40,11 L58,9 L67,7 L67,18 L65,28 L66,34 L64,40 L66,46 L70,53 L73,58 L70,64 L66,72 L63,80 L60,91 L46,89 L33,88 L18,85 L9,84 Z"
-              />
-            </svg>
-            <div className={styles.compass}>
-              <span className={styles.compassArrow} />
-              <br />N
-            </div>
-            <div className={styles.coastLabel}>Pacific Ocean</div>
-            {[
-              ['8%', '28°S'],
-              ['30%', '31°S'],
-              ['52%', '33°S'],
-              ['74%', '35°S'],
-              ['92%', '37°S'],
-            ].map(([top, label]) => (
-              <div key={label} className={styles.latLabel} style={{ top }}>
-                {label}
-              </div>
-            ))}
-            {[
-              ['60%', '12%', 'Lismore'],
-              ['55%', '28%', 'Armidale'],
-              ['62%', '38%', 'Newcastle'],
-              ['38%', '50%', 'Bathurst'],
-              ['70%', '58%', 'SYDNEY'],
-              ['65%', '70%', 'Wollongong'],
-              ['35%', '88%', 'Albury'],
-            ].map(([l, t, label]) => (
-              <div key={label} className={styles.cityRef} style={{ left: l, top: t }}>
-                {label}
-              </div>
-            ))}
-            <div className={styles.atlasLegend}>○ UNIVERSITY · ON PLATFORM</div>
-            <div className={styles.atlasCopyright}>© RMA 2026 · NOT TO SCALE</div>
-
-            {/* Sydney cluster on main atlas */}
-            <div
-              className={styles.cluster}
-              style={{ left: `${sydX}%`, top: `${sydY}%`, opacity: sydVisible === 0 ? 0.18 : 1 }}
-              onClick={() => setRegion('sydney')}
-              onKeyDown={(e) => e.key === 'Enter' && setRegion('sydney')}
-              role="button"
-              tabIndex={0}
-            >
-              <div className={styles.clusterRing}>×{sydVisible || sydUnis.length}</div>
-              <div className={styles.clusterLabel}>
-                Sydney Metro <em>— see inset</em>
-              </div>
-            </div>
-
-            {/* Non-Sydney pins on main atlas */}
-            {UNIS.filter((u) => u.region !== 'sydney').map((u) => {
-              const vis = visible.has(u.id);
-              return (
-                <Link
-                  key={u.id}
-                  href={`/browse?university=${u.abbr}`}
-                  className={`${styles.uniPin} ${!vis ? styles.uniPinDim : ''} ${hoverId === u.id ? styles.uniPinHi : ''}`}
-                  style={{ left: `${u.x}%`, top: `${u.y}%` }}
-                  onMouseEnter={() => setHoverId(u.id)}
-                  onMouseLeave={() => setHoverId(null)}
-                >
-                  <div className={styles.uniPinRing} />
-                  <div className={`${styles.uniPinLabel} ${u.flip ? styles.uniPinLabelFlip : ''}`}>
-                    {u.abbr} <span className={styles.uniPinRating}>{u.rating}★</span>
-                  </div>
-                </Link>
-              );
-            })}
+            <UniMap
+              unis={UNIS}
+              bounds={NSW_BOUNDS}
+              visibleIds={visible}
+              hoverId={hoverId}
+              onHover={setHoverId}
+            />
           </div>
 
-          {/* Sydney metro inset */}
+          {/* Sydney metro inset — live map */}
           <div className={styles.insetHeadRow}>
             <h3 className={styles.insetH3}>
               Sydney metro <em>— detail.</em>
             </h3>
-            <div className={styles.mapScale}>INSET · 1 : 200K · 6 UNIVERSITIES</div>
+            <div className={styles.mapScale}>INSET · GREATER SYDNEY · 6 UNIVERSITIES</div>
           </div>
           <div className={styles.inset}>
-            {/* Stylised Sydney coast — Harbour + Botany Bay notches, Parramatta River */}
-            <svg
-              className={styles.insetMap}
-              viewBox="0 0 100 100"
-              preserveAspectRatio="none"
-              aria-hidden="true"
-            >
-              <path
-                className={styles.insetMapLand}
-                vectorEffect="non-scaling-stroke"
-                d="M0,0 L84,0 C89,5 85,10 88,15 C91,19 86,23 89,28 C91,31 84,33 82,35
-                   C86,37 90,38 88,40 C80,39 70,38 62,40 C56,41 52,43 50,45
-                   C56,46 62,47 68,47 C76,47 83,46 88,48 C91,52 88,56 90,60
-                   C91,64 88,68 90,72 C91,76 88,79 89,83 C86,84 82,84 79,86
-                   C71,88 64,89 60,91 C66,93 73,93 79,92 C84,92 87,96 88,100
-                   L0,100 Z"
-              />
-              <path
-                className={styles.insetRiver}
-                vectorEffect="non-scaling-stroke"
-                d="M50,45 C44,43 40,46 34,45 C28,44 24,46 20,44"
-              />
-            </svg>
-            <div className={styles.insetCoastLabel}>Pacific</div>
-            <div className={styles.insetWater} style={{ left: '70%', top: '42%' }}>
-              Harbour
-            </div>
-            <div className={styles.insetWater} style={{ left: '70%', top: '90%' }}>
-              Botany Bay
-            </div>
-            <div className={styles.insetRef} style={{ left: '78%', top: '56%' }}>
-              CBD
-            </div>
-            <div className={styles.insetRef} style={{ left: '20%', top: '44%' }}>
-              Parramatta
-            </div>
-            <div className={styles.insetLegend}>○ UNIVERSITY</div>
-            <div className={styles.scaleMark}>
-              <span className={styles.scaleBar} />
-              <span>10 km</span>
-            </div>
-            {sydUnis.map((u) => {
-              const vis = visible.has(u.id);
-              return (
-                <Link
-                  key={u.id}
-                  href={`/browse?university=${u.abbr}`}
-                  className={`${styles.uniPin} ${!vis ? styles.uniPinDim : ''} ${hoverId === u.id ? styles.uniPinHi : ''}`}
-                  style={{ left: `${u.ix}%`, top: `${u.iy}%` }}
-                  onMouseEnter={() => setHoverId(u.id)}
-                  onMouseLeave={() => setHoverId(null)}
-                >
-                  <div className={styles.uniPinRing} />
-                  <div className={`${styles.uniPinLabel} ${u.flip ? styles.uniPinLabelFlip : ''}`}>
-                    {u.abbr} <span className={styles.uniPinRating}>{u.rating}★</span>
-                  </div>
-                </Link>
-              );
-            })}
+            <UniMap
+              unis={sydUnis}
+              bounds={SYD_BOUNDS}
+              visibleIds={visible}
+              hoverId={hoverId}
+              onHover={setHoverId}
+            />
           </div>
         </div>
 

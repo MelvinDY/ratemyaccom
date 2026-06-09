@@ -182,9 +182,19 @@
   aspect-ratio: 4 / 5;
   border: 1px solid var(--ed-ink);
   overflow: hidden;
-  background:
-    radial-gradient(circle, #d4d4dc 1px, transparent 1.2px) 0 0 / 32px 32px,
-    white;
+  background: white;
+}
+.mapLoading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  font-family: var(--ed-mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ed-mute);
 }
 /* Stylised NSW landmass behind the pins */
 .atlasMap {
