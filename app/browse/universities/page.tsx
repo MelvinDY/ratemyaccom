@@ -348,7 +348,24 @@ export default function BrowseUniversitiesPage() {
             <div className={styles.mapScale}>INSET · 1 : 200K · 6 UNIVERSITIES</div>
           </div>
           <div className={styles.inset}>
-            <div className={styles.insetCoast} />
+            {/* Stylised Sydney coast — Harbour + Botany Bay notches, Parramatta River */}
+            <svg
+              className={styles.insetMap}
+              viewBox="0 0 100 100"
+              preserveAspectRatio="none"
+              aria-hidden="true"
+            >
+              <path
+                className={styles.insetMapLand}
+                vectorEffect="non-scaling-stroke"
+                d="M0,0 L88,0 L88,30 L85,38 L56,45 L85,51 L88,58 L88,84 L62,90 L84,95 L83,100 L0,100 Z"
+              />
+              <path
+                className={styles.insetRiver}
+                vectorEffect="non-scaling-stroke"
+                d="M56,45 L44,44 L32,46 L22,44"
+              />
+            </svg>
             <div className={styles.insetCoastLabel}>Pacific</div>
             <div className={styles.insetRef} style={{ left: '78%', top: '56%' }}>
               CBD
