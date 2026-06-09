@@ -473,6 +473,17 @@
   stroke-width: 1;
   stroke-linejoin: round;
 }
+.insetWater {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  font-family: var(--ed-mono);
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ed-mute-2);
+  pointer-events: none;
+  white-space: nowrap;
+}
 .insetCoastLabel {
   position: absolute;
   right: 12px;

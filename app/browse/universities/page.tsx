@@ -358,15 +358,26 @@ export default function BrowseUniversitiesPage() {
               <path
                 className={styles.insetMapLand}
                 vectorEffect="non-scaling-stroke"
-                d="M0,0 L88,0 L88,30 L85,38 L56,45 L85,51 L88,58 L88,84 L62,90 L84,95 L83,100 L0,100 Z"
+                d="M0,0 L84,0 C89,5 85,10 88,15 C91,19 86,23 89,28 C91,31 84,33 82,35
+                   C86,37 90,38 88,40 C80,39 70,38 62,40 C56,41 52,43 50,45
+                   C56,46 62,47 68,47 C76,47 83,46 88,48 C91,52 88,56 90,60
+                   C91,64 88,68 90,72 C91,76 88,79 89,83 C86,84 82,84 79,86
+                   C71,88 64,89 60,91 C66,93 73,93 79,92 C84,92 87,96 88,100
+                   L0,100 Z"
               />
               <path
                 className={styles.insetRiver}
                 vectorEffect="non-scaling-stroke"
-                d="M56,45 L44,44 L32,46 L22,44"
+                d="M50,45 C44,43 40,46 34,45 C28,44 24,46 20,44"
               />
             </svg>
             <div className={styles.insetCoastLabel}>Pacific</div>
+            <div className={styles.insetWater} style={{ left: '70%', top: '42%' }}>
+              Harbour
+            </div>
+            <div className={styles.insetWater} style={{ left: '70%', top: '90%' }}>
+              Botany Bay
+            </div>
             <div className={styles.insetRef} style={{ left: '78%', top: '56%' }}>
               CBD
             </div>
