@@ -18,7 +18,8 @@ We list the places students survived, rated, and would do again."_
 
 - **Live:** deployed on Vercel (Next.js) + Neon (Postgres)
 - **Repo:** github.com/MelvinDY/ratemyaccom
-- **Status:** core loop live; data seeded; ~half the surface area redesigned
+- **Status:** core loop live; prod DB seeded; all public pages redesigned to
+  editorial (only `/moderator` remains old); Google-only sign-in active.
 
 ---
 
@@ -52,26 +53,33 @@ We list the places students survived, rated, and would do again."_
 ### Pages (App Router, `app/**/page.tsx`)
 | Route | Purpose | Design state |
 |---|---|---|
-| `/` | Editorial homepage (word-rotator hero, manifesto, featured index, quiz strip) | ✅ Editorial |
+| `/` | Editorial homepage (word-rotator hero, manifesto, featured index, quiz strip) — real property photos on hero + index tiles | ✅ Editorial |
 | `/browse` | Property catalogue — filters, search, sort, grid/list | ✅ Editorial |
-| `/browse/universities` | NSW atlas map of universities, hover-synced index | ✅ Editorial |
+| `/browse/universities` | Real Leaflet maps (NSW + Sydney inset, CartoDB tiles) with hover-synced index | ✅ Editorial |
 | `/accommodation/[slug]` | Detail: hero, scorecard, photo essay, pricing, amenities, reviews, location, comparables | ✅ Editorial |
-| `/login`, `/register` | Auth (password + OTP + Google/Apple OAuth) | ⚠️ Old neumorphic dark + OAuth buttons |
-| `/about` | About / the method | ⚠️ Old neumorphic |
-| `/quiz`, `/quiz/results` | 12-question recommender | ⚠️ Old neumorphic |
-| `/support` | Help / contact / privacy / terms tabs | ⚠️ Old neumorphic |
-| `/write-review` | Submit a review | ⚠️ Old neumorphic |
+| `/login`, `/register` | Auth — **Google-only sign-in for now** (email/password, OTP, Apple gated off via `lib/config/auth.ts`) | ✅ Editorial |
+| `/about` | About / the method | ✅ Editorial |
+| `/quiz`, `/quiz/results` | 12-question recommender | ✅ Editorial |
+| `/support` | Help / contact / privacy / terms tabs | ✅ Editorial |
+| `/write-review` | Submit a review | ✅ Editorial |
 | `/moderator` | Moderation dashboard | ⚠️ Old neumorphic |
+
+Editorial `error.tsx` / `global-error.tsx` boundaries replace Next's default error screen.
 
 Shared **Header** and **Footer** are editorial.
 
 ### Backend / API
 - Auth: custom **JWT in httpOnly cookies** (`auth-token` / `refresh-token`), OTP
-  login, account lockout, CSRF, rate limiting, audit logging.
-- **Google + Apple OAuth** routes implemented (`/api/auth/google`, `/api/auth/apple`
-  + callbacks) — need real credentials to activate.
+  login, account lockout, CSRF, rate limiting, audit logging. Passwords hashed
+  with **bcryptjs** (pure-JS; native `bcrypt` was crashing on Vercel serverless).
+- **Google OAuth live** (`/api/auth/google` + callback) — credentials configured
+  in Vercel; redirect URI normalised against `NEXT_PUBLIC_APP_URL`. **Apple OAuth**
+  routes exist but are not activated (and hidden in the UI for now).
+- **Sign-in is Google-only for now** — email/password, OTP and Apple are gated off
+  in the UI via `lib/config/auth.ts` flags; the routes remain intact.
 - Accommodation & review CRUD, helpful/report, admin audit-log endpoints,
-  recommendations endpoint.
+  recommendations endpoint. List/recommendations APIs return a **nested** shape;
+  UI consumers flatten via `lib/api/accommodations.ts` (`mapAccommodations`).
 
 ### Data
 - **Neon Postgres** via Prisma. Models: `User`, `Accommodation`, `Amenity`,
@@ -79,6 +87,8 @@ Shared **Header** and **Footer** are editorial.
 - **Seed:** `npm run db:seed:nsw` loads **32 NSW properties** (Scape, Iglu,
   UniLodge, Urbanest + UNSW/USYD/UTS/Macquarie/WSU housing) with sample reviews
   and computed ratings. Photos are validated Unsplash images (see §10).
+- University strings **normalised** to `Name (ABBR)` for all five (e.g.
+  `University of Sydney (USYD)`) so Browse filters/comparables match consistently.
 
 ### Infra / quality
 - CI (GitHub Actions): Lint+Typecheck, Build, Component Tests (Vitest),
@@ -116,7 +126,8 @@ Shared **Header** and **Footer** are editorial.
 ## 7. Tech stack
 Next.js 14 (App Router) · React 18 · TypeScript · Prisma + Neon Postgres ·
 Tailwind (legacy pages) + CSS Modules (editorial pages) · jose/jsonwebtoken ·
-Resend (email) · Vercel hosting · Vitest + Jest + Playwright.
+bcryptjs · Leaflet + react-leaflet (CartoDB tiles) · Resend (email) ·
+Vercel hosting · Vitest + Jest + Playwright.
 
 ---
 
@@ -140,11 +151,14 @@ Resend (email) · Vercel hosting · Vitest + Jest + Playwright.
   20 amenities, 359 amenity links, 8 users (verified 2026-06-09).
 
 ### P1 — Auth & data integrity
-- [ ] **Activate OAuth** — add real `GOOGLE_CLIENT_ID/SECRET` and Apple
-  (`APPLE_CLIENT_ID/TEAM_ID/KEY_ID/PRIVATE_KEY`) in Vercel; register the live
-  callback URLs; test on the deployed HTTPS URL (Apple won't work on localhost).
+- [x] **Google OAuth** — credentials configured in Vercel; redirect-URI mismatch
+  fixed (trailing-slash normalised). This is the only active sign-in path for now.
+- [ ] **End-to-end Google sign-in pass** — confirm a real Google login completes
+  and creates/links a user on the live site (config done; needs a live run-through).
+- [ ] **Apple OAuth** — deferred; routes exist, hidden in UI. Activate later if wanted.
 - [ ] **Email verification** — set `RESEND_API_KEY` + `FROM_EMAIL` so registration/
-  verification/reset emails actually send (currently no-op without a key).
+  verification/reset emails actually send (currently no-op without a key). Note:
+  with Google-only sign-in, email verification matters less near-term.
 - [ ] **Verify the Quiz → recommendations flow** end-to-end (does `/quiz` post to
   `/api/recommendations` and render `/quiz/results`?).
 - [ ] **Write-a-review flow** — confirm a logged-in verified student can submit a
@@ -154,7 +168,8 @@ Resend (email) · Vercel hosting · Vitest + Jest + Playwright.
 - [ ] **Shortlist / saved properties** (`SavedAccommodation` model already exists).
 - [ ] **Compare** — side-by-side of 2–3 properties (rating dims, price, amenities).
 - [ ] **Browse Suburbs** — companion to Browse Universities.
-- [ ] **Full property Atlas** — map view of all properties with the Browse filters.
+- [ ] **Full property Atlas** — map view of all properties with the Browse filters
+  (Leaflet now wired in `components/maps/UniMap.tsx` — reuse for this).
 - [ ] **Real photography** — replace Unsplash placeholders with actual building
   photos (licensed/owned), or an operator image pipeline + domain whitelisting.
 
@@ -185,11 +200,12 @@ Resend (email) · Vercel hosting · Vitest + Jest + Playwright.
 
 ## 10. Open decisions / notes
 - **Photos:** real operator photos proved unhotlinkable (Scape returns 403; sites
-  are JS-heavy SPAs). Current galleries use validated Unsplash images on the
-  already-whitelisted `images.unsplash.com`. Decision needed on sourcing real
-  photography for launch.
+  are JS-heavy SPAs). Galleries use validated Unsplash images on the
+  already-whitelisted `images.unsplash.com`; the homepage hero/index tiles and the
+  detail page now render these (Browse still uses striped placeholder tiles).
+  Decision still needed on sourcing real photography for launch.
 - **Illustrative stats** in the hero/manifesto need to become real before any
   public launch (credibility risk on a "trust" product).
-- **University string convention** — accommodations store the full university name
-  (e.g. `University of New South Wales (UNSW)`); keep new data consistent so Browse
-  filters and detail "comparables" match.
+- **University string convention** — accommodations store `Name (ABBR)` (e.g.
+  `University of New South Wales (UNSW)`), now normalised across all five in the DB;
+  keep new data consistent so Browse filters and detail "comparables" match.
