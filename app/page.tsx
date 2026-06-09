@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import Image from 'next/image';
 import { prisma } from '@/lib/database/prisma';
 import HeroRotator from '@/components/home/HeroRotator';
 import { getPlatformStats } from '@/lib/stats';
@@ -21,6 +22,7 @@ async function getFeaturedAccommodations() {
         ratingOverall: true,
         totalReviews: true,
         distanceToCampus: true,
+        images: true,
         reviews: {
           where: { status: 'PUBLISHED' },
           orderBy: { rating: 'desc' },
@@ -247,6 +249,15 @@ export default async function HomePage() {
               </div>
               <div>
                 <div className={styles.articlePhoto}>
+                  {accom.images?.[0] && (
+                    <Image
+                      src={accom.images[0]}
+                      alt={accom.name}
+                      fill
+                      sizes="(max-width: 768px) 100vw, 50vw"
+                      className={styles.tilePhotoImg}
+                    />
+                  )}
                   <div className={styles.articlePhotoFig}>FIG. 0{i + 2}</div>
                   <div className={styles.articlePhotoLabel}>{accom.name.toUpperCase()}</div>
                 </div>
@@ -311,7 +322,17 @@ export default async function HomePage() {
                   <span className={styles.indexCardNum}>N° {String(i + 3).padStart(2, '0')}</span>
                   <span className={styles.indexCardKicker}>{accom.type.replace('-', ' ')}</span>
                 </div>
-                <div className={styles.indexCardPhoto} />
+                <div className={styles.indexCardPhoto}>
+                  {accom.images?.[0] && (
+                    <Image
+                      src={accom.images[0]}
+                      alt={accom.name}
+                      fill
+                      sizes="(max-width: 768px) 50vw, 25vw"
+                      className={styles.tilePhotoImg}
+                    />
+                  )}
+                </div>
                 <div>
                   <div className={styles.indexCardMeta}>
                     {accom.university.toUpperCase()} · {accom.suburb.toUpperCase()}
