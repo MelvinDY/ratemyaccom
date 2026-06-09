@@ -1,7 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { findOrCreateOAuthUser, setAuthCookies, parseState } from '@/lib/auth/oauth-helpers';
 
-const APP_URL = process.env.NEXT_PUBLIC_APP_URL!;
+// Strip any trailing slash so the token-exchange redirect_uri matches the
+// one sent during the auth request (and registered in Google) exactly.
+const APP_URL = (process.env.NEXT_PUBLIC_APP_URL || '').replace(/\/+$/, '');
 
 export async function GET(req: NextRequest) {
   const { searchParams } = req.nextUrl;
