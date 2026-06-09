@@ -174,7 +174,9 @@
   position: relative;
   vertical-align: top;
   overflow: hidden;
-  height: 0.95em;
+  /* height matches the per-word line-height below so exactly one word shows
+     and adjacent words' descenders/ascenders can't bleed into the window */
+  height: 1.2em;
   min-width: 1.2em;
 }
 .heroB-rot-track {
@@ -184,7 +186,7 @@
 }
 .heroB-rot-track > span {
   display: block;
-  line-height: 0.95;
+  line-height: 1.2;
   font-style: italic;
   font-weight: 600;
   color: var(--blue);
