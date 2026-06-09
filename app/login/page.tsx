@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useAuth } from '@/hooks/useAuth';
 import OAuthButtons from '@/components/auth/OAuthButtons';
+import { AUTH_METHODS } from '@/lib/config/auth';
 import styles from '@/components/editorial/editorial.module.css';
 
 type LoginMethod = 'password' | 'otp';
@@ -251,7 +252,7 @@ export default function LoginPage() {
           {!inVerify && <OAuthButtons redirect="/" label="Sign in" />}
 
           {/* Password login */}
-          {loginMethod === 'password' && (
+          {AUTH_METHODS.emailPassword && loginMethod === 'password' && (
             <form onSubmit={handlePasswordLogin}>
               {error && <div className={styles.errorBox}>{error}</div>}
 
@@ -305,25 +306,29 @@ export default function LoginPage() {
                 {isLoading ? 'Signing in…' : 'Sign in →'}
               </button>
 
-              <div className={styles.divider}>
-                <span className={styles.dividerLine} />
-                <span className={styles.dividerText}>or</span>
-                <span className={styles.dividerLine} />
-              </div>
+              {AUTH_METHODS.emailOtp && (
+                <>
+                  <div className={styles.divider}>
+                    <span className={styles.dividerLine} />
+                    <span className={styles.dividerText}>or</span>
+                    <span className={styles.dividerLine} />
+                  </div>
 
-              <button
-                type="button"
-                onClick={switchToOtp}
-                disabled={isLoading}
-                className={styles.btnSecondary}
-              >
-                Email me a sign-in code
-              </button>
+                  <button
+                    type="button"
+                    onClick={switchToOtp}
+                    disabled={isLoading}
+                    className={styles.btnSecondary}
+                  >
+                    Email me a sign-in code
+                  </button>
+                </>
+              )}
             </form>
           )}
 
           {/* OTP — request */}
-          {loginMethod === 'otp' && otpStep === 'email' && (
+          {AUTH_METHODS.emailOtp && loginMethod === 'otp' && otpStep === 'email' && (
             <form onSubmit={handleRequestOtp}>
               {error && <div className={styles.errorBox}>{error}</div>}
 
@@ -373,7 +378,7 @@ export default function LoginPage() {
           )}
 
           {/* OTP — verify */}
-          {inVerify && (
+          {AUTH_METHODS.emailOtp && inVerify && (
             <form onSubmit={handleVerifyOtp}>
               {error && <div className={styles.errorBox}>{error}</div>}
 

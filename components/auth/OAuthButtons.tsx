@@ -1,5 +1,7 @@
 'use client';
 
+import { AUTH_METHODS, OAUTH_ONLY } from '@/lib/config/auth';
+
 interface Props {
   redirect?: string;
   label?: string; // 'Sign in' | 'Sign up'
@@ -38,48 +40,52 @@ export default function OAuthButtons({ redirect = '/', label = 'Sign in' }: Prop
       </a>
 
       {/* Apple */}
-      <a
-        href={`/api/auth/apple${params}`}
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          gap: 10,
-          padding: '13px 20px',
-          background: '#0A0A0F',
-          border: '1px solid #0A0A0F',
-          color: 'white',
-          fontFamily: 'inherit',
-          fontSize: 14,
-          fontWeight: 500,
-          letterSpacing: '0.01em',
-          textDecoration: 'none',
-          cursor: 'pointer',
-          transition: 'opacity 0.15s',
-        }}
-        onMouseEnter={(e) => (e.currentTarget.style.opacity = '0.88')}
-        onMouseLeave={(e) => (e.currentTarget.style.opacity = '1')}
-      >
-        <AppleIcon />
-        {label} with Apple
-      </a>
-
-      {/* Divider */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: 12, margin: '4px 0' }}>
-        <div style={{ flex: 1, height: 1, background: '#E5E5EA' }} />
-        <span
+      {AUTH_METHODS.apple && (
+        <a
+          href={`/api/auth/apple${params}`}
           style={{
-            fontFamily: 'var(--font-mono, monospace)',
-            fontSize: 10,
-            letterSpacing: '0.08em',
-            textTransform: 'uppercase',
-            color: '#6B6B78',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: 10,
+            padding: '13px 20px',
+            background: '#0A0A0F',
+            border: '1px solid #0A0A0F',
+            color: 'white',
+            fontFamily: 'inherit',
+            fontSize: 14,
+            fontWeight: 500,
+            letterSpacing: '0.01em',
+            textDecoration: 'none',
+            cursor: 'pointer',
+            transition: 'opacity 0.15s',
           }}
+          onMouseEnter={(e) => (e.currentTarget.style.opacity = '0.88')}
+          onMouseLeave={(e) => (e.currentTarget.style.opacity = '1')}
         >
-          or continue with email
-        </span>
-        <div style={{ flex: 1, height: 1, background: '#E5E5EA' }} />
-      </div>
+          <AppleIcon />
+          {label} with Apple
+        </a>
+      )}
+
+      {/* Divider — only when an email-based method follows */}
+      {!OAUTH_ONLY && (
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12, margin: '4px 0' }}>
+          <div style={{ flex: 1, height: 1, background: '#E5E5EA' }} />
+          <span
+            style={{
+              fontFamily: 'var(--font-mono, monospace)',
+              fontSize: 10,
+              letterSpacing: '0.08em',
+              textTransform: 'uppercase',
+              color: '#6B6B78',
+            }}
+          >
+            or continue with email
+          </span>
+          <div style={{ flex: 1, height: 1, background: '#E5E5EA' }} />
+        </div>
+      )}
     </div>
   );
 }

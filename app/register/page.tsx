@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useAuth } from '@/hooks/useAuth';
 import OAuthButtons from '@/components/auth/OAuthButtons';
+import { AUTH_METHODS } from '@/lib/config/auth';
 import type { University } from '@/lib/validation/schemas';
 import styles from '@/components/editorial/editorial.module.css';
 
@@ -161,160 +162,164 @@ export default function RegisterPage() {
         <div className={styles.card}>
           <OAuthButtons redirect="/" label="Sign up" />
 
-          <form onSubmit={handleSubmit}>
-            {error && <div className={styles.errorBox}>{error}</div>}
+          {AUTH_METHODS.emailPassword && (
+            <form onSubmit={handleSubmit}>
+              {error && <div className={styles.errorBox}>{error}</div>}
 
-            <div className={styles.field}>
-              <label className={styles.label} htmlFor="name">
-                Full name
-              </label>
-              <input
-                id="name"
-                type="text"
-                name="name"
-                autoComplete="name"
-                placeholder="Your name"
-                value={formData.name}
-                onChange={handleChange}
-                disabled={isLoading}
-                className={`${styles.input} ${validationErrors.name ? styles.inputError : ''}`}
-              />
-              {validationErrors.name && <p className={styles.errorText}>{validationErrors.name}</p>}
-            </div>
+              <div className={styles.field}>
+                <label className={styles.label} htmlFor="name">
+                  Full name
+                </label>
+                <input
+                  id="name"
+                  type="text"
+                  name="name"
+                  autoComplete="name"
+                  placeholder="Your name"
+                  value={formData.name}
+                  onChange={handleChange}
+                  disabled={isLoading}
+                  className={`${styles.input} ${validationErrors.name ? styles.inputError : ''}`}
+                />
+                {validationErrors.name && (
+                  <p className={styles.errorText}>{validationErrors.name}</p>
+                )}
+              </div>
 
-            <div className={styles.field}>
-              <label className={styles.label} htmlFor="email">
-                University email
-              </label>
-              <input
-                id="email"
-                type="email"
-                name="email"
-                autoComplete="email"
-                placeholder="yourname@university.edu.au"
-                value={formData.email}
-                onChange={handleChange}
-                disabled={isLoading}
-                className={`${styles.input} ${validationErrors.email ? styles.inputError : ''}`}
-              />
-              {validationErrors.email && (
-                <p className={styles.errorText}>{validationErrors.email}</p>
-              )}
-            </div>
+              <div className={styles.field}>
+                <label className={styles.label} htmlFor="email">
+                  University email
+                </label>
+                <input
+                  id="email"
+                  type="email"
+                  name="email"
+                  autoComplete="email"
+                  placeholder="yourname@university.edu.au"
+                  value={formData.email}
+                  onChange={handleChange}
+                  disabled={isLoading}
+                  className={`${styles.input} ${validationErrors.email ? styles.inputError : ''}`}
+                />
+                {validationErrors.email && (
+                  <p className={styles.errorText}>{validationErrors.email}</p>
+                )}
+              </div>
 
-            <div className={styles.field}>
-              <label className={styles.label} htmlFor="university">
-                University
-              </label>
-              <select
-                id="university"
-                value={formData.university}
-                onChange={(e) => handleUniversityChange(e.target.value as University)}
-                disabled={isLoading}
-                className={`${styles.select} ${validationErrors.university ? styles.inputError : ''}`}
-              >
-                <option value="" disabled>
-                  Select your university
-                </option>
-                {universities.map((uni) => (
-                  <option key={uni.value} value={uni.value}>
-                    {uni.label}
-                  </option>
-                ))}
-              </select>
-              {validationErrors.university && (
-                <p className={styles.errorText}>{validationErrors.university}</p>
-              )}
-            </div>
-
-            <div className={styles.field}>
-              <label className={styles.label} htmlFor="studentId">
-                Student ID
-              </label>
-              <input
-                id="studentId"
-                type="text"
-                name="studentId"
-                placeholder="e.g. z5123456"
-                value={formData.studentId}
-                onChange={handleChange}
-                disabled={isLoading}
-                className={`${styles.input} ${validationErrors.studentId ? styles.inputError : ''}`}
-              />
-              {validationErrors.studentId && (
-                <p className={styles.errorText}>{validationErrors.studentId}</p>
-              )}
-            </div>
-
-            <div className={styles.field}>
-              <label className={styles.label} htmlFor="password">
-                Password
-              </label>
-              <input
-                id="password"
-                type="password"
-                name="password"
-                autoComplete="new-password"
-                placeholder="Create a password"
-                value={formData.password}
-                onChange={handleChange}
-                onFocus={() => setShowPasswordHints(true)}
-                disabled={isLoading}
-                className={`${styles.input} ${validationErrors.password ? styles.inputError : ''}`}
-              />
-              {validationErrors.password && (
-                <p className={styles.errorText}>{validationErrors.password}</p>
-              )}
-              {showPasswordHints && (
-                <ul
-                  style={{
-                    listStyle: 'none',
-                    padding: 0,
-                    margin: '10px 0 0',
-                    fontFamily: 'var(--ed-mono)',
-                    fontSize: 10,
-                    letterSpacing: '0.04em',
-                    textTransform: 'uppercase',
-                    display: 'grid',
-                    gap: 5,
-                  }}
+              <div className={styles.field}>
+                <label className={styles.label} htmlFor="university">
+                  University
+                </label>
+                <select
+                  id="university"
+                  value={formData.university}
+                  onChange={(e) => handleUniversityChange(e.target.value as University)}
+                  disabled={isLoading}
+                  className={`${styles.select} ${validationErrors.university ? styles.inputError : ''}`}
                 >
-                  {passwordChecks.map((c) => (
-                    <li
-                      key={c.label}
-                      style={{ color: c.valid ? 'var(--blue)' : 'var(--ed-mute-2)' }}
-                    >
-                      {c.valid ? '✓' : '·'} {c.label}
-                    </li>
+                  <option value="" disabled>
+                    Select your university
+                  </option>
+                  {universities.map((uni) => (
+                    <option key={uni.value} value={uni.value}>
+                      {uni.label}
+                    </option>
                   ))}
-                </ul>
-              )}
-            </div>
+                </select>
+                {validationErrors.university && (
+                  <p className={styles.errorText}>{validationErrors.university}</p>
+                )}
+              </div>
 
-            <div className={styles.field}>
-              <label className={styles.label} htmlFor="confirmPassword">
-                Confirm password
-              </label>
-              <input
-                id="confirmPassword"
-                type="password"
-                name="confirmPassword"
-                autoComplete="new-password"
-                placeholder="Re-enter your password"
-                value={formData.confirmPassword}
-                onChange={handleChange}
-                disabled={isLoading}
-                className={`${styles.input} ${validationErrors.confirmPassword ? styles.inputError : ''}`}
-              />
-              {validationErrors.confirmPassword && (
-                <p className={styles.errorText}>{validationErrors.confirmPassword}</p>
-              )}
-            </div>
+              <div className={styles.field}>
+                <label className={styles.label} htmlFor="studentId">
+                  Student ID
+                </label>
+                <input
+                  id="studentId"
+                  type="text"
+                  name="studentId"
+                  placeholder="e.g. z5123456"
+                  value={formData.studentId}
+                  onChange={handleChange}
+                  disabled={isLoading}
+                  className={`${styles.input} ${validationErrors.studentId ? styles.inputError : ''}`}
+                />
+                {validationErrors.studentId && (
+                  <p className={styles.errorText}>{validationErrors.studentId}</p>
+                )}
+              </div>
 
-            <button type="submit" disabled={isLoading} className={styles.btnPrimary}>
-              {isLoading ? 'Creating account…' : 'Create account →'}
-            </button>
-          </form>
+              <div className={styles.field}>
+                <label className={styles.label} htmlFor="password">
+                  Password
+                </label>
+                <input
+                  id="password"
+                  type="password"
+                  name="password"
+                  autoComplete="new-password"
+                  placeholder="Create a password"
+                  value={formData.password}
+                  onChange={handleChange}
+                  onFocus={() => setShowPasswordHints(true)}
+                  disabled={isLoading}
+                  className={`${styles.input} ${validationErrors.password ? styles.inputError : ''}`}
+                />
+                {validationErrors.password && (
+                  <p className={styles.errorText}>{validationErrors.password}</p>
+                )}
+                {showPasswordHints && (
+                  <ul
+                    style={{
+                      listStyle: 'none',
+                      padding: 0,
+                      margin: '10px 0 0',
+                      fontFamily: 'var(--ed-mono)',
+                      fontSize: 10,
+                      letterSpacing: '0.04em',
+                      textTransform: 'uppercase',
+                      display: 'grid',
+                      gap: 5,
+                    }}
+                  >
+                    {passwordChecks.map((c) => (
+                      <li
+                        key={c.label}
+                        style={{ color: c.valid ? 'var(--blue)' : 'var(--ed-mute-2)' }}
+                      >
+                        {c.valid ? '✓' : '·'} {c.label}
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+
+              <div className={styles.field}>
+                <label className={styles.label} htmlFor="confirmPassword">
+                  Confirm password
+                </label>
+                <input
+                  id="confirmPassword"
+                  type="password"
+                  name="confirmPassword"
+                  autoComplete="new-password"
+                  placeholder="Re-enter your password"
+                  value={formData.confirmPassword}
+                  onChange={handleChange}
+                  disabled={isLoading}
+                  className={`${styles.input} ${validationErrors.confirmPassword ? styles.inputError : ''}`}
+                />
+                {validationErrors.confirmPassword && (
+                  <p className={styles.errorText}>{validationErrors.confirmPassword}</p>
+                )}
+              </div>
+
+              <button type="submit" disabled={isLoading} className={styles.btnPrimary}>
+                {isLoading ? 'Creating account…' : 'Create account →'}
+              </button>
+            </form>
+          )}
 
           <div className={styles.switchRow}>
             Already have an account?{' '}

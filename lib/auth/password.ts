@@ -1,9 +1,12 @@
 /**
  * Password Hashing Utilities
- * Handles secure password hashing and verification using bcrypt
+ * Handles secure password hashing and verification using bcryptjs.
+ * bcryptjs is pure-JS (no native bindings), so it loads reliably in
+ * serverless runtimes like Vercel. Its hashes are interchangeable with
+ * the native `bcrypt` package, so existing hashes keep verifying.
  */
 
-import bcrypt from 'bcrypt';
+import bcrypt from 'bcryptjs';
 
 const SALT_ROUNDS = 12; // Higher = more secure but slower
 
