@@ -44,6 +44,20 @@ export default function BrowsePage() {
       .then((d) => {
         const list: Accom[] = (d.data ?? d ?? []).map((a: Accom) => a);
         setItems(list);
+
+        // Seed the university filter from the ?university= param (e.g. atlas links,
+        // which pass an abbreviation like USYD). Match as a substring so it works
+        // against the stored "Name (ABBR)" strings regardless of abbr or full name.
+        const param = new URLSearchParams(window.location.search).get('university');
+        if (param) {
+          const needle = param.toLowerCase();
+          const matches = Array.from(
+            new Set(list.map((a) => a.university).filter((u) => u.toLowerCase().includes(needle)))
+          );
+          if (matches.length) {
+            setUnis(new Set(matches));
+          }
+        }
       })
       .catch(() => {})
       .finally(() => setLoading(false));

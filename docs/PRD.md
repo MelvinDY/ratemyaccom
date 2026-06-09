@@ -1,6 +1,6 @@
 # Rate My Accom — Product Requirements Document
 
-_Last updated: 2026-06-08_
+_Last updated: 2026-06-09_
 
 ---
 
@@ -136,8 +136,8 @@ Resend (email) · Vercel hosting · Vitest + Jest + Playwright.
 - [x] **Real counts on homepage & header** — done: `lib/stats.ts` feeds live
   property/review/university counts to the header and homepage (em-dash fallback
   on an empty DB).
-- [ ] **Seed the production DB** — run `npm run db:seed:nsw` against Neon so the
-  live site isn't empty.
+- [x] **Seed the production DB** — done: Neon holds 32 accommodations, 160 reviews,
+  20 amenities, 359 amenity links, 8 users (verified 2026-06-09).
 
 ### P1 — Auth & data integrity
 - [ ] **Activate OAuth** — add real `GOOGLE_CLIENT_ID/SECRET` and Apple
