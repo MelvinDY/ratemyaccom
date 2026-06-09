@@ -20,6 +20,39 @@ interface Accom {
   amenities: { name: string; available: boolean }[];
 }
 
+/** Shape returned by GET /api/accommodations (nested), before flattening. */
+interface ApiAccom {
+  id: string;
+  name: string;
+  slug: string;
+  university: string;
+  type: string;
+  roomTypes?: string[];
+  location?: { suburb?: string };
+  pricing?: { min?: number; max?: number; period?: string };
+  ratings?: { overall?: number; totalReviews?: number };
+  amenities?: { name: string; available: boolean }[];
+}
+
+/** Flatten the API's nested response into the shape this page renders. */
+function mapAccom(a: ApiAccom): Accom {
+  return {
+    id: a.id,
+    name: a.name,
+    slug: a.slug,
+    university: a.university,
+    suburb: a.location?.suburb ?? '',
+    type: a.type,
+    priceMin: a.pricing?.min ?? 0,
+    priceMax: a.pricing?.max ?? 0,
+    pricePeriod: (a.pricing?.period ?? 'week').toUpperCase(),
+    ratingOverall: a.ratings?.overall ?? 0,
+    totalReviews: a.ratings?.totalReviews ?? 0,
+    roomTypes: a.roomTypes ?? [],
+    amenities: a.amenities ?? [],
+  };
+}
+
 type SortKey = 'rating' | 'reviews' | 'priceLow' | 'priceHigh' | 'name';
 type ViewMode = 'catalog' | 'grid';
 
@@ -42,7 +75,7 @@ export default function BrowsePage() {
     fetch('/api/accommodations?limit=100')
       .then((r) => r.json())
       .then((d) => {
-        const list: Accom[] = (d.data ?? d ?? []).map((a: Accom) => a);
+        const list: Accom[] = (d.data ?? d ?? []).map(mapAccom);
         setItems(list);
 
         // Seed the university filter from the ?university= param (e.g. atlas links,
