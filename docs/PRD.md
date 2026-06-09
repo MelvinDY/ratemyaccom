@@ -177,9 +177,9 @@ Vercel hosting · Vitest + Jest + Playwright.
 - [ ] **Brand assets** — editorial favicon/logo, OG images, per-page metadata.
 - [ ] **Raise test coverage** — global Jest threshold was lowered to 9% after the
   redesign added untested pages; add page/route tests and raise it back.
-- [ ] **Clean up stale files** — remove `*.new.ts` route duplicates
-  (`app/api/accommodations/route.new.ts`, `[id]/route.new.ts`, `reviews/route.new.ts`)
-  and the analysis scripts in the repo root.
+- [x] **Clean up stale files** — removed the `*.new.ts` route duplicates
+  (`app/api/accommodations/route.new.ts`, `[id]/route.new.ts`, `reviews/route.new.ts`).
+  (Analysis scripts in the repo root still to tidy.)
 - [ ] **Lint debt** — reduce `@typescript-eslint/no-explicit-any` and
   `no-non-null-assertion` warnings across `lib/` and API routes.
 - [ ] **Build warnings** — `rate-limiter-flexible` triggers Edge Runtime warnings;
